@@ -24,14 +24,13 @@ export class TestScene extends Scene {
 
 		for (let pointLight of this.pointLights) {
 			pointLight.shadowMap.excludeNodesFromShadowMap(renderer, [
-				'red-sphere'
 			]);
 		}
 
 
 		await material.loadMaterial('materials/stone.mat.json', true, renderer.gl);
 
-		this.sceneGraph.find('sphere').addComponent(new CubeScript());
+		//this.sceneGraph.find('sphere').addComponent(new CubeScript());
 
 		/*	const terrain = mesh.GetMesh('terrain');
 			terrain.materialID = ''; //'stone-with-displacement';  //'rock -with-displacement'; //'rock';

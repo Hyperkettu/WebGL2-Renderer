@@ -59,7 +59,7 @@ export function GetPbrSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, hasMe
 
 		precision highp float;
 
-		#define NUM_LIGHTS ${ PointLight.NUM_LIGHTS}
+		${PointLight.NUM_LIGHTS > 0 ? `#define NUM_LIGHTS ${ PointLight.NUM_LIGHTS}`: ''}
 
 		struct PointLight {
 			vec3 color;
@@ -97,7 +97,7 @@ export function GetPbrSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, hasMe
 		${ 5 <= PointLight.NUM_LIGHTS ? `uniform samplerCube pointLightShadowMap${5};` : ''}
 
 		layout(std140) uniform Lights {
-			PointLight pointLights[NUM_LIGHTS];
+			${PointLight.NUM_LIGHTS > 0 ? 'PointLight pointLights[NUM_LIGHTS]' : ''}
 			DirLight dirLight;
 
 			vec3 eyePositionW;
@@ -1474,7 +1474,7 @@ export function GetTerrainSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, h
 		${ 5 <= PointLight.NUM_LIGHTS ? `uniform samplerCube pointLightShadowMap${5};` : ''}
 
 		layout(std140) uniform Lights {
-			PointLight pointLights[NUM_LIGHTS];
+			${PointLight.NUM_LIGHTS > 0 ? 'PointLight pointLights[NUM_LIGHTS]' : ''}
 			DirLight dirLight;
 
 			vec3 eyePositionW;
@@ -1961,7 +1961,7 @@ export const billboardParticleVsSrc =
 	};
 
 	layout(std140) uniform Lights {
-		PointLight pointLights[NUM_LIGHTS];
+		${PointLight.NUM_LIGHTS > 0 ? 'PointLight pointLights[NUM_LIGHTS]' : ''}
 		DirLight dirLight;
 
 		vec3 eyePositionW;
