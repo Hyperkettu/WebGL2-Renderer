@@ -1,0 +1,25 @@
+{
+	"material" : {
+		"name" : "titan",
+		"shader": "pbr",
+		"tech": "ANRM",
+		"textures": [
+			{
+				"path" : "images/titan/titan_albedo.png",
+				"type" : "albedo"
+			},
+			{
+				"path" : "images/titan/titan_normal.png",
+				"type" : "normal"
+			},			
+			{
+				"path" : "images/titan/titan_metallic.png",
+				"type" : "metallic"
+			},
+			{
+				"path" : "images/titan/titan_roughness.png",
+				"type" : "roughness"
+			}
+		]
+	}
+}

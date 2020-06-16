@@ -1,0 +1,32 @@
+{
+	"material" : {
+		"name" : "snow-with-displacement",
+		"shader": "pbr",
+		"tech": "ANRMAD",
+		"textures": [
+			{
+				"path" : "images/snow/albedo.png",
+				"type" : "albedo"
+			},
+			{
+				"path" : "images/snow/normal.png",
+				"type" : "normal"
+			},			
+			{
+				"path" : "images/snow/metallic.png",
+				"type" : "metallic"
+			},
+			{
+				"path" : "images/snow/roughness.png",
+				"type" : "roughness"
+			},	
+			{
+				"path" : "images/snow/ao.png",
+				"type" : "ambient-occlusion"
+			},
+			{
+				"path" : "images/snow/displacement.png",
+				"type" : "displacement"
+			}]
+	}
+}

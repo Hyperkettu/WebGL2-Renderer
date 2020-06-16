@@ -1,0 +1,12 @@
+{
+	"mesh": {
+		"name": "titan-sphere",
+		"type": "sphere",
+		"data": {
+			"radius": 5,
+			"numStacks": 128,
+			"numSectors": 128
+		},
+		"material": "materials/titan.mat.json"
+	}
+}

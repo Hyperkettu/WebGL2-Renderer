@@ -1,0 +1,25 @@
+{
+	"material" : {
+		"name" : "water",
+		"shader": "pbr",
+		"tech": "ANRA",
+		"textures": [
+			{
+				"path" : "images/water/water-albedo-alpha.png",
+				"type" : "albedo"
+			},
+			{
+				"path" : "images/water/water-normal.png",
+				"type" : "normal"
+			},
+			{
+				"path" : "images/water/water-roughness.png",
+				"type" : "roughness"
+			},	
+			{
+				"path" : "images/water/water-ao.png",
+				"type" : "ambient-occlusion"
+			}
+		]
+	}
+}

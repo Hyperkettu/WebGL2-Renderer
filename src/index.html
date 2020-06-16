@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+	<title>WebGL Proto</title>
+	<script>
+        var g_settings = {
+            serverUrl: "{{{ serverUrl }}}",
+			serverWs: "{{{ serverWs }}}",
+            version: "{{{ version }}}",
+			build: "{{{ build }}}",
+			bundlemap: "{{{ bundlemap }}}",
+			sentry: {
+				dsn: "{{{ sentry.dsn.client }}}",
+				release: "{{{ name.id }}} {{{ version }}} (client)"
+			}
+        }
+    </script>
+    <script src="{{{ script }}}"></script>
+    <script>
+        window.onload = function () {
+            main.main();
+        }
+    </script>
+</head>
+
+</html>

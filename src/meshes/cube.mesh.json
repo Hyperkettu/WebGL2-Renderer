@@ -1,0 +1,12 @@
+{
+	"mesh": {
+		"name": "cube-1x1x1",
+		"type": "cube",
+		"data": {
+			"width": 10,
+			"height": 10,
+			"depth": 10
+		},
+		"material": "materials/water.mat.json"
+	}
+}

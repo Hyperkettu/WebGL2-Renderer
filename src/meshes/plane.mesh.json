@@ -1,0 +1,11 @@
+{
+	"mesh": {
+		"name": "plane-10x10",
+		"type": "plane",
+		"data": {
+			"width": 10,
+			"height": 10
+		},
+		"material": "materials/stone.mat.json"
+	}
+}

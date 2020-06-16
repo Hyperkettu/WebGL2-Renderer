@@ -1,0 +1,32 @@
+{
+	"material" : {
+		"name" : "bark1-with-displacement",
+		"shader": "pbr",
+		"tech": "ANRMAD",
+		"textures": [
+			{
+				"path" : "images/bark1/bark1-albedo.png",
+				"type" : "albedo"
+			},
+			{
+				"path" : "images/bark1/bark1-normal.png",
+				"type" : "normal"
+			},			
+			{
+				"path" : "images/bark1/bark1-metallic.png",
+				"type" : "metallic"
+			},
+			{
+				"path" : "images/bark1/bark1-roughness.png",
+				"type" : "roughness"
+			},	
+			{
+				"path" : "images/bark1/bark1-ao.png",
+				"type" : "ambient-occlusion"
+			},
+			{
+				"path" : "images/bark1/bark1-displacement.png",
+				"type" : "displacement"
+			}]
+	}
+}

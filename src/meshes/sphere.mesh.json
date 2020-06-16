@@ -1,0 +1,12 @@
+{
+	"mesh": {
+		"name": "sphere-1",
+		"type": "sphere",
+		"data": {
+			"radius": 1.0,
+			"numStacks": 256,
+			"numSectors": 256
+		},
+		"material": "materials/snow.mat.json"
+	}
+}

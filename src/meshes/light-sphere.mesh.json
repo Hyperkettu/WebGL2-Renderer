@@ -1,0 +1,12 @@
+{
+	"mesh": {
+		"name": "light-sphere",
+		"type": "sphere",
+		"data": {
+			"radius": 0.3,
+			"numStacks": 128,
+			"numSectors": 128
+		},
+		"material": "materials/rock-with-emission.mat.json"
+	}
+}

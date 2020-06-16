@@ -1,0 +1,29 @@
+{
+	"compilerOptions": {
+		"declaration": false,
+		"sourceMap": true,
+		"inlineSources": true,
+		"noImplicitAny": false,
+		"noEmitOnError": false,
+		"removeComments": true,
+		"target": "es5",
+		"importHelpers": true,
+		"resolveJsonModule": true,
+		"esModuleInterop": true,
+		"module": "commonjs",
+		"lib": [
+			"dom",
+			"es5",
+			"es2015.iterable",
+			"es2015.promise",
+			"scripthost"
+		],
+		"baseUrl": ".",
+		"types": [
+			"node"
+		]
+	},
+	"compileOnSave": false,
+	"include": [
+	]
+}
