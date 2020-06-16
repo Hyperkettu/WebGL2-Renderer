@@ -134,10 +134,7 @@ export abstract class Scene {
 		}
 
 		await this.terrain.load(renderer);
-
-		// ADDED NOW
-		this.modifySphere = this.sceneGraph.find('sphere');
-		(this.modifySphere.getComponent('meshComponent') as MeshComponent).mesh.wireFrame = true;
+		
 	}
 
 	addObject(node: SceneNode) {

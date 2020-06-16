@@ -3,10 +3,10 @@
 		"name": "cube-1x1x1",
 		"type": "cube",
 		"data": {
-			"width": 10,
-			"height": 10,
-			"depth": 10
+			"width": 5,
+			"height": 5,
+			"depth": 5
 		},
-		"material": "materials/water.mat.json"
+		"material": "materials/tree.mat.json"
 	}
 }
