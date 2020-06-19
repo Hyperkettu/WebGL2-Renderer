@@ -63,7 +63,7 @@ export class Picker {
 			const meshComponent = node.getComponent('meshComponent') as MeshComponent;
 			if(meshComponent && meshComponent.mesh) {
 				const info = new HitInfo();
-				for(let index = 0 ; index < meshComponent.mesh.getTriangleCount(); index += 1) {
+				for(let index = 0 ; index < meshComponent.mesh.getTriangleCount(); index++) {
 					if(math.rayInterectsTriangle(ray, meshComponent.mesh.getTriangle(index), info)) {
 
 						if(this.hitPolicy === 'any') {

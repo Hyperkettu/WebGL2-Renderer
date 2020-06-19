@@ -45,7 +45,7 @@ export class Triangle {
 		this.alpha = (d11 * d20 - d01 * d21) / denom;
 		this.beta = (d00 * d21 - d01 * d20) / denom;
 		this.gamma = 1 - this.alpha - this.beta;
-		console.log('alpha:', this.alpha, this.beta);
+		//console.log('alpha:', this.alpha, this.beta, this.gamma);
 
 		let hit = false;
 		if (this.alpha >= 0 && this.alpha <= 1 &&

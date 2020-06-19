@@ -23,7 +23,7 @@ export class Mesh {
 	}
 
 	getTriangleCount() {
-		return this.vertices.length / 3;
+		return this.indices.length / 3;
 	}
 
 	getTriangle(index: number) {
