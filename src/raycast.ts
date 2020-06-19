@@ -2,7 +2,6 @@ import { vec3 } from 'gl-matrix';
 import { Camera } from './camera';
 import { Viewport } from './context';
 import { Ray } from './ray';
-import { Plane } from './plane';
 import * as math from './util';
 import { Triangle } from './triangle';
 import { Sphere } from './sphere';
@@ -71,7 +70,6 @@ export class Picker {
 							return hitInfo;
 						} else if(this.hitPolicy === 'closest') {
 							const distance = vec3.distance(info.hitPoint, camera.position);
-							console.log(distance, index);
 							if(distance < this.distance) {
 								this.distance = distance;
 								setAttributes(node, info);
