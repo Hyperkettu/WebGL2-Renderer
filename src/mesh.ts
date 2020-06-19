@@ -1,8 +1,5 @@
 import { VertexArrayObject } from './vertexarrayobject';
 import { Vertex } from './vertex';
-import { Material } from './material';
-import { ShaderType } from './shader';
-import { Texture, TextureType } from './texture';
 import { Triangle } from './triangle';
 
 export class Mesh {
@@ -20,6 +17,11 @@ export class Mesh {
 
 	createMesh(gl: WebGL2RenderingContext, vertices: Vertex[], indices: number[]) {
 		this.vertexArrayObject = new VertexArrayObject(gl, vertices, indices);
+	}
+
+	updateVertices(gl: WebGL2RenderingContext, vertices: Vertex[]) {
+		this.vertices = vertices;
+		this.vertexArrayObject.updateVertices(gl, this.vertices);
 	}
 
 	getTriangleCount() {
