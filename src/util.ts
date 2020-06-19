@@ -5,8 +5,6 @@ import { Plane } from './plane';
 import { Sphere } from './sphere';
 import { AABB } from './aabb';
 import { HitInfo } from './raycast';
-import { waitForDebugger } from 'inspector';
-import { resolve } from 'path';
 
 export const DEG_TO_RAD = Math.PI / 180.0;
 export const RAD_TO_DEG = 180.0 / Math.PI;

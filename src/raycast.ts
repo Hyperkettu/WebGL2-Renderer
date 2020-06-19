@@ -7,11 +7,19 @@ import * as math from './util';
 import { Triangle } from './triangle';
 import { Sphere } from './sphere';
 import { AABB } from './aabb';
+import { SceneGraph } from './scenegraph';
+import { MeshComponent } from './meshcomponent';
+import { SceneNode } from './scenenode';
+
+export type HitPolicy = 'any' | 'closest';
 
 export class Picker {
 
-	constructor(viewport: Viewport) {
+	constructor(viewport: Viewport, hitPolicy: HitPolicy) {
 		this.viewport = viewport;
+		this.hitPolicy = hitPolicy;
+		this.pickerRadius = 1;
+		this.distance = Infinity;
 
 		this.triangle = new Triangle(
 			vec3.fromValues(-5, 0, -5),
@@ -37,23 +45,50 @@ export class Picker {
 		return new Ray(camera.position, rayDir);
 	}
 
-	castRay(camera: Camera, x: number, y: number) {
-
+	castRay(camera: Camera, x: number, y: number, world: SceneGraph) {
+		
+		const hitInfo = new HitInfo();
+		hitInfo.hit = false;
 		const ray = this.generateScreenRayFromCamera(camera, x, y);
 
-		const hitInfo = new HitInfo();
+		const setAttributes = (node: SceneNode, info: HitInfo) => {
+			hitInfo.hitObject = node;
+			hitInfo.hit = true;
+			hitInfo.hitPoint = info.hitPoint;
+			hitInfo.normal = info.normal;
+		};
 
-		math.rayIntersectsAABB(ray, this.aabb, hitInfo);
-		//math.rayIntersectsSphere(ray, this.sphere, hitInfo);
-		//	math.rayInterectsTriangle(ray, this.triangle, hitInfo);
+		world.forEach(node => {
 
-		/*console.log('ray', ray, 'plane', plane, 'hitInfo', hitInfo);
+			const meshComponent = node.getComponent('meshComponent') as MeshComponent;
+			if(meshComponent && meshComponent.mesh) {
+				const info = new HitInfo();
+				for(let index = 0 ; index < meshComponent.mesh.getTriangleCount(); index += 1) {
+					if(math.rayInterectsTriangle(ray, meshComponent.mesh.getTriangle(index), info)) {
 
-		if (math.rayIntersectsPlane(ray, plane, hitInfo)) {
-
-		}*/
+						if(this.hitPolicy === 'any') {
+							setAttributes(node, info);
+							return hitInfo;
+						} else if(this.hitPolicy === 'closest') {
+							const distance = vec3.distance(info.hitPoint, camera.position);
+							console.log(distance, index);
+							if(distance < this.distance) {
+								this.distance = distance;
+								setAttributes(node, info);
+							}
+						}
+					}
+				}
+			}
+		});
 		return hitInfo;
 	}
+
+
+	pickerRadius: number;
+	hitPolicy: 'any' | 'closest';
+
+	distance: number;
 	aabb: AABB;
 	sphere: Sphere;
 	triangle: Triangle;
@@ -67,4 +102,5 @@ export class HitInfo {
 	hitPoint: vec3;
 	hit: boolean;
 	normal: vec3;
+	hitObject: SceneNode;
 }

@@ -267,18 +267,11 @@ export class SettingsState extends State {
 		document.addEventListener('mouseup', event => {
 			const camera = this.params.renderer.getCurrentCamera();
 			const svp = this.params.renderer.context.screenViewPort;
-			const picker = new Picker(svp);
-			const info = picker.castRay(camera, event.x, svp.height - event.y);
+			const picker = new Picker(svp, 'closest');
+			const info = picker.castRay(camera, event.x, svp.height - event.y, this.scene.sceneGraph);
 			console.log(info);
 			if (info.hit) {
-				const sphere = this.scene.sceneGraph.find('sphere');
-				(sphere.getComponent('meshComponent') as MeshComponent).mesh.wireFrame = false;
-				(sphere.getComponent('transform') as Transform).position = vec3.fromValues(
-					info.hitPoint[0], info.hitPoint[1], info.hitPoint[2]);
-			} else {
-				const sphere = this.scene.sceneGraph.find('sphere');
-				(sphere.getComponent('meshComponent') as MeshComponent).mesh.wireFrame = true;
-
+			//	info.hitObject.enabled = false;
 			}
 		});
 
