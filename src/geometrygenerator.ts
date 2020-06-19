@@ -520,6 +520,55 @@ export class GeometryGenerator {
 		mesh.SetMesh(name, terrain);
 	}
 
+	static async GeneratePlaneTerrain(gl: WebGL2RenderingContext, name: string, dimension: number, numSections: number, tileScale: number, tileOffset: number) {
+
+		const vertices: Vertex[] = [];
+
+		const w2 = numSections * 0.5;
+		const h2 = numSections * 0.5;
+
+		for (let x = -w2; x <= w2; x += 1) {
+			for (let y = - h2; y <= h2; y += 1) {
+
+				const xPercent = (x + w2) / w2 * 2;
+				const yPercent = (y + h2) / h2 * 2;
+
+				const vertex = new Vertex();
+
+				vertex.position = vec3.fromValues(x * dimension, 0, y * dimension);
+				vertex.textureCoords = vec2.fromValues(xPercent * tileScale + tileOffset, yPercent * tileScale + tileOffset);
+				vertex.normal = vec3.fromValues(0, 1, 0);
+				vertex.tangent = vec3.fromValues(1, 0, 0);
+				vertices.push(vertex);
+
+
+			}
+		}
+
+		const indices: number[] = [];
+
+		let x = 0, y = 0;
+		for (let i = 0; i < numSections; i++) {
+			for (let j = 0; j < numSections; j++) {
+				// first triangle
+				indices.push((numSections + 1) * x + y);
+				indices.push((numSections + 1) * x + y + 1);
+				indices.push((numSections + 1) * (x + 1) + y);
+				// second triangle
+				indices.push((numSections + 1) * (x + 1) + y);
+				indices.push((numSections + 1) * x + y + 1);
+				indices.push((numSections + 1) * (x + 1) + y + 1);
+				y++;
+			}
+			y = 0;
+			x++;
+		}
+
+		const terrain = new Mesh(gl, vertices, indices);
+		mesh.SetMesh(name, terrain);
+		terrain.wireFrame = true;
+	}
+
 	static ComputeTangents(vertices: Vertex[], indices: number[]) {
 
 		for (let i = 0; i < indices.length; i += 3) {
@@ -602,4 +651,20 @@ export class GeometryGenerator {
 			vertices[i].normal = normals[i];
 		}
 	}
+
+	static computeTangentAndNormal(x: number, y: number, vertices: Vertex[], numSections: number, dimension: number) {
+		const heightL = vertices[math.clamp(y, 0, numSections - 1) * numSections + math.clamp(x - 1, 0, numSections - 1)].position[1] || 0;
+		const heightR = vertices[math.clamp(y, 0, numSections - 1) * numSections + math.clamp(x + 1, 0, numSections - 1)].position[1] || 0;
+		const heightD = vertices[math.clamp(y - 1, 0, numSections - 1) * numSections + math.clamp(x, 0, numSections - 1)].position[1] || 0;
+		const heightU = vertices[math.clamp(y + 1, 0, numSections - 1) * numSections + math.clamp(x, 0, numSections - 1)].position[1] || 0;
+
+		const vertex = vertices[y * (numSections + 1) + x];
+		vertex.tangent = vec3.fromValues(2.0 * dimension, (heightR - heightL), 0);
+		vec3.normalize(vertex.tangent, vertex.tangent);
+		const bitangent = vec3.fromValues(0, (heightD - heightU), -2.0 * dimension);
+		vec3.normalize(bitangent, bitangent);
+		vec3.cross(vertex.normal, vertex.tangent, bitangent);
+		vec3.normalize(vertex.normal, vertex.normal);
+	}
 }
+
