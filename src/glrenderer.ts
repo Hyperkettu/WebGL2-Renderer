@@ -21,6 +21,7 @@ import { PointLight } from './pointlight';
 import { ParticleSystem } from './particlesystem';
 import { Picker } from './raycast';
 import { wait } from './util';
+import { loadMaterial } from './material'; 
 
 export class Renderer {
 
@@ -78,6 +79,8 @@ export class Renderer {
 		await this.currentScene.initScene(this, scenePaths[0]);
 
 		shader.LoadShaders(this.gl);
+
+		loadMaterial('materials/default.mat.json', true, this.gl);
 
 		this.particleSystem = new ParticleSystem({
 			birthRate: 400,

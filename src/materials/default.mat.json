@@ -1,0 +1,12 @@
+{
+	"material" : {
+		"name" : "default",
+		"shader": "pbr",
+		"tech": "A",
+		"textures": [
+			{
+				"path" : "images/materials/default-albedo.png",
+				"type" : "albedo"
+			}]
+	}
+}
