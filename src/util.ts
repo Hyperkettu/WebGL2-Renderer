@@ -5,7 +5,7 @@ import { Plane } from './plane';
 import { Sphere } from './sphere';
 import { AABB } from './aabb';
 import { HitInfo } from './raycast';
-import { Mesh } from './mesh';
+import { StaticMesh } from './mesh';
 import { Vertex } from './vertex';
 
 export const DEG_TO_RAD = Math.PI / 180.0;
@@ -209,7 +209,7 @@ export function getAABBNormal(point: vec3, aabb: AABB) {
 	return normal;
 }
 
-export function getMeshVerticesWithinRadius(point: vec3, radius: number, mesh: Mesh) {
+export function getMeshVerticesWithinRadius(point: vec3, radius: number, mesh: StaticMesh) {
 	const vertices: Vertex[] = [];
 	for(let submesh of mesh.getSubmeshes()) {
 		for(let vertex of submesh.vertices) {

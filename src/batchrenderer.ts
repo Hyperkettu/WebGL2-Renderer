@@ -4,9 +4,10 @@ import { Camera } from './camera';
 import * as camera from './cameramanager';
 import { ConstantBuffers, BufferDirtyFlag } from './constantbuffers';
 import { mat4 } from 'gl-matrix';
+import { VertexBase } from './vertex';
 
 interface Batch {
-	submesh: Submesh;
+	submesh: Submesh<VertexBase>;
 	world: mat4;
 }
 

@@ -7,6 +7,8 @@ import { PointLight } from './pointlight';
 import { Scene } from './scene';
 import { Submesh } from './submesh';
 import { vec3 } from 'gl-matrix';
+import { VertexBase } from './vertex';
+import { Mesh } from './mesh';
 
 export class SceneNode {
 
@@ -25,21 +27,21 @@ export class SceneNode {
 	}
 
 	setMesh(name: string, submeshName: string, layer: Layer) {
-		(this.getComponent('meshComponent') as MeshComponent).mesh = mesh.GetMesh(name).getSubmesh(submeshName);
-		(this.getComponent('meshComponent') as MeshComponent).layer = layer;
+		(this.getComponent('meshComponent') as MeshComponent<VertexBase>).mesh = mesh.GetMesh<Mesh<VertexBase>>(name).getSubmesh(submeshName);
+		(this.getComponent('meshComponent') as MeshComponent<VertexBase>).layer = layer;
 
 	}
 
-	addMesh(mesh: Submesh, layer: Layer) {
-		const comp = this.getComponent('meshComponent') as MeshComponent;
+	addMesh(mesh: Submesh<VertexBase>, layer: Layer) {
+		const comp = this.getComponent('meshComponent') as MeshComponent<VertexBase>;
 		comp.mesh = mesh;
 		comp.layer = layer;
 	}
 
-	getComponent(type: string) {
+	getComponent<Type>(type: string) {
 		for (let component of this.components) {
 			if (component.type === type) {
-				return component;
+				return (component as unknown) as Type;
 			}
 
 		}

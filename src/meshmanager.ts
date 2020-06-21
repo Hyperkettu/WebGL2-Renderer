@@ -1,6 +1,6 @@
 import { Mesh, StaticMesh } from './mesh';
 import { vec3, vec2 } from 'gl-matrix';
-import { Vertex, ScreenVertex } from './vertex';
+import { Vertex, ScreenVertex, VertexBase } from './vertex';
 import * as texture from './texturemanager';
 import { VertexArrayObject } from './vertexarrayobject';
 import { MaterialData, MaterialFile } from './material';
@@ -11,13 +11,13 @@ import { SceneNode } from './scenenode';
 import { MeshComponent } from './meshcomponent';
 import { Layer } from './batchrenderer';
 
-let meshes: { [id: string]: Mesh } = {};
+let meshes: { [id: string]: Mesh<VertexBase> } = {};
 
-export function GetMesh(id: string) {
-	return meshes[id];
+export function GetMesh<MeshType>(id: string) {
+	return (meshes[id] as unknown) as MeshType;
 }
 
-export function SetMesh(id: string, mesh: Mesh) {
+export function SetMesh(id: string, mesh: Mesh<VertexBase>) {
 	meshes[id] = mesh;
 }
 
@@ -78,7 +78,7 @@ export interface SceneNodeData {
 }
 
 export interface VertexData {
-	vertices: Vertex[];
+	vertices: VertexBase[];
 	indices: number [];
 	material: string;
 }
@@ -154,7 +154,7 @@ export function loadFromMeshFile(gl: WebGL2RenderingContext, file: MeshData, par
 	return mesh;
 }
 
-function recurseSubmeshes(gl: WebGL2RenderingContext, mesh: Mesh, node: SceneNodeData, parent: SceneNode) {
+function recurseSubmeshes(gl: WebGL2RenderingContext, mesh: Mesh<VertexBase>, node: SceneNodeData, parent: SceneNode) {
 	
 	mesh.createSubmesh(gl, node.name, node.vertexData.vertices, node.vertexData.indices, node.vertexData?.material);
 	const submesh = mesh.getSubmesh(node.name);
@@ -170,7 +170,7 @@ function recurseSubmeshes(gl: WebGL2RenderingContext, mesh: Mesh, node: SceneNod
 	}
 }
 
-export function toMeshDataFile(mesh: Mesh) {
+export function toMeshDataFile(mesh: Mesh<VertexBase>) {
 	let vertexData: VertexData = {
 		material: 'bark1-with-displacement',
 		vertices: [],

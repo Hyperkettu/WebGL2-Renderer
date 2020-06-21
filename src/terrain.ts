@@ -1,4 +1,4 @@
-import { Mesh } from './mesh';
+import { StaticMesh } from './mesh';
 import * as texture from './texturemanager';
 import { Renderer } from './glrenderer';
 import { GeometryGenerator } from './geometrygenerator';
@@ -93,7 +93,7 @@ export class Terrain {
 		gl.bindVertexArray(null);
 	}
 
-	terrain: Mesh;
+	terrain: StaticMesh;
 	world: mat4;
 
 	albedos: Texture;

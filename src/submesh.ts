@@ -1,10 +1,10 @@
 import { VertexArrayObject } from './vertexarrayobject';
-import { Vertex } from './vertex';
+import { Vertex, PositionVertexType } from './vertex';
 import { Triangle } from './triangle';
 
-export class Submesh {
+export class Submesh<VertexType> {
 
-	constructor(gl: WebGL2RenderingContext, vertices: Vertex[], indices: number[]) {
+	constructor(gl: WebGL2RenderingContext, vertices: VertexType[], indices: number[]) {
 		this.vertices = vertices;
 		this.indices = indices;
 		this.createMesh(gl, vertices, indices);
@@ -15,11 +15,11 @@ export class Submesh {
 		this.pointLightIndex = -1;
 	}
 
-	createMesh(gl: WebGL2RenderingContext, vertices: Vertex[], indices: number[]) {
+	createMesh(gl: WebGL2RenderingContext, vertices: VertexType[], indices: number[]) {
 		this.vertexArrayObject = new VertexArrayObject(gl, vertices, indices);
 	}
 
-	updateVertices(gl: WebGL2RenderingContext, vertices: Vertex[]) {
+	updateVertices(gl: WebGL2RenderingContext, vertices: VertexType[]) {
 		this.vertices = vertices;
 		this.vertexArrayObject.updateVertices(gl, this.vertices);
 	}
@@ -30,16 +30,16 @@ export class Submesh {
 
 	getTriangle(index: number) {
 		return new Triangle(
-			this.vertices[this.indices[3 * index]].position, 
-			this.vertices[ this.indices[3 * index + 1]].position, 
-			this.vertices[this.indices[3 * index + 2]].position);
+			(((this.vertices[this.indices[3 * index]]) as unknown) as PositionVertexType).position, 
+			((this.vertices[ this.indices[3 * index + 1]]as unknown) as PositionVertexType).position, 
+			((this.vertices[this.indices[3 * index + 2]]as unknown) as PositionVertexType).position);
 	}
 
 	meshName: string;
 	submeshName: string;
 
-	vertexArrayObject: VertexArrayObject;
-	vertices: Vertex[];
+	vertexArrayObject: VertexArrayObject<VertexType>;
+	vertices: VertexType[];
 	indices: number[];
 	materialID: string;
 

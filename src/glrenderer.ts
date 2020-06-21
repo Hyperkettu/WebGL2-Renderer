@@ -22,6 +22,7 @@ import { ParticleSystem } from './particlesystem';
 import { Picker } from './raycast';
 import { wait } from './util';
 import { loadMaterial } from './material'; 
+import { VertexBase } from './vertex';
 
 export class Renderer {
 
@@ -261,7 +262,7 @@ export class Renderer {
 		scene.sceneGraph.forEach(node => {
 
 			if (node !== scene.sceneGraph.root && node.enabled) {
-				const meshComponent = node.getComponent('meshComponent') as MeshComponent;
+				const meshComponent = node.getComponent('meshComponent') as MeshComponent<VertexBase>;
 
 				// cull frustum in the future
 				if(meshComponent.mesh) {

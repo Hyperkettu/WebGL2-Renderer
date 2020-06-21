@@ -14,6 +14,7 @@ import { Layer } from './batchrenderer';
 import { MeshComponent } from './meshcomponent';
 import { Terrain } from './terrain';
 import * as resource from './resource';
+import { VertexBase } from './vertex';
 
 export interface SceneFile {
 	data: SceneData;
@@ -187,7 +188,7 @@ export abstract class Scene {
 				, object.pointLight.intensity, object.pointLight.radius);
 
 			const pointLightIndex = this.pointLights.length;
-			(node.getComponent('meshComponent') as MeshComponent).mesh.pointLightIndex = pointLightIndex;
+			(node.getComponent('meshComponent') as MeshComponent<VertexBase>).mesh.pointLightIndex = pointLightIndex;
 			this.pointLights.push(node.pointLight);
 		}
 

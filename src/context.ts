@@ -6,6 +6,7 @@ import { RenderTargetState } from './rendertarget';
 import { Texture } from './texture';
 import * as settings from './settings';
 import { Renderer } from './glrenderer';
+import { VertexBase } from './vertex';
 
 export interface Viewport {
 	x: number;
@@ -83,7 +84,7 @@ export class Context {
 		this.gl.bindVertexArray(null);
 	}
 
-	setVertexAndIndexBuffers(submesh: Submesh) {
+	setVertexAndIndexBuffers(submesh: Submesh<VertexBase>) {
 		if (this.vertexArrayObject !== submesh.vertexArrayObject) {
 			this.numIndices = submesh.indices.length;
 			this.numVertices = submesh.vertices.length;
@@ -167,7 +168,7 @@ export class Context {
 		render();
 	}
 
-	vertexArrayObject: VertexArrayObject;
+	vertexArrayObject: VertexArrayObject<VertexBase>;
 	numIndices: number;
 	numVertices: number;
 

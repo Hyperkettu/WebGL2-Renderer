@@ -1,4 +1,4 @@
-import { Vertex } from './vertex';
+import { Vertex, PositionVertex, NormalVertexType, PositionVertexType, GeneralVertexType } from './vertex';
 import { StaticMesh } from './mesh';
 import { vec3, vec2 } from 'gl-matrix';
 import * as mesh from './meshmanager';
@@ -574,7 +574,7 @@ export class GeometryGenerator {
 		//terrain.wireFrame = true;
 	}
 
-	static ComputeTangents(vertices: Vertex[], indices: number[]) {
+	static ComputeTangents(vertices: GeneralVertexType[], indices: number[]) {
 
 		for (let i = 0; i < indices.length; i += 3) {
 
@@ -608,7 +608,7 @@ export class GeometryGenerator {
 
 	}
 
-	static ComputeNormals(vertices: Vertex[], indices: number[]) {
+	static ComputeNormals(vertices: PositionVertexType[], indices: number[]) {
 
 		const normals: vec3[] = [];
 
@@ -622,7 +622,7 @@ export class GeometryGenerator {
 			const v2 = vertices[indices[e + 1]];
 			const v3 = vertices[indices[e + 2]];
 
-			const a = v.position;
+			const a = v.position
 			const b = v2.position;
 			const c = v3.position;
 			// cross product
@@ -653,7 +653,7 @@ export class GeometryGenerator {
 		}
 		// set normals to vertices
 		for (let i = 0; i < vertices.length; i += 3) {
-			vertices[i].normal = normals[i];
+			((vertices[i] as unknown) as NormalVertexType).normal = normals[i];
 		}
 	}
 

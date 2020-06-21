@@ -1,48 +1,48 @@
 import { Vertex, toFloat32Array, ParticleVertex } from './vertex';
 
-export class VertexBuffer {
+export class VertexBuffer<VertexType> {
 
-	constructor(gl: WebGL2RenderingContext, vertices: Vertex[]) {
+	constructor(gl: WebGL2RenderingContext, vertices: VertexType[]) {
 		this.createBuffer(gl, vertices);
 	}
 
-	private createBuffer(gl: WebGL2RenderingContext, vertices: Vertex[]) {
-		this.vertexBuffer = gl.createBuffer();
-		const floatArray = toFloat32Array(vertices);
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, floatArray, gl.STATIC_DRAW);
-		let size = 3;          // n components per iteration
-		const type = gl.FLOAT;   // the data is 32bit floats
-		const normalize = false; // don't normalize the data
-		let stride = 4 * 11;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-		let offset = 0;        // start at the beginning of the buffer
+	private createBuffer(gl: WebGL2RenderingContext, vertices: VertexType[]) {
 
-		// set position data
-		gl.vertexAttribPointer(
-			0, size, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(0);
+			this.vertexBuffer = gl.createBuffer();
+			const floatArray = toFloat32Array(vertices);
+			gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+			gl.bufferData(gl.ARRAY_BUFFER, floatArray, gl.STATIC_DRAW);
+			let size = 3;          // n components per iteration
+			const type = gl.FLOAT;   // the data is 32bit floats
+			const normalize = false; // don't normalize the data
+			let stride = 4 * 11;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+			let offset = 0;        // start at the beginning of the buffer
 
-		// set normal data
-		offset = 3 * 4;
-		size = 3;
-		gl.vertexAttribPointer(
-			1, size, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(1);
+			// set position data
+			gl.vertexAttribPointer(
+				0, size, type, normalize, stride, offset);
+			gl.enableVertexAttribArray(0);
 
-		// set texture coordinate data
-		offset = 6 * 4;
-		size = 2;
-		gl.vertexAttribPointer(
-			2, size, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(2);
+			// set normal data
+			offset = 3 * 4;
+			size = 3;
+			gl.vertexAttribPointer(
+				1, size, type, normalize, stride, offset);
+			gl.enableVertexAttribArray(1);
 
-		// set tangent data
-		offset = 8 * 4;
-		size = 3;
-		gl.vertexAttribPointer(
-			3, size, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(3);
+			// set texture coordinate data
+			offset = 6 * 4;
+			size = 2;
+			gl.vertexAttribPointer(
+				2, size, type, normalize, stride, offset);
+			gl.enableVertexAttribArray(2);
 
+			// set tangent data
+			offset = 8 * 4;
+			size = 3;
+			gl.vertexAttribPointer(
+				3, size, type, normalize, stride, offset);
+			gl.enableVertexAttribArray(3);
 	}
 
 	static createParticleBuffer(gl: WebGL2RenderingContext, vertices: Float32Array, buffer?: WebGLBuffer, divisor: boolean = false) {

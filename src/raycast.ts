@@ -9,6 +9,7 @@ import { AABB } from './aabb';
 import { SceneGraph } from './scenegraph';
 import { MeshComponent } from './meshcomponent';
 import { SceneNode } from './scenenode';
+import { VertexBase } from './vertex';
 
 export type HitPolicy = 'any' | 'closest';
 
@@ -59,7 +60,7 @@ export class Picker {
 
 		world.forEach(node => {
 
-			const meshComponent = node.getComponent('meshComponent') as MeshComponent;
+			const meshComponent = node.getComponent('meshComponent') as MeshComponent<VertexBase>;
 			if(meshComponent && meshComponent.mesh) {
 				const info = new HitInfo();
 				for(let index = 0 ; index < meshComponent.mesh.getTriangleCount(); index++) {
