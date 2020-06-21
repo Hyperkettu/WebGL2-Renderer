@@ -2,7 +2,7 @@ import { Submesh } from './submesh';
 import { Vertex } from './vertex';
 import { SceneNodeData } from './meshmanager';
 
-export class Mesh {
+export abstract class Mesh {
 
     constructor(name: string) {
         this.name = name;
@@ -27,4 +27,10 @@ export class Mesh {
 
     name: string;
     submeshes: { [name: string]: Submesh };
+}
+
+export class StaticMesh extends Mesh {
+    constructor(name: string) {
+        super(name);
+    }
 }

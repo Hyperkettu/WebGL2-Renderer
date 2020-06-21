@@ -1,5 +1,5 @@
 import { Vertex } from './vertex';
-import { Mesh } from './mesh';
+import { StaticMesh } from './mesh';
 import { vec3, vec2 } from 'gl-matrix';
 import * as mesh from './meshmanager';
 import { Texture } from './texture';
@@ -92,7 +92,7 @@ export class GeometryGenerator {
 
 			}
 		}
-		const sphere = new Mesh(name);
+		const sphere = new StaticMesh(name);
 		sphere.createSubmesh(gl, 'sphere', vertices, indices, 'default');
 		mesh.SetMesh(name, sphere);
 
@@ -302,7 +302,7 @@ export class GeometryGenerator {
 
 		];
 
-		const cube = new Mesh(name);
+		const cube = new StaticMesh(name);
 		cube.createSubmesh(gl, 'cube', vertices, indices, 'default');
 		mesh.SetMesh(name, cube);
 	}
@@ -347,7 +347,7 @@ export class GeometryGenerator {
 			0, 2, 3
 		];
 
-		const plane = new Mesh(name);
+		const plane = new StaticMesh(name);
 		plane.createSubmesh(gl, 'plane', vertices, indices, 'default');
 		mesh.SetMesh(name, plane);
 	}
@@ -519,7 +519,7 @@ export class GeometryGenerator {
 
 		//	AverageNormals(vertices, indices);
 
-		const terrain = new Mesh(name);
+		const terrain = new StaticMesh(name);
 		terrain.createSubmesh(gl, 'terrain', vertices, indices, 'default');
 		mesh.SetMesh(name, terrain);
 	}
@@ -568,7 +568,7 @@ export class GeometryGenerator {
 			x++;
 		}
 
-		const terrain = new Mesh(name);
+		const terrain = new StaticMesh(name);
 		terrain.createSubmesh(gl, 'terrain', vertices, indices, 'default');
 		mesh.SetMesh(name, terrain);
 		//terrain.wireFrame = true;

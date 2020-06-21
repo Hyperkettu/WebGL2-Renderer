@@ -1,4 +1,4 @@
-import { Mesh } from './mesh';
+import { Mesh, StaticMesh } from './mesh';
 import { vec3, vec2 } from 'gl-matrix';
 import { Vertex, ScreenVertex } from './vertex';
 import * as texture from './texturemanager';
@@ -143,7 +143,7 @@ export function GenerateScreenQuadVertices() {
 
 export function loadFromMeshFile(gl: WebGL2RenderingContext, file: MeshData, parent: SceneNode) {
 	const data = file.data as MeshFileData;
-	const mesh = new Mesh(file.name);
+	const mesh = new StaticMesh(file.name);
 	//mesh.materialID = data.vertexData.material;
 
 	for(let child of data.children) {
