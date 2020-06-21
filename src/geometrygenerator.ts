@@ -92,7 +92,8 @@ export class GeometryGenerator {
 
 			}
 		}
-		const sphere = new Mesh(gl, vertices, indices);
+		const sphere = new Mesh(name);
+		sphere.createSubmesh(gl, 'sphere', vertices, indices, 'default');
 		mesh.SetMesh(name, sphere);
 
 	}
@@ -301,7 +302,8 @@ export class GeometryGenerator {
 
 		];
 
-		const cube = new Mesh(gl, vertices, indices);
+		const cube = new Mesh(name);
+		cube.createSubmesh(gl, 'cube', vertices, indices, 'default');
 		mesh.SetMesh(name, cube);
 	}
 
@@ -345,7 +347,8 @@ export class GeometryGenerator {
 			0, 2, 3
 		];
 
-		const plane = new Mesh(gl, vertices, indices);
+		const plane = new Mesh(name);
+		plane.createSubmesh(gl, 'plane', vertices, indices, 'default');
 		mesh.SetMesh(name, plane);
 	}
 
@@ -516,7 +519,8 @@ export class GeometryGenerator {
 
 		//	AverageNormals(vertices, indices);
 
-		const terrain = new Mesh(gl, vertices, indices);
+		const terrain = new Mesh(name);
+		terrain.createSubmesh(gl, 'terrain', vertices, indices, 'default');
 		mesh.SetMesh(name, terrain);
 	}
 
@@ -564,9 +568,10 @@ export class GeometryGenerator {
 			x++;
 		}
 
-		const terrain = new Mesh(gl, vertices, indices);
+		const terrain = new Mesh(name);
+		terrain.createSubmesh(gl, 'terrain', vertices, indices, 'default');
 		mesh.SetMesh(name, terrain);
-		terrain.wireFrame = true;
+		//terrain.wireFrame = true;
 	}
 
 	static ComputeTangents(vertices: Vertex[], indices: number[]) {

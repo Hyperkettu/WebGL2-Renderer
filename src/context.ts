@@ -1,5 +1,5 @@
 import { VertexArrayObject } from './vertexarrayobject';
-import { Mesh } from './mesh';
+import { Submesh } from './submesh';
 import { ConstantBuffers } from './constantbuffers';
 import { ShaderType, ShaderTech } from './shader';
 import { RenderTargetState } from './rendertarget';
@@ -83,11 +83,11 @@ export class Context {
 		this.gl.bindVertexArray(null);
 	}
 
-	setVertexAndIndexBuffers(mesh: Mesh) {
-		if (this.vertexArrayObject !== mesh.vertexArrayObject) {
-			this.numIndices = mesh.indices.length;
-			this.numVertices = mesh.vertices.length;
-			this.vertexArrayObject = mesh.vertexArrayObject;
+	setVertexAndIndexBuffers(submesh: Submesh) {
+		if (this.vertexArrayObject !== submesh.vertexArrayObject) {
+			this.numIndices = submesh.indices.length;
+			this.numVertices = submesh.vertices.length;
+			this.vertexArrayObject = submesh.vertexArrayObject;
 		}
 	}
 

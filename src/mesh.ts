@@ -1,48 +1,30 @@
-import { VertexArrayObject } from './vertexarrayobject';
+import { Submesh } from './submesh';
 import { Vertex } from './vertex';
-import { Triangle } from './triangle';
+import { SceneNodeData } from './meshmanager';
 
 export class Mesh {
 
-	constructor(gl: WebGL2RenderingContext, vertices: Vertex[], indices: number[]) {
-		this.vertices = vertices;
-		this.indices = indices;
-		this.createMesh(gl, vertices, indices);
+    constructor(name: string) {
+        this.name = name;
+        this.submeshes = {};
+    }
 
-		this.wireFrame = false;
+    createSubmesh(gl: WebGL2RenderingContext, submeshName: string, vertices: Vertex[], indices: number[], materialId: string) {
+        const submesh = new Submesh(gl, vertices,indices);
+        submesh.materialID = materialId ? materialId : 'default-material-id';
+        submesh.submeshName = submeshName;
+        submesh.meshName = this.name;
+        this.submeshes[submeshName] = submesh;
+    }
 
-		this.displacementFactor = 0;
-		this.pointLightIndex = -1;
-	}
+    getSubmesh(name: string) {
+        return this.submeshes[name];
+    }
 
-	createMesh(gl: WebGL2RenderingContext, vertices: Vertex[], indices: number[]) {
-		this.vertexArrayObject = new VertexArrayObject(gl, vertices, indices);
-	}
+    getSubmeshes() {
+        return Object.values(this.submeshes);
+    }
 
-	updateVertices(gl: WebGL2RenderingContext, vertices: Vertex[]) {
-		this.vertices = vertices;
-		this.vertexArrayObject.updateVertices(gl, this.vertices);
-	}
-
-	getTriangleCount() {
-		return this.indices.length / 3;
-	}
-
-	getTriangle(index: number) {
-		return new Triangle(
-			this.vertices[this.indices[3 * index]].position, 
-			this.vertices[ this.indices[3 * index + 1]].position, 
-			this.vertices[this.indices[3 * index + 2]].position);
-	}
-
-	vertexArrayObject: VertexArrayObject;
-	vertices: Vertex[];
-	indices: number[];
-	materialID: string;
-
-	wireFrame: boolean;
-
-	displacementFactor: number;
-	pointLightIndex: number;
-
+    name: string;
+    submeshes: { [name: string]: Submesh };
 }

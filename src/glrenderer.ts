@@ -261,7 +261,9 @@ export class Renderer {
 				const meshComponent = node.getComponent('meshComponent') as MeshComponent;
 
 				// cull frustum in the future
-				this.batchRenderer.addBatch({ mesh: meshComponent.mesh, world: node.transform.world }, meshComponent.layer);
+				if(meshComponent.mesh) {
+					this.batchRenderer.addBatch({ submesh: meshComponent.mesh, world: node.transform.world }, meshComponent.layer);
+				}
 			}
 		});
 

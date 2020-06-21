@@ -99,9 +99,11 @@ export abstract class Scene {
 			const meshFile = resource.get<MeshFile>(meshPath);
 			meshFiles.push(meshFile);
 
-			if (materials.indexOf(meshFile.mesh.material)) {
-				materials.push(meshFile.mesh.material);
-				materialPromises.push(resource.loadFile<MaterialFile>(meshFile.mesh.material));
+			for(let materialFile of meshFile.mesh.materials) {
+				if (materials.indexOf(materialFile)) {
+					materials.push(materialFile);
+					materialPromises.push(resource.loadFile<MaterialFile>(materialFile));
+				}
 			}
 		}
 
@@ -121,15 +123,9 @@ export abstract class Scene {
 			loadMaterial(materialPath);
 		}
 
-		const pathToMesh: { [name: string]: Mesh } = {};
-
-		for (let meshPath of meshPaths) {
-			pathToMesh[meshPath] = loadMesh(renderer.gl, meshPath);
-		}
-
 		for (let object of sceneFile.data.objects) {
-			const node = this.sceneNodeFromData(renderer.gl, object, pathToMesh, null);
-			this.recurseChildren(renderer.gl, object, node, pathToMesh);
+			const node = this.sceneNodeFromData(renderer.gl, object, null);
+			this.recurseChildren(renderer.gl, object, node);
 			this.addObject(node);
 		}
 
@@ -155,19 +151,28 @@ export abstract class Scene {
 		}
 	}
 
-	recurseChildren(gl: WebGL2RenderingContext, object: SceneNodeData, sceneNode: SceneNode, pathToMesh: { [name: string]: Mesh }) {
+	recurseChildren(gl: WebGL2RenderingContext, object: SceneNodeData, sceneNode: SceneNode ) {
 		if (object.children) {
 			for (let child of object.children) {
-				const node = this.sceneNodeFromData(gl, child, pathToMesh, sceneNode);
-				this.recurseChildren(gl, child, node, pathToMesh);
+				const node = this.sceneNodeFromData(gl, child, sceneNode);
+				this.recurseChildren(gl, child, node);
 			}
+		}
+		if(object.meshPath) {
+			this.createMesh(gl, object, sceneNode);
+		}
+
+	}
+
+	private createMesh(gl: WebGL2RenderingContext, object: SceneNodeData, parent: SceneNode) {
+		if(parent) {
+			loadMesh(gl, object.meshPath, parent);
 		}
 	}
 
-	private sceneNodeFromData(gl: WebGL2RenderingContext, object: SceneNodeData, pathToMesh: { [name: string]: Mesh }, parent?: SceneNode) {
+	private sceneNodeFromData(gl: WebGL2RenderingContext, object: SceneNodeData, parent?: SceneNode) {
 
 		const node = new SceneNode(object.name, this);
-		node.addMesh(Object.create(pathToMesh[object.meshPath]), Layer.OPAQUE);
 		node.transform.setPosition(object.position.x, object.position.y, object.position.z);
 		node.transform.setRotation(object.rotation.x, object.rotation.y, object.rotation.z);
 

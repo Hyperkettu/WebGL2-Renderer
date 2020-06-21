@@ -1,9 +1,9 @@
 {
 	"data": {
-		"skybox": "images/skybox/",
+		"skybox": "images/space-blue/",
 		"objects": [
-			{	
-				"name": "cube",
+			{
+				"name": "terrainNode",
 				"position": {
 					"x": 0,
 					"y": 0,
@@ -14,10 +14,9 @@
 					"y": 0,
 					"z": 0
 				},
-				"meshPath": "meshes/cube.mesh.json",
+				"meshPath": "meshes/terrain.staticmesh",
 				"children": []
 			}
-		
 		]
-	}	
+	}
 }

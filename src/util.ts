@@ -211,9 +211,11 @@ export function getAABBNormal(point: vec3, aabb: AABB) {
 
 export function getMeshVerticesWithinRadius(point: vec3, radius: number, mesh: Mesh) {
 	const vertices: Vertex[] = [];
-	for(let vertex of mesh.vertices) {
-		if(vec3.distance(vertex.position, point) <= radius) {
-			vertices.push(vertex);
+	for(let submesh of mesh.getSubmeshes()) {
+		for(let vertex of submesh.vertices) {
+			if(vec3.distance(vertex.position, point) <= radius) {
+				vertices.push(vertex);
+			}
 		}
 	}
 	return vertices;

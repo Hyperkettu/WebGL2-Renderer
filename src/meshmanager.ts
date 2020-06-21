@@ -6,6 +6,10 @@ import { VertexArrayObject } from './vertexarrayobject';
 import { MaterialData, MaterialFile } from './material';
 import { GeometryGenerator } from './geometrygenerator';
 import * as resource from './resource';
+import { chdir } from 'process';
+import { SceneNode } from './scenenode';
+import { MeshComponent } from './meshcomponent';
+import { Layer } from './batchrenderer';
 
 let meshes: { [id: string]: Mesh } = {};
 
@@ -24,7 +28,7 @@ export interface MeshData {
 	type: 'buffer' | 'sphere' | 'plane' | 'cube';
 	name: string;
 	data: Data;
-	material: string;
+	materials?: string[];
 }
 
 export interface Data {
@@ -47,7 +51,39 @@ export interface CubeData extends Data {
 	depth: number;
 }
 
-function getMeshData(gl: WebGL2RenderingContext, meshData: MeshData) {
+export interface MeshFileData extends Data {
+	children: SceneNodeData[];
+}
+
+export interface SceneNodeData {
+	name: string;
+	position: {
+		x: number;
+		y: number;
+		z: number;
+	};
+	rotation: {
+		x: number;
+		y: number;
+		z: number;
+	};
+	scale?: {
+		x: number;
+		y: number; 
+		z: number;
+	}
+	children: SceneNodeData[];
+	vertexData?: VertexData;
+
+}
+
+export interface VertexData {
+	vertices: Vertex[];
+	indices: number [];
+	material: string;
+}
+
+function getMeshData(gl: WebGL2RenderingContext, meshData: MeshData, parent: SceneNode) {
 	switch (meshData.type) {
 		case 'sphere':
 			const sphereData = meshData.data as SphereData;
@@ -61,15 +97,16 @@ function getMeshData(gl: WebGL2RenderingContext, meshData: MeshData) {
 			const cubeData = meshData.data as CubeData;
 			GeometryGenerator.GenerateCube(gl, meshData.name, cubeData.width, cubeData.height, cubeData.depth);
 			break;
+		case 'buffer': 
+			return loadFromMeshFile(gl, meshData, parent);
+			
 	}
 	return meshes[meshData.name];
 }
 
-export function loadMesh(gl: WebGL2RenderingContext, path: string) {
+export function loadMesh(gl: WebGL2RenderingContext, path: string, parent: SceneNode) {
 	const file: MeshFile = resource.get<MeshFile>(path);
-	const mesh = getMeshData(gl, file.mesh);
-	const materialId = resource.get<MaterialFile>(file.mesh.material).material.name;
-	mesh.materialID = materialId;
+	const mesh = getMeshData(gl, file.mesh, parent);
 	return mesh;
 }
 
@@ -102,6 +139,84 @@ export function GenerateScreenQuadVertices() {
 	vertices.push(vertex);
 
 	return vertices;
+}
+
+export function loadFromMeshFile(gl: WebGL2RenderingContext, file: MeshData, parent: SceneNode) {
+	const data = file.data as MeshFileData;
+	const mesh = new Mesh(file.name);
+	//mesh.materialID = data.vertexData.material;
+
+	for(let child of data.children) {
+		recurseSubmeshes(gl, mesh, child, parent);
+	}
+
+	SetMesh(file.name, mesh);
+	return mesh;
+}
+
+function recurseSubmeshes(gl: WebGL2RenderingContext, mesh: Mesh, node: SceneNodeData, parent: SceneNode) {
+	
+	mesh.createSubmesh(gl, node.name, node.vertexData.vertices, node.vertexData.indices, node.vertexData?.material);
+	const submesh = mesh.getSubmesh(node.name);
+
+	const sceneNode = new SceneNode(node.name, parent.scene, parent);
+	sceneNode.transform.setPosition(node.position.x, node.position.y, node.position.y);
+	sceneNode.transform.setRotation(node.rotation.x, node.rotation.y, node.rotation.z);
+	sceneNode.addMesh(Object.create(submesh), Layer.OPAQUE); // take a copy of submesh
+	parent.addChild(sceneNode);
+
+	for(let child of node.children){
+		recurseSubmeshes(gl, mesh, child, sceneNode);
+	}
+}
+
+export function toMeshDataFile(mesh: Mesh) {
+	let vertexData: VertexData = {
+		material: 'bark1-with-displacement',
+		vertices: [],
+		indices: []
+	};
+
+	const submesh = mesh.getSubmesh('terrain');
+	vertexData.material = submesh.materialID;
+	vertexData.vertices = submesh.vertices;
+	vertexData.indices = submesh.indices;
+
+	const sceneNodeData: SceneNodeData = {
+		children: [],
+		name: 'terrain',
+		position: {
+			x: 0,
+			y: 0,
+			z: 0
+		},
+		rotation: {
+			x: 0,
+			y: 0,
+			z: 0
+		},
+		vertexData
+	};
+
+	let meshData: MeshFileData = {
+		children: [
+			sceneNodeData
+		]
+	}; 
+
+	const data: MeshFile = {
+		mesh: {
+			name: 'testi',
+			materials: [
+				'materials/bark1.mat.json'
+			],
+			type: 'buffer',
+			data: meshData
+			
+		}
+	};
+	JSON.stringify(data);
+	console.log(JSON.stringify(data));
 }
 
 export function GenerateUnitCubeVertices() {

@@ -71,9 +71,10 @@ export class Terrain {
 
 		}
 
+		const submesh = this.terrain.getSubmesh('terrain');
 		ConstantBuffers.world = this.world;
-		ConstantBuffers.displacementFactor = this.terrain.displacementFactor;
-		ConstantBuffers.pointLightIndex = this.terrain.pointLightIndex;
+		ConstantBuffers.displacementFactor = submesh.displacementFactor;
+		ConstantBuffers.pointLightIndex = submesh.pointLightIndex;
 		ConstantBuffers.SyncPerObject(gl);
 		ConstantBuffers.SyncPerFrame(gl);
 
@@ -84,11 +85,11 @@ export class Terrain {
 
 		let mode = gl.TRIANGLES;
 
-		if (this.terrain.wireFrame) {
+		if (submesh.wireFrame) {
 			mode = gl.LINE_STRIP;
 		}
-		gl.bindVertexArray(this.terrain.vertexArrayObject.vao);
-		gl.drawElements(mode, this.terrain.indices.length, gl.UNSIGNED_SHORT, 0);
+		gl.bindVertexArray(submesh.vertexArrayObject.vao);
+		gl.drawElements(mode, submesh.indices.length, gl.UNSIGNED_SHORT, 0);
 		gl.bindVertexArray(null);
 	}
 

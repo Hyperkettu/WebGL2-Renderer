@@ -1,4 +1,4 @@
-import { Mesh } from './mesh';
+import { Submesh } from './submesh';
 import { Renderer } from './glrenderer';
 import { Camera } from './camera';
 import * as camera from './cameramanager';
@@ -6,7 +6,7 @@ import { ConstantBuffers, BufferDirtyFlag } from './constantbuffers';
 import { mat4 } from 'gl-matrix';
 
 interface Batch {
-	mesh: Mesh;
+	submesh: Submesh;
 	world: mat4;
 }
 
@@ -42,18 +42,18 @@ export class BatchRenderer {
 		const context = renderer.getContext();
 		for (let i = 0; i < this.layers[layer].length; i++) {
 			const batch = this.layers[layer][i];
-			if (renderer.materialID !== batch.mesh.materialID) {
+			if (renderer.materialID !== batch.submesh.materialID) {
 				renderer.materialEnd(shadowPass);
-				renderer.materialBegin(batch.mesh.materialID, shadowPass);
+				renderer.materialBegin(batch.submesh.materialID, shadowPass);
 			}
 
-			context.setVertexAndIndexBuffers(batch.mesh);
+			context.setVertexAndIndexBuffers(batch.submesh);
 			ConstantBuffers.world = batch.world;
-			ConstantBuffers.displacementFactor = batch.mesh.displacementFactor;
-			ConstantBuffers.pointLightIndex = batch.mesh.pointLightIndex;
+			ConstantBuffers.displacementFactor = batch.submesh.displacementFactor;
+			ConstantBuffers.pointLightIndex = batch.submesh.pointLightIndex;
 			ConstantBuffers.UpdateBuffer(BufferDirtyFlag.PER_OBJECT, renderer.shader);
 
-			if (batch.mesh.wireFrame) {
+			if (batch.submesh.wireFrame) {
 				context.drawIndexed(renderer.gl.LINE_STRIP, renderer.shader, renderer.shaderTech);
 			} else {
 				context.drawIndexed(renderer.gl.TRIANGLES, renderer.shader, renderer.shaderTech);

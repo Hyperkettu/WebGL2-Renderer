@@ -5,7 +5,7 @@ import { Layer } from './batchrenderer';
 import * as mesh from './meshmanager';
 import { PointLight } from './pointlight';
 import { Scene } from './scene';
-import { Mesh } from './mesh';
+import { Submesh } from './submesh';
 import { vec3 } from 'gl-matrix';
 
 export class SceneNode {
@@ -24,13 +24,13 @@ export class SceneNode {
 		this.enableUpdate = true;
 	}
 
-	setMesh(name: string, layer: Layer) {
-		(this.getComponent('meshComponent') as MeshComponent).mesh = mesh.GetMesh(name);
+	setMesh(name: string, submeshName: string, layer: Layer) {
+		(this.getComponent('meshComponent') as MeshComponent).mesh = mesh.GetMesh(name).getSubmesh(submeshName);
 		(this.getComponent('meshComponent') as MeshComponent).layer = layer;
 
 	}
 
-	addMesh(mesh: Mesh, layer: Layer) {
+	addMesh(mesh: Submesh, layer: Layer) {
 		const comp = this.getComponent('meshComponent') as MeshComponent;
 		comp.mesh = mesh;
 		comp.layer = layer;
