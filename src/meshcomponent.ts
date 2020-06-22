@@ -12,7 +12,14 @@ export class MeshComponent<VertexType> extends Component {
 		this.type = 'meshComponent';
 	}
 
+	update(dt: number) {
+		if(this.mesh) {
+			this.mesh.update(this.node.scene.renderer.gl, dt);
+		}
+	}
+
 	mesh: Submesh<VertexType>;
+
 	layer: Layer;
 
 }

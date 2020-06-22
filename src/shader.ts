@@ -5,6 +5,7 @@ import { GetPbrSrc } from './shadersources';
 
 export enum ShaderType {
 	PBR = 0,
+	MORPHED_PBR,
 	FILL_SCREEN,
 	BRDF_INTEGRATION,
 	SKYBOX,
@@ -155,7 +156,7 @@ export class ShaderTech {
 	 * Technique names like this:
 	 * albedo - normal - roughness - metallic - ao -displacement - emission ->  ANRMADE
 	 */
-	static permutePBRShaders() {
+	static permutePBRShaders(settings: { morphed: boolean }) {
 
 		const techSources: { [name: string]: { pbrVsSrc: string, pbrFsSrc: string } } = {};
 
@@ -187,7 +188,7 @@ export class ShaderTech {
 								}
 
 								techSources[techName] = GetPbrSrc(normal === 1,
-									roughness === 1, metallic === 1, ao === 1, displacement === 1, emission === 1);
+									roughness === 1, metallic === 1, ao === 1, displacement === 1, emission === 1, settings.morphed);
 							}
 						}
 					}

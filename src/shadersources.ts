@@ -1,10 +1,73 @@
 import { PointLight } from './pointlight';
 
-export function GetPbrSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, hasMetallicMap: boolean, hasAoMap: boolean, hasDisplacementMap: boolean, hasEmissionMap: boolean) {
+export function GetPbrSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, hasMetallicMap: boolean, hasAoMap: boolean, hasDisplacementMap: boolean, hasEmissionMap: boolean, morphedMesh?: boolean) {
+	
+	let pbrVsSrc = morphedMesh ? 
+	`#version 300 es
+	
+	precision highp float;
 
-	const pbrVsSrc =
+	layout(location = 0) in vec3 position1;
+	layout(location = 1) in vec3 position2;
+	layout(location = 2) in vec3 normal1;
+	layout(location = 3) in vec3 normal2;
+	layout(location = 4) in vec2 texCoords;
+	layout(location = 5) in vec3 tangent1;
+	layout(location = 6) in vec3 tangent2;
 
-		`#version 300 es
+	layout (std140) uniform MatricesPerFrame {
+		mat4 projection;
+		mat4 view;
+	};
+
+	layout (std140) uniform PerObject {
+		mat4 world;
+		highp float displacementFactor;
+		highp float pointLightIndex;
+	};
+
+	layout (std140) uniform Data {
+		vec4 dataVec1;
+		vec4 dataVec2;
+		bool value;
+	};
+
+	${hasDisplacementMap ? 'uniform sampler2D displacementMap;' : ''}
+	
+	out vec2 uvs;
+	out vec3 positionW;
+	out vec3 normalW;
+	out mat3 TBN;
+
+	void main() {
+
+		float weight = clamp(dataVec1.x, 0.0f, 1.0f);
+
+		vec3 position = weight * position1 + (1.0f - weight) * position2;
+		vec3 normal = weight * normal1 + (1.0f - weight) * normal2;
+		vec3 tangent = weight * tangent1 + (1.0f - weight) * tangent2;
+		tangent = tangent - dot(tangent, normal) * normal; // Gram-Schmidt
+
+		uvs = texCoords;
+    	positionW = (world * vec4(position, 1.0f)).xyz;
+    	mat3 normalMatrix = transpose(inverse(mat3(world)));
+		normalW = normalize(normalMatrix * normal);
+
+    	vec3 T = normalize(mat3(world) * tangent);
+    	// Gram-Schmidt
+    	T = normalize(T - dot(T, normalW) * normalW);
+    	vec3 B = cross(normalW, T);
+		TBN = mat3(T, B, normalW);
+
+		${hasDisplacementMap ?
+		'float displacement = displacementFactor * texture(displacementMap, uvs).r;' +
+		'positionW = positionW + displacement * normalW;' : ''}
+
+		gl_Position = projection * view * vec4(positionW, 1.0f);
+	}
+	` :
+
+ 		`#version 300 es
 
 		precision highp float;
 

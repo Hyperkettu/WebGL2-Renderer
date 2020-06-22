@@ -60,8 +60,9 @@ export interface SceneNodeData {
 
 export abstract class Scene {
 
-	constructor(name: string) {
+	constructor(name: string, renderer: Renderer) {
 		this.name = name;
+		this.renderer = renderer;
 		this.sceneGraph = new SceneGraph();
 
 		this.pointLights = [];
@@ -130,7 +131,8 @@ export abstract class Scene {
 			this.addObject(node);
 		}
 
-		await this.terrain.load(renderer);
+		// TO SEE TERRAIN UNCOMMENT THIS
+		//await this.terrain.load(renderer);
 		
 	}
 
@@ -198,6 +200,7 @@ export abstract class Scene {
 	name: string;
 	path: string;
 	sceneGraph: SceneGraph;
+	renderer: Renderer;
 
 	dirLight?: DirectionalLight;
 	pointLights?: PointLight[];

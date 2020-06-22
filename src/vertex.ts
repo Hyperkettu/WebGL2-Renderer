@@ -27,8 +27,13 @@ export class MorphVertex extends VertexBase {
 	constructor() {
 		super();
 	}
-	positionWeight: vec4;
-	position2Weight: vec4;
+	position1: vec3;
+	position2: vec3;
+	normal1: vec3;
+	normal2: vec3;
+	textureCoords: vec2;
+	tangent1: vec3;
+	tangent2: vec3;
 }
 
 export class ScreenVertex {
@@ -61,45 +66,62 @@ export class RenderParticleVertex {
 	size: vec2;
 }
 
+export function morphVertexToFloat32Array(vertices: MorphVertex[]) {
+	const array: number[] = [];
+
+	for (let index = 0; index < vertices.length; index++) {
+		array.push(vertices[index].position1[0]);
+		array.push(vertices[index].position1[1]);
+		array.push(vertices[index].position1[2]);
+
+		array.push(vertices[index].position2[0]);
+		array.push(vertices[index].position2[1]);
+		array.push(vertices[index].position2[2]);
+
+		array.push(vertices[index].normal1[0]);
+		array.push(vertices[index].normal1[1]);
+		array.push(vertices[index].normal1[2]);
+
+		array.push(vertices[index].normal2[0]);
+		array.push(vertices[index].normal2[1]);
+		array.push(vertices[index].normal2[2]);
+
+		array.push(vertices[index].textureCoords[0]);
+		array.push(vertices[index].textureCoords[1]);
+
+		array.push(vertices[index].tangent1[0]);
+		array.push(vertices[index].tangent1[1]);
+		array.push(vertices[index].tangent1[2]);
+
+		array.push(vertices[index].tangent2[0]);
+		array.push(vertices[index].tangent2[1]);
+		array.push(vertices[index].tangent2[2]);
+
+	}
+
+	return new Float32Array(array);
+}
+
 export function toFloat32Array<VertexType>(vertices: VertexType[]) {
 	const array: number[] = [];
 
-		const verts = (vertices as unknown) as Vertex[];
+	const verts = (vertices as unknown) as Vertex[];
 
-		for (let index = 0; index < verts.length; index++) {
-			array.push(verts[index].position[0]);
-			array.push(verts[index].position[1]);
-			array.push(verts[index].position[2]);
+	for (let index = 0; index < verts.length; index++) {
+		array.push(verts[index].position[0]);
+		array.push(verts[index].position[1]);
+		array.push(verts[index].position[2]);
 
-			array.push(verts[index].normal[0]);
-			array.push(verts[index].normal[1]);
-			array.push(verts[index].normal[2]);
+		array.push(verts[index].normal[0]);
+		array.push(verts[index].normal[1]);
+		array.push(verts[index].normal[2]);
 
-			array.push(verts[index].textureCoords[0]);
-			array.push(verts[index].textureCoords[1]);
+		array.push(verts[index].textureCoords[0]);
+		array.push(verts[index].textureCoords[1]);
 
-			array.push(verts[index].tangent[0]);
-			array.push(verts[index].tangent[1]);
-			array.push(verts[index].tangent[2]);
-		}
-	if(vertices instanceof MorphVertex) {
-		/*const verts = (vertices as unknown) as MorphVertex[];
-		for (let index = 0; index < verts.length; index++) {
-			array.push(verts[index].position[0]);
-			array.push(verts[index].position[1]);
-			array.push(verts[index].position[2]);
-
-			array.push(verts[index].normal[0]);
-			array.push(verts[index].normal[1]);
-			array.push(verts[index].normal[2]);
-
-			array.push(verts[index].textureCoords[0]);
-			array.push(verts[index].textureCoords[1]);
-
-			array.push(verts[index].tangent[0]);
-			array.push(verts[index].tangent[1]);
-			array.push(verts[index].tangent[2]);*
-		}*/
+		array.push(verts[index].tangent[0]);
+		array.push(verts[index].tangent[1]);
+		array.push(verts[index].tangent[2]);
 	}
 
 	return new Float32Array(array);

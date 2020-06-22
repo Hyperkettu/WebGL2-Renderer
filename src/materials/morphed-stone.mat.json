@@ -1,0 +1,28 @@
+{
+	"material" : {
+		"name" : "morphed-stone-with-displacement",
+		"shader": "morphed-pbr",
+		"tech": "ANRMA",
+		"textures": [
+			{
+				"path" : "images/stone/stone-albedo.png",
+				"type" : "albedo"
+			},
+			{
+				"path" : "images/stone/stone-normal.png",
+				"type" : "normal"
+			},			
+			{
+				"path" : "images/stone/stone-metallic.png",
+				"type" : "metallic"
+			},
+			{
+				"path" : "images/stone/stone-roughness.png",
+				"type" : "roughness"
+			},	
+			{
+				"path" : "images/stone/stone-ao.png",
+				"type" : "ambient-occlusion"
+			}]
+	}
+}

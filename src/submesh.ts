@@ -1,13 +1,15 @@
 import { VertexArrayObject } from './vertexarrayobject';
 import { Vertex, PositionVertexType } from './vertex';
 import { Triangle } from './triangle';
+import { VertexDataType } from './vertexbuffer';
+import { VertexData } from './meshmanager';
 
 export class Submesh<VertexType> {
 
-	constructor(gl: WebGL2RenderingContext, vertices: VertexType[], indices: number[]) {
+	constructor(gl: WebGL2RenderingContext, vertices: VertexType[], indices: number[], type: VertexDataType) {
 		this.vertices = vertices;
 		this.indices = indices;
-		this.createMesh(gl, vertices, indices);
+		this.createMesh(gl, vertices, indices, type);
 
 		this.wireFrame = false;
 
@@ -15,8 +17,8 @@ export class Submesh<VertexType> {
 		this.pointLightIndex = -1;
 	}
 
-	createMesh(gl: WebGL2RenderingContext, vertices: VertexType[], indices: number[]) {
-		this.vertexArrayObject = new VertexArrayObject(gl, vertices, indices);
+	createMesh(gl: WebGL2RenderingContext, vertices: VertexType[], indices: number[], type: VertexDataType) {
+		this.vertexArrayObject = new VertexArrayObject(gl, vertices, indices, type);
 	}
 
 	updateVertices(gl: WebGL2RenderingContext, vertices: VertexType[]) {
@@ -26,6 +28,10 @@ export class Submesh<VertexType> {
 
 	getTriangleCount() {
 		return this.indices.length / 3;
+	}
+
+	update(gl: WebGL2RenderingContext, dt: number) {
+
 	}
 
 	getTriangle(index: number) {

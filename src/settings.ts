@@ -101,7 +101,7 @@ export function setEnableBlending(value: boolean) {
 	enableBlending = value;
 }
 
-export let debugNormals: boolean = true;
+export let debugNormals: boolean = false;
 
 export function setEnableDebugNormals(debug: boolean) {
 	debugNormals = debug;

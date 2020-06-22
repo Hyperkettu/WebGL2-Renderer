@@ -1,6 +1,6 @@
-import { Mesh, StaticMesh } from './mesh';
+import { Mesh, StaticMesh, MorphedMesh, MorphedSubmesh } from './mesh';
 import { vec3, vec2 } from 'gl-matrix';
-import { Vertex, ScreenVertex, VertexBase } from './vertex';
+import { Vertex, ScreenVertex, VertexBase, MorphVertex } from './vertex';
 import * as texture from './texturemanager';
 import { VertexArrayObject } from './vertexarrayobject';
 import { MaterialData, MaterialFile } from './material';
@@ -10,6 +10,7 @@ import { chdir } from 'process';
 import { SceneNode } from './scenenode';
 import { MeshComponent } from './meshcomponent';
 import { Layer } from './batchrenderer';
+import { type } from 'os';
 
 let meshes: { [id: string]: Mesh<VertexBase> } = {};
 
@@ -25,7 +26,7 @@ export interface MeshFile {
 	mesh: MeshData;
 }
 export interface MeshData {
-	type: 'buffer' | 'sphere' | 'plane' | 'cube';
+	type: 'static' | 'morphed' | 'skinned' | 'sphere' | 'plane' | 'cube';
 	name: string;
 	data: Data;
 	materials?: string[];
@@ -79,6 +80,7 @@ export interface SceneNodeData {
 
 export interface VertexData {
 	vertices: VertexBase[];
+	vertices2?: VertexBase[];
 	indices: number [];
 	material: string;
 }
@@ -97,8 +99,10 @@ function getMeshData(gl: WebGL2RenderingContext, meshData: MeshData, parent: Sce
 			const cubeData = meshData.data as CubeData;
 			GeometryGenerator.GenerateCube(gl, meshData.name, cubeData.width, cubeData.height, cubeData.depth);
 			break;
-		case 'buffer': 
+		case 'static': 
+		case 'morphed':
 			return loadFromMeshFile(gl, meshData, parent);
+
 			
 	}
 	return meshes[meshData.name];
@@ -143,8 +147,13 @@ export function GenerateScreenQuadVertices() {
 
 export function loadFromMeshFile(gl: WebGL2RenderingContext, file: MeshData, parent: SceneNode) {
 	const data = file.data as MeshFileData;
-	const mesh = new StaticMesh(file.name);
-	//mesh.materialID = data.vertexData.material;
+	let mesh: Mesh<VertexBase>; 
+
+	if(file.type === 'static') {
+		mesh = new StaticMesh(file.name);
+	} else if(file.type === 'morphed') {
+		mesh = new MorphedMesh(file.name, 2);
+	}
 
 	for(let child of data.children) {
 		recurseSubmeshes(gl, mesh, child, parent);
@@ -154,9 +163,32 @@ export function loadFromMeshFile(gl: WebGL2RenderingContext, file: MeshData, par
 	return mesh;
 }
 
+function handleMorphVertices(vertices: VertexBase[], vertices2: VertexBase[]) {
+	const morphVertices: MorphVertex[] = []
+	for(let index = 0; index < vertices.length; index++) {
+		const vertex = vertices[index] as Vertex;
+		const vertex2 = vertices2[index] as Vertex;
+		const vert = new MorphVertex();
+		vert.position1 = vertex.position;
+		vert.position2 = vertex2.position;
+		vert.normal1 = vertex.normal;
+		vert.normal2 = vertex2.normal;
+		vert.textureCoords = vertex.textureCoords;
+		vert.tangent1 = vertex.tangent;
+		vert.tangent2 = vertex2.tangent;
+		morphVertices.push(vert);
+	}
+	return morphVertices;
+}
+
 function recurseSubmeshes(gl: WebGL2RenderingContext, mesh: Mesh<VertexBase>, node: SceneNodeData, parent: SceneNode) {
-	
-	mesh.createSubmesh(gl, node.name, node.vertexData.vertices, node.vertexData.indices, node.vertexData?.material);
+
+	let vertices = node.vertexData.vertices;
+
+	if(node.vertexData.vertices2) {
+		vertices = handleMorphVertices(node.vertexData.vertices, node.vertexData.vertices2);
+	}
+	mesh.createSubmesh(gl, node.name, vertices, node.vertexData.indices, node.vertexData?.material);
 	const submesh = mesh.getSubmesh(node.name);
 
 	const sceneNode = new SceneNode(node.name, parent.scene, parent);
@@ -210,7 +242,7 @@ export function toMeshDataFile(mesh: Mesh<VertexBase>) {
 			materials: [
 				'materials/bark1.mat.json'
 			],
-			type: 'buffer',
+			type: 'static',
 			data: meshData
 			
 		}

@@ -1,5 +1,5 @@
 import { Texture } from './texture';
-import { ShaderType } from './shader';
+import { ShaderType, Shader } from './shader';
 import * as texture from './texturemanager';
 import * as resource from './resource';
 
@@ -22,7 +22,7 @@ export interface MaterialFile {
 
 export interface MaterialData {
 	name: string;
-	shader: 'pbr';
+	shader: 'pbr' | 'morphed-pbr';
 	tech: string;
 	textures: texture.TextureData[];
 }
@@ -34,7 +34,7 @@ export async function loadMaterial(path: string, load: boolean = false, gl: WebG
 	const file: MaterialFile = resource.get<MaterialFile>(path);
 	const material: Material = {};
 	material.name = file.material.name;
-	material.shader = ShaderType.PBR;
+	material.shader = file.material.shader === 'pbr' ? ShaderType.PBR : ShaderType.MORPHED_PBR;
 	material.tech = file.material.tech;
 
 	material.textures = [];

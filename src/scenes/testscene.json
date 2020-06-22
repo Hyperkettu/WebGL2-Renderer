@@ -14,7 +14,7 @@
 					"y": 0,
 					"z": 0
 				},
-				"meshPath": "meshes/terrain.staticmesh",
+				"meshPath": "meshes/terrain.morphedmesh",
 				"children": []
 			}
 		]

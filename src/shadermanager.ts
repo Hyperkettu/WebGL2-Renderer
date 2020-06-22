@@ -8,12 +8,21 @@ function LoadShader(gl: WebGL2RenderingContext, vertexSrc: string, fragmentSrc: 
 	const shader = new Shader(type);
 
 	if (type === ShaderType.PBR) {
-		const techs = ShaderTech.permutePBRShaders();
+		const techs = ShaderTech.permutePBRShaders({ morphed: false });
 		for (let techName in techs) {
 			shader.addTechnique(gl, techName, techs[techName].pbrVsSrc, techs[techName].pbrFsSrc);
 			shader.techniques[techName].bindTo(gl, 'MatricesPerFrame', 0);
 			shader.techniques[techName].bindTo(gl, 'PerObject', 1);
 			shader.techniques[techName].bindTo(gl, 'Lights', 2);
+		}
+	} else if(type === ShaderType.MORPHED_PBR) {
+		const techs = ShaderTech.permutePBRShaders({ morphed: true });
+		for(let techName in techs) {
+			shader.addTechnique(gl, techName, techs[techName].pbrVsSrc, techs[techName].pbrFsSrc);
+			shader.techniques[techName].bindTo(gl, 'MatricesPerFrame', 0);
+			shader.techniques[techName].bindTo(gl, 'PerObject', 1);
+			shader.techniques[techName].bindTo(gl, 'Lights', 2);
+			shader.techniques[techName].bindTo(gl, 'Data', 3);
 		}
 	} else {
 
@@ -88,6 +97,7 @@ export function GetShaderOfType(type: ShaderType) {
 
 export function LoadShaders(gl: WebGL2RenderingContext) {
 	LoadShader(gl, null, null, ShaderType.PBR);
+	LoadShader(gl, null, null, ShaderType.MORPHED_PBR);
 	LoadShader(gl, shaderSrc.fillScreenVsSrc, shaderSrc.fillScreenFsSrc, ShaderType.FILL_SCREEN);
 	LoadShader(gl, shaderSrc.fillScreenVsSrc, shaderSrc.brdfFsSrc, ShaderType.BRDF_INTEGRATION);
 	LoadShader(gl, shaderSrc.skyboxVsSrc, shaderSrc.skyboxFsSrc, ShaderType.SKYBOX);

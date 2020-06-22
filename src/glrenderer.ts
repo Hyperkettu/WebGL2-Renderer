@@ -76,7 +76,7 @@ export class Renderer {
 	async Load(scenePaths: string[]) {
 
 		await mesh.LoadMeshes(this.gl);
-		this.currentScene = new TestScene('test-scene');
+		this.currentScene = new TestScene('test-scene', this);
 		await this.currentScene.initScene(this, scenePaths[0]);
 
 		shader.LoadShaders(this.gl);
@@ -196,6 +196,7 @@ export class Renderer {
 		}
 
 		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.PER_FRAME, ShaderType.PBR);
+		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.PER_FRAME, ShaderType.MORPHED_PBR);
 
 		// ADD THIS BACK TO SEE BLENDMAPPED TERRAIN
 		//	this.currentScene.terrain.render(this.gl);

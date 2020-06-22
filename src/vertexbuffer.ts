@@ -1,9 +1,85 @@
-import { Vertex, toFloat32Array, ParticleVertex } from './vertex';
+import { Vertex, toFloat32Array, ParticleVertex, MorphVertex, morphVertexToFloat32Array } from './vertex';
+
+export enum VertexDataType {
+	VERTEX,
+	MORPHED_VERTEX
+};
 
 export class VertexBuffer<VertexType> {
 
-	constructor(gl: WebGL2RenderingContext, vertices: VertexType[]) {
-		this.createBuffer(gl, vertices);
+	constructor(gl: WebGL2RenderingContext, vertices: VertexType[], type: VertexDataType) {
+		if(type === VertexDataType.VERTEX) {
+			this.createBuffer(gl, vertices);
+		} else if(type === VertexDataType.MORPHED_VERTEX) {
+			this.createMorphedBuffer(gl, (vertices as unknown) as MorphVertex[]);
+		}
+	}
+
+	private createMorphedBuffer(gl: WebGL2RenderingContext, vertices: MorphVertex[]) {
+		this.vertexBuffer = gl.createBuffer();
+		const floatArray = morphVertexToFloat32Array(vertices);
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, floatArray, gl.STATIC_DRAW);
+		
+		let layoutLocationIndex = 0;
+		let numVectorComponents = 3;
+		const type = gl.FLOAT;
+		const normalize = false;
+		const stride = 4 * (2 * (3 + 3 + 2 + 3) - 2);
+		let offset = 0;
+
+		// position1
+		gl.vertexAttribPointer(
+			layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
+		gl.enableVertexAttribArray(layoutLocationIndex);
+
+		// position2
+		layoutLocationIndex++;
+		offset += 3 * 4;
+		numVectorComponents = 3;
+		gl.vertexAttribPointer(
+			layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
+		gl.enableVertexAttribArray(layoutLocationIndex);
+
+		// normal1
+		layoutLocationIndex++;
+		offset += 3 * 4;
+		numVectorComponents = 3;
+		gl.vertexAttribPointer(
+			layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
+		gl.enableVertexAttribArray(layoutLocationIndex);
+
+		// normal2
+		layoutLocationIndex++;
+		offset += 3 * 4;
+		numVectorComponents = 3;
+		gl.vertexAttribPointer(
+			layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
+		gl.enableVertexAttribArray(layoutLocationIndex);
+
+		// texture coordinates
+		layoutLocationIndex++;
+		offset += 3 * 4;
+		numVectorComponents = 2;
+		gl.vertexAttribPointer(
+			layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
+		gl.enableVertexAttribArray(layoutLocationIndex);
+
+		// tangent1
+		layoutLocationIndex++;
+		offset += 2 * 4;
+		numVectorComponents = 3;
+		gl.vertexAttribPointer(
+			layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
+		gl.enableVertexAttribArray(layoutLocationIndex);
+
+		// tangent2
+		layoutLocationIndex++;
+		offset += 3 * 4;
+		numVectorComponents = 3;
+		gl.vertexAttribPointer(
+			layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
+		gl.enableVertexAttribArray(layoutLocationIndex);
 	}
 
 	private createBuffer(gl: WebGL2RenderingContext, vertices: VertexType[]) {

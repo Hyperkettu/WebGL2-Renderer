@@ -4,12 +4,14 @@ import * as shader from './shadermanager';
 import * as settings from './settings';
 import * as texture from './texturemanager';
 import { PointLight } from './pointlight';
+import { Buffer } from 'buffer';
 
 export enum BufferDirtyFlag {
 	NONE = 0,
 	PER_OBJECT = (1 << 0),
 	PER_FRAME = (1 << 1),
-	SELDOM = (1 << 2)
+	PER_SOME_OBJECTS = (1 << 2),
+	SELDOM = (1 << 3)
 }
 
 export class ConstantBuffers {
@@ -22,6 +24,9 @@ export class ConstantBuffers {
 
 		if (this.shaderDirtyFlags & BufferDirtyFlag.PER_OBJECT) {
 			ConstantBuffers.SyncPerObject(gl);
+		}
+		if(this.shaderDirtyFlags & BufferDirtyFlag.PER_SOME_OBJECTS) {
+
 		}
 		if (this.shaderDirtyFlags & BufferDirtyFlag.PER_FRAME) {
 			ConstantBuffers.SyncPerFrame(gl);

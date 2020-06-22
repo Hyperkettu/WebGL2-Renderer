@@ -1,17 +1,17 @@
 import { Vertex, toFloat32Array } from './vertex';
-import { VertexBuffer } from './vertexbuffer';
+import { VertexBuffer, VertexDataType } from './vertexbuffer';
 import { IndexBuffer } from './indexbuffer';
 
 export class VertexArrayObject<VertexType> {
 
-	constructor(gl: WebGL2RenderingContext, vertices: VertexType[], indices: number[]) {
-		this.createVertexArrayObject(gl, vertices, indices);
+	constructor(gl: WebGL2RenderingContext, vertices: VertexType[], indices: number[], type: VertexDataType) {
+		this.createVertexArrayObject(gl, vertices, indices, type);
 	}
 
-	createVertexArrayObject(gl: WebGL2RenderingContext, vertices: VertexType[], indices: number[]) {
+	createVertexArrayObject(gl: WebGL2RenderingContext, vertices: VertexType[], indices: number[], type: VertexDataType) {
 		this.vao = gl.createVertexArray();
 		gl.bindVertexArray(this.vao);
-		this.vertexBuffer = new VertexBuffer<VertexType>(gl, vertices);
+		this.vertexBuffer = new VertexBuffer<VertexType>(gl, vertices, type);
 		this.indexBuffer = new IndexBuffer(gl, indices);
 		gl.bindVertexArray(null);
 	}

@@ -11,8 +11,8 @@ import * as texture from './texturemanager';
 import { GeometryGenerator } from './geometrygenerator';
 
 export class TestScene extends Scene {
-	constructor(name: string) {
-		super(name);
+	constructor(name: string, renderer: Renderer) {
+		super(name, renderer);
 	}
 
 	async initScene(renderer: Renderer, path: string) {
@@ -27,24 +27,26 @@ export class TestScene extends Scene {
 			pointLight.shadowMap.excludeNodesFromShadowMap(renderer, [
 			]);
 		}
-		
+
 		await material.loadMaterial('materials/rock.mat.json', true, renderer.gl);
 
 		//this.sceneGraph.find('sphere').addComponent(new CubeScript());
 
-		/*	const terrain = mesh.GetMesh('terrain');
+			/*const terrain = mesh.GetMesh('terrain');
 			terrain.materialID = ''; //'stone-with-displacement';  //'rock -with-displacement'; //'rock';
 			terrain.wireFrame = false;
+
 			const node = new SceneNode('terrainNode', this);
 			node.transform.setPosition(0, 10, 0);
 			node.transform.setRotation(0, 0, 0);
 			node.addMesh(terrain, Layer.OPAQUE);
 			this.addObject(node);*/
 
-			/*await GeometryGenerator.GeneratePlaneTerrain(renderer.gl, 'planeTerrain', 0.2, 20, 4, 0);
+		/*	await GeometryGenerator.GeneratePlaneTerrain(renderer.gl, 'planeTerrain', 0.2, 20, 1.2, 0);
 			const terrain = mesh.GetMesh('planeTerrain');
 			const submesh = terrain.getSubmesh('terrain');
 			submesh.wireFrame = false;
+			submesh.materialID = 'bark1-with-displacement';
 			const node = new SceneNode('terrainNode', this);
 			node.transform.setPosition(0, 0, 0);
 			node.transform.setRotation(0, 0, 0);
