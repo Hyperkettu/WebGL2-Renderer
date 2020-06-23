@@ -20,9 +20,12 @@ import { TestScene } from './testscene';
 import { PointLight } from './pointlight';
 import { ParticleSystem } from './particlesystem';
 import { Picker } from './raycast';
-import { wait } from './util';
+import { wait, DEG_TO_RAD } from './util';
 import { loadMaterial } from './material'; 
 import { VertexBase } from './vertex';
+import { Overlay } from './overlay/overlay';
+import { Sprite } from './overlay/sprite'; 
+import { runInThisContext } from 'vm';
 
 export class Renderer {
 
@@ -41,6 +44,7 @@ export class Renderer {
 		this.batchRenderer = new BatchRenderer();
 		this.postProcess = new PostProcess(this.gl, this);
 		this.cubeMapRenderer = new CubeMapRenderer(this.gl);
+		this.overlay = new Overlay(this.gl);
 
 		// use this extension to enable texture internal format gl.RG16F
 		const colorBufferExtension = this.gl.getExtension('EXT_color_buffer_float');
@@ -96,6 +100,27 @@ export class Renderer {
 		await this.preCompute();
 
 		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.SELDOM, ShaderType.PBR);
+
+		await texture.LoadTexture(this.gl, 'images/rock/rock-albedo.png');
+        const sprite = new Sprite('sprite', texture.GetTexture('images/rock/rock-albedo.png'));
+        this.overlay.stage.root.addChild(sprite);
+        sprite.setPosition(window.innerWidth / 2, window.innerHeight / 2);
+		sprite.setAnchor(0.5, 0.5);
+		sprite.setAlpha(0.2);
+		sprite.setAngle(45 * DEG_TO_RAD);
+		sprite.setSize(200, 200);
+
+		const sprite2 = new Sprite('sprite', texture.GetTexture('images/rock/rock-albedo.png'));
+        this.overlay.stage.root.addChild(sprite2);
+        sprite2.setPosition(window.innerWidth / 4, window.innerHeight / 4);
+		sprite2.setAnchor(0, 0);
+		sprite2.setAlpha(1);
+		sprite2.setAngle(90 * DEG_TO_RAD);
+		sprite2.setSize(100, 100);
+		
+		console.log(this.overlay.stage);
+
+        this.overlay.setAtlas(texture.GetTexture('images/rock/rock-albedo.png'));
 	}
 
 	getContext() {
@@ -218,6 +243,15 @@ export class Renderer {
 
 		this.context.renderTargetEnd();
 
+		let rtsOverlay = new RenderTargetState(gl, this.context.screenViewPort);
+		rtsOverlay.addColorTarget(gl, 0, this.postProcess.hdrBuffer);
+		this.context.renderTargetBegin(rtsOverlay);
+		this.overlay.overlayBegin(gl);
+		this.context.viewport();
+		this.overlay.render(gl, 0);
+		this.overlay.overlayEnd(gl);
+		this.context.renderTargetEnd();
+
 		this.postProcess.Begin(this);
 
 		let bloomTexture: Texture = null;
@@ -337,6 +371,8 @@ export class Renderer {
 	currentScene: Scene;
 
 	particleSystem: ParticleSystem;
+
+	overlay: Overlay;
 
 	generatePBREnvironmentMaps: boolean = true;
 

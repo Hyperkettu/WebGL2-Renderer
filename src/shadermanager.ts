@@ -1,6 +1,7 @@
 
 import { Shader, ShaderType, ShaderTech } from './shader';
 import * as shaderSrc from './shadersources';
+//import { vsSource, fsSource } from './uitests/matrixprecalctest';
 
 const shaders: { [id: number]: Shader } = {};
 
@@ -84,6 +85,11 @@ function LoadShader(gl: WebGL2RenderingContext, vertexSrc: string, fragmentSrc: 
 		shader.techniques['default'].bindTo(gl, 'Data', 3);
 	}
 
+	if(type === ShaderType.OVERLAY) {
+		shader.addTechnique(gl, 'default', vertexSrc, fragmentSrc);
+		shader.techniques['default'].bindTo(gl, 'OverlayMatrices', 5);
+	}
+
 	shaders[type as number] = shader;
 }
 
@@ -116,4 +122,5 @@ export function LoadShaders(gl: WebGL2RenderingContext) {
 	LoadShader(gl, null, null, ShaderType.VISUALIZE_NORMALS_TERRAIN);
 	LoadShader(gl, shaderSrc.particleUpdateVsSrc, shaderSrc.particleUpdateFsSrc, ShaderType.PARTICLE_UPDATE);
 	LoadShader(gl, shaderSrc.billboardParticleVsSrc, shaderSrc.billboardParticleFsSrc, ShaderType.BILLBOARD_PARTICLE);
+	LoadShader(gl, shaderSrc.overlayVsSrc, shaderSrc.overlayFsSrc, ShaderType.OVERLAY);
 }

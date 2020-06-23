@@ -148,6 +148,12 @@ export class ConstantBuffers {
 		ConstantBuffers.pointLightPosition = [];
 		ConstantBuffers.pointLightRadius = [];
 
+		ConstantBuffers.overlayMatrices = new UniformBufferObject();
+		ConstantBuffers.overlayMatrices.addUniform('mat4', 'ortho');
+		ConstantBuffers.overlayMatrices.addUniform('mat4', 'view');
+		ConstantBuffers.overlayMatrices.create(gl);
+		ConstantBuffers.overlayMatrices.bindTo(gl, 5);
+
 	}
 
 	static shaderDirtyFlags: number = BufferDirtyFlag.NONE;
@@ -185,6 +191,7 @@ export class ConstantBuffers {
 	static lights: UniformBufferObject;
 	static generalData: UniformBufferObject;
 	static particleData: UniformBufferObject;
+	static overlayMatrices: UniformBufferObject;
 
 }
 

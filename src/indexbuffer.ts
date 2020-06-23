@@ -1,13 +1,13 @@
 export class IndexBuffer {
 
-	constructor(gl: WebGL2RenderingContext, indices: number[]) {
-		this.createBuffer(gl, indices);
+	constructor(gl: WebGL2RenderingContext, indices: number[], usage: number = gl.STATIC_DRAW) {
+		this.createBuffer(gl, indices, usage);
 	}
 
-	createBuffer(gl: WebGL2RenderingContext, indices: number[]) {
+	createBuffer(gl: WebGL2RenderingContext, indices: number[], usage: number = gl.STATIC_DRAW) {
 		this.indexBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), usage);
 	}
 
 	indexBuffer: WebGLBuffer;

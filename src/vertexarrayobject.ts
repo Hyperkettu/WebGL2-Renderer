@@ -12,14 +12,21 @@ export class VertexArrayObject<VertexType> {
 		this.vao = gl.createVertexArray();
 		gl.bindVertexArray(this.vao);
 		this.vertexBuffer = new VertexBuffer<VertexType>(gl, vertices, type);
-		this.indexBuffer = new IndexBuffer(gl, indices);
+		this.indexBuffer = new IndexBuffer(gl, indices, gl.STATIC_DRAW);
 		gl.bindVertexArray(null);
 	}
 
 	updateVertices(gl: WebGL2RenderingContext, vertices: VertexType[]) {
 		gl.bindVertexArray(this.vao);
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer.vertexBuffer);
-		gl.bufferSubData(gl.ARRAY_BUFFER, 0, toFloat32Array(vertices));
+		gl.bufferSubData(gl.ARRAY_BUFFER, 0, toFloat32Array(vertices, this.vertexBuffer.type));
+		gl.bindVertexArray(null);
+	}
+
+	updateVertexBuffer(gl: WebGL2RenderingContext) {
+		gl.bindVertexArray(this.vao);
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer.vertexBuffer);
+		gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.vertexBuffer.floatArray);
 		gl.bindVertexArray(null);
 	}
 

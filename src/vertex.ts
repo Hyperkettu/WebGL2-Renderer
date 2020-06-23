@@ -1,5 +1,6 @@
-import { vec3, vec4, vec2 } from 'gl-matrix';
+import { vec3, vec4, vec2, mat3 } from 'gl-matrix';
 import { verify } from 'crypto';
+import { VertexDataType } from './vertexbuffer';
 
 export type PositionVertexType = Vertex | ScreenVertex | PositionVertex;
 export type NormalVertexType = Vertex;
@@ -66,6 +67,19 @@ export class RenderParticleVertex {
 	size: vec2;
 }
 
+export class SpriteVertex extends VertexBase {
+	constructor() {
+		super();
+	}
+
+	position: vec2;
+	textureCoord: vec2;
+	tintColorAlpha: vec4;
+	transformColumn1: vec4;
+	transformColumn2: vec4;
+	transformColumn3: vec4;
+}
+
 export function morphVertexToFloat32Array(vertices: MorphVertex[]) {
 	const array: number[] = [];
 
@@ -102,26 +116,28 @@ export function morphVertexToFloat32Array(vertices: MorphVertex[]) {
 	return new Float32Array(array);
 }
 
-export function toFloat32Array<VertexType>(vertices: VertexType[]) {
-	const array: number[] = [];
+export function toFloat32Array<VertexType>(vertices: VertexType[], type: VertexDataType) {
+	let array: number[] = [];
 
-	const verts = (vertices as unknown) as Vertex[];
+	if(type === VertexDataType.VERTEX) {
+		const verts = (vertices as unknown) as Vertex[];
 
-	for (let index = 0; index < verts.length; index++) {
-		array.push(verts[index].position[0]);
-		array.push(verts[index].position[1]);
-		array.push(verts[index].position[2]);
+		for (let index = 0; index < verts.length; index++) {
+			array.push(verts[index].position[0]);
+			array.push(verts[index].position[1]);
+			array.push(verts[index].position[2]);
 
-		array.push(verts[index].normal[0]);
-		array.push(verts[index].normal[1]);
-		array.push(verts[index].normal[2]);
+			array.push(verts[index].normal[0]);
+			array.push(verts[index].normal[1]);
+			array.push(verts[index].normal[2]);
 
-		array.push(verts[index].textureCoords[0]);
-		array.push(verts[index].textureCoords[1]);
+			array.push(verts[index].textureCoords[0]);
+			array.push(verts[index].textureCoords[1]);
 
-		array.push(verts[index].tangent[0]);
-		array.push(verts[index].tangent[1]);
-		array.push(verts[index].tangent[2]);
+			array.push(verts[index].tangent[0]);
+			array.push(verts[index].tangent[1]);
+			array.push(verts[index].tangent[2]);
+		}
 	}
 
 	return new Float32Array(array);
