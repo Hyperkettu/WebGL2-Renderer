@@ -26,6 +26,10 @@ import { VertexBase } from './vertex';
 import { Overlay } from './overlay/overlay';
 import { Sprite } from './overlay/sprite'; 
 import { runInThisContext } from 'vm';
+import { vec2, vec3 } from 'gl-matrix';
+import { lerpVec2, easeInOutElastic, lerpNumber } from './overlay/easing';
+import * as math from './util';
+import { Animation } from './overlay/animationsystem';
 
 export class Renderer {
 
@@ -77,6 +81,8 @@ export class Renderer {
 
 	}
 
+	sprite: Sprite;
+
 	async Load(scenePaths: string[]) {
 
 		await mesh.LoadMeshes(this.gl);
@@ -104,23 +110,69 @@ export class Renderer {
 		await texture.LoadTexture(this.gl, 'images/rock/rock-albedo.png');
         const sprite = new Sprite('sprite', texture.GetTexture('images/rock/rock-albedo.png'));
         this.overlay.stage.root.addChild(sprite);
-        sprite.setPosition(window.innerWidth / 2, window.innerHeight / 2);
+        sprite.setPosition(vec2.fromValues(window.innerWidth / 2, window.innerHeight / 2));
 		sprite.setAnchor(0.5, 0.5);
 		sprite.setAlpha(0.2);
 		sprite.setAngle(45 * DEG_TO_RAD);
 		sprite.setSize(200, 200);
 
+		this.sprite = sprite;
+
 		const sprite2 = new Sprite('sprite', texture.GetTexture('images/rock/rock-albedo.png'));
         this.overlay.stage.root.addChild(sprite2);
-        sprite2.setPosition(window.innerWidth / 4, window.innerHeight / 4);
+        sprite2.setPosition(vec2.fromValues(window.innerWidth / 4, window.innerHeight / 4));
 		sprite2.setAnchor(0, 0);
 		sprite2.setAlpha(1);
 		sprite2.setAngle(90 * DEG_TO_RAD);
 		sprite2.setSize(100, 100);
 		
-		console.log(this.overlay.stage);
+		this.overlay.setAtlas(texture.GetTexture('images/rock/rock-albedo.png'));
+		
+		addEventListener('keypress', event => {
 
-        this.overlay.setAtlas(texture.GetTexture('images/rock/rock-albedo.png'));
+			const animationMoveDown = new Animation(this.sprite, 'position', 'easeInOutBack', 4, 'animate', 0);
+			animationMoveDown.from = vec2.fromValues(this.sprite.position[0], this.sprite.position[0]);
+			animationMoveDown.to = vec2.fromValues(this.sprite.position[0], this.sprite.position[0] + 200);
+			const animationWait = new Animation(this.sprite, 'position', 'easeInOutBack', 4, 'wait', 2);
+			const animationMoveRight = new Animation(this.sprite, 'position', 'easeInOutBack', 4, 'animate', 0);
+			animationMoveRight.from = vec2.fromValues(this.sprite.position[0], this.sprite.position[0] + 200);
+			animationMoveRight.to = vec2.fromValues(this.sprite.position[0] + 300, this.sprite.position[0] + 200);
+			const animationWaitLonger = new Animation(this.sprite, 'position', 'easeInOutBack', 4, 'wait', 0);
+			const animationScaleDown = new Animation(this.sprite, 'scale', 'easeInOutBack', 4, 'animate', 0);
+			animationScaleDown.from = vec2.fromValues(this.sprite.scale[0], this.sprite.scale[1]);
+			animationScaleDown.to = vec2.fromValues(this.sprite.scale[0] * 0.5, this.sprite.scale[1] * 0.5);
+			const fadeout = new Animation(this.sprite, 'alpha', 'easeInOutBack', 4, 'animate', 5);
+			fadeout.from = 0.2;
+			fadeout.to = 1;
+
+			const colorAnimate = new Animation(this.sprite, 'color', 'easeInOutBack', 4, 'animate', 5);
+			colorAnimate.from = vec3.fromValues(1,1,1);
+			colorAnimate.to = vec3.fromValues(1, 0.5, 0);
+
+			const rotate = new Animation(this.sprite, 'angle', 'easeInOutBack', 4, 'animate', 0);
+			rotate.from = 90 * DEG_TO_RAD;
+			rotate.to = 135 * DEG_TO_RAD;
+
+			const rotate2 = new Animation(this.sprite, 'angle', 'easeInOutBack', 4, 'animate', 0);
+			rotate2.from = 45 * DEG_TO_RAD;
+			rotate2.to = 90 * DEG_TO_RAD;
+
+			this.overlay.startAnimation([
+				animationMoveDown,
+				animationWait,
+				animationMoveRight,
+				animationWaitLonger,
+				animationScaleDown,
+				fadeout,
+				colorAnimate,
+				rotate
+			]);
+
+			this.overlay.startAnimation([
+				rotate2
+			]);
+		});
+	
 	}
 
 	getContext() {
@@ -179,11 +231,12 @@ export class Renderer {
 		}
 	}
 
-	renderCurrentScene() {
-		this.render(this.currentScene);
+	renderCurrentScene(time: number, dt: number) {
+		this.overlay.animationSystem.updateAnimations(dt);
+		this.render(this.currentScene, time, dt);
 	}
 
-	render(scene: Scene) {
+	render(scene: Scene, time: number, dt: number) {
 
 		this.resetCounter();
 
@@ -248,7 +301,7 @@ export class Renderer {
 		this.context.renderTargetBegin(rtsOverlay);
 		this.overlay.overlayBegin(gl);
 		this.context.viewport();
-		this.overlay.render(gl, 0);
+		this.overlay.render(gl, dt);
 		this.overlay.overlayEnd(gl);
 		this.context.renderTargetEnd();
 

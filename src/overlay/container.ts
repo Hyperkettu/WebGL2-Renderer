@@ -24,8 +24,8 @@ export class Container {
         this.worldTransformUpdated = false;
     }
 
-    setPosition(x: number, y: number) {
-        this.position = vec2.fromValues(x, y);
+    setPosition(position: vec2) {
+        this.position = position;
         this.localDirty = true;
     }
 
@@ -39,8 +39,8 @@ export class Container {
         this.localDirty = true;
     }
 
-    setScale(x: number, y: number) {
-        vec2.set(this.scale, x, y);
+    setScale(scale: vec2) {
+        vec2.set(this.scale, scale[0], scale[0]);
         this.localDirty = true;
     }
 

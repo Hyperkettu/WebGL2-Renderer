@@ -52,7 +52,7 @@ export class Application {
             update(time, dt);
     
             this.renderer.reset();
-            this.renderer.renderCurrentScene();
+            this.renderer.renderCurrentScene(time, dt);
     
             requestAnimationFrame(frameUpdate);
         };

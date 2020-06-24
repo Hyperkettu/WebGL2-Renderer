@@ -10,6 +10,7 @@ import { ShaderType } from '../shader';
 import { ConstantBuffers } from '../constantbuffers';
 import { OverlayCamera } from './overlaycamera';
 import * as texture from '../texturemanager';
+import { AnimationSystem, Animation } from './animationsystem';
  
 export class Overlay {
     
@@ -20,6 +21,11 @@ export class Overlay {
         this.sprites = [];
         this.mesh = new OverlayMesh(gl, Overlay.SPRITE_BATCH_SIZE);
         this.camera = new OverlayCamera();
+        this.animationSystem = new AnimationSystem();
+    }
+
+    startAnimation(animationSequence: Animation[]) {
+        this.animationSystem.startAnimation(animationSequence);
     }
 
     setAtlas(texture: Texture) {
@@ -38,6 +44,8 @@ export class Overlay {
     }
 
     render(gl: WebGL2RenderingContext, dt: number) {
+
+        this.animationSystem.updateAnimations(dt);
 
         this.sprites = [];
         this.stage.forEach((node, worldTransform, transformUpdated) => {
@@ -68,4 +76,6 @@ export class Overlay {
     mesh: OverlayMesh;
     depthFuncBeforeOverlay: number;
     camera: OverlayCamera;
+
+    animationSystem: AnimationSystem;
 }
