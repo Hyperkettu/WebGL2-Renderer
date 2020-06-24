@@ -1,12 +1,12 @@
 import { vec2, vec3, vec4 } from 'gl-matrix';
-import { Ray } from './ray';
-import { Triangle } from './triangle';
-import { Plane } from './plane';
-import { Sphere } from './sphere';
-import { AABB } from './aabb';
-import { HitInfo } from './raycast';
-import { StaticMesh } from './mesh';
-import { Vertex } from './vertex';
+import { Ray } from '../ray';
+import { Triangle } from '../triangle';
+import { Plane } from '../plane';
+import { Sphere } from '../sphere';
+import { AABB } from '../aabb';
+import { HitInfo } from '../raycast';
+import { StaticMesh } from '../mesh';
+import { Vertex } from '../vertex';
 
 export const DEG_TO_RAD = Math.PI / 180.0;
 export const RAD_TO_DEG = 180.0 / Math.PI;
@@ -19,6 +19,28 @@ export async function wait(millis: number) {
 		}, (millis));
 	});
 	return promise;
+}
+
+export function lerpNumber(from: number, to: number, t: number, easingFunction?: (x: number) => number) {
+    const value = easingFunction ? easingFunction(t) : t;
+    return value * to + (1 - value) * from;
+}
+
+export function lerpVec2(from: vec2, to: vec2, t: number, easingFunction?: (x: number) => number) {
+    const value = easingFunction ? easingFunction(t) : t;
+    const returnValue = vec2.create();
+    vec2.set(returnValue, lerpNumber(from[0], to[0], value), lerpNumber(from[1], to[1], value));
+    return returnValue;
+}
+
+export function lerpVec3(from: vec3, to: vec3, t: number, easingFunction?: (x: number) => number) {
+    const value = easingFunction ? easingFunction(t) : t;
+    const returnValue = vec3.create();
+    vec3.set(returnValue, 
+        lerpNumber(from[0], to[0], value), 
+        lerpNumber(from[1], to[1], value),
+        lerpNumber(from[2], to[2], value));
+    return returnValue;
 }
 
 export function clamp(value: number, min: number, max: number) {

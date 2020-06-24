@@ -4,7 +4,7 @@ import { vec3, vec2 } from 'gl-matrix';
 import * as mesh from './meshmanager';
 import { Texture } from './texture';
 import { FrameBuffer } from './framebuffer';
-import * as math from './util';
+import * as math from './util/math';
 
 export class GeometryGenerator {
 	constructor() { }

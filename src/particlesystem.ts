@@ -10,7 +10,7 @@ import * as texture from './texturemanager';
 import { Texture } from './texture';
 import { VertexArrayObject } from './vertexarrayobject';
 import { IndexBuffer } from './indexbuffer';
-import * as util from './util';
+import * as math from './util/math';
 
 interface ParticleRenderState {
 	udpateVAO: WebGLVertexArrayObject;
@@ -62,7 +62,7 @@ export class ParticleSystem {
 			const vertex = new ParticleVertex();
 			vertex.position = vec3.fromValues(0, 2.75, 0);
 			vertex.velocity = vec3.fromValues(0, 0, 0);
-			const life = util.randomFloat(this.data.minAge, this.data.maxAge);
+			const life = math.randomFloat(this.data.minAge, this.data.maxAge);
 			vertex.age = life + 1;
 			vertex.life = life;
 

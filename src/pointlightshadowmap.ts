@@ -1,6 +1,6 @@
 import { DepthTexture } from './depthtexture';
 import { vec3, mat4, vec4 } from 'gl-matrix';
-import { DEG_TO_RAD } from './util';
+import { DEG_TO_RAD } from './util/math';
 import { Renderer } from './glrenderer';
 import { RenderTargetState } from './rendertarget';
 import { Layer } from './batchrenderer';

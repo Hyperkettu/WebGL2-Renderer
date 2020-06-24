@@ -2,7 +2,7 @@ import { Submesh } from './submesh';
 import { Vertex, MorphVertex } from './vertex';
 import { SceneNodeData } from './meshmanager';
 import { VertexDataType } from './vertexbuffer';
-import * as math from './util';
+import * as math from './util/math';
 import { ConstantBuffers } from './constantbuffers';
 import { vec4 } from 'gl-matrix';
 import { type } from 'os';

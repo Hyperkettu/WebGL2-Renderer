@@ -1,7 +1,7 @@
 import { mat4, vec4, vec3, vec2, quat } from 'gl-matrix';
-import { DEG_TO_RAD } from './util';
+import { DEG_TO_RAD } from './util/math';
 import { Viewport } from './context';
-import * as math from './util';
+import * as math from './util/math';
 
 export class Camera {
 

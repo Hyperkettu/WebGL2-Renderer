@@ -2,7 +2,7 @@ import { vec3 } from 'gl-matrix';
 import { Camera } from './camera';
 import { Viewport } from './context';
 import { Ray } from './ray';
-import * as math from './util';
+import * as math from './util/math';
 import { Triangle } from './triangle';
 import { Sphere } from './sphere';
 import { AABB } from './aabb';

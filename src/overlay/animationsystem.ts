@@ -1,7 +1,7 @@
 import { Container } from './container';
 import { Sprite } from "./sprite";
-import * as math from '../util';
-import * as ease from './easing';
+import * as math from '../util/math';
+import * as ease from '../util/easing';
 import { vec2, vec3 } from 'gl-matrix';
 
 
@@ -36,11 +36,11 @@ export class AnimationSystem {
         this.animationSequences = [];
         this.pendingAnimationSequences = {};
 
-        getAnimator['position'] = ease.lerpVec2;
-        getAnimator['angle'] = ease.lerpNumber;
-        getAnimator['scale'] = ease.lerpVec2;
-        getAnimator['alpha'] = ease.lerpNumber;
-        getAnimator['color'] = ease.lerpVec3;
+        getAnimator['position'] = math.lerpVec2;
+        getAnimator['angle'] = math.lerpNumber;
+        getAnimator['scale'] = math.lerpVec2;
+        getAnimator['alpha'] = math.lerpNumber;
+        getAnimator['color'] = math.lerpVec3;
 
         setTarget['position'] = 'setPosition';
         setTarget['angle'] = 'setAngle';

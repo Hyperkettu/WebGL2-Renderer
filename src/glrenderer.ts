@@ -20,15 +20,14 @@ import { TestScene } from './testscene';
 import { PointLight } from './pointlight';
 import { ParticleSystem } from './particlesystem';
 import { Picker } from './raycast';
-import { wait, DEG_TO_RAD } from './util';
+import { wait, DEG_TO_RAD } from './util/math';
 import { loadMaterial } from './material'; 
 import { VertexBase } from './vertex';
 import { Overlay } from './overlay/overlay';
 import { Sprite } from './overlay/sprite'; 
 import { runInThisContext } from 'vm';
 import { vec2, vec3 } from 'gl-matrix';
-import { lerpVec2, easeInOutElastic, lerpNumber } from './overlay/easing';
-import * as math from './util';
+import * as math from './util/math';
 import { Animation } from './overlay/animationsystem';
 
 export class Renderer {

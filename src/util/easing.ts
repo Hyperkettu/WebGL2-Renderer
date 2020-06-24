@@ -1,5 +1,3 @@
-import { vec2, vec3 } from 'gl-matrix';
-
 export function easeInOutElastic(x: number): number {
     const c5 = (2 * Math.PI) / 4.5;
     
@@ -75,28 +73,6 @@ export function easeInOutBack(x: number): number {
     return x < 0.5
       ? (Math.pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2)) / 2
       : (Math.pow(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2;
-}
-
-export function lerpNumber(from: number, to: number, t: number, easingFunction?: (x: number) => number) {
-    const value = easingFunction ? easingFunction(t) : t;
-    return value * to + (1 - value) * from;
-}
-
-export function lerpVec2(from: vec2, to: vec2, t: number, easingFunction?: (x: number) => number) {
-    const value = easingFunction ? easingFunction(t) : t;
-    const returnValue = vec2.create();
-    vec2.set(returnValue, lerpNumber(from[0], to[0], value), lerpNumber(from[1], to[1], value));
-    return returnValue;
-}
-
-export function lerpVec3(from: vec3, to: vec3, t: number, easingFunction?: (x: number) => number) {
-    const value = easingFunction ? easingFunction(t) : t;
-    const returnValue = vec3.create();
-    vec3.set(returnValue, 
-        lerpNumber(from[0], to[0], value), 
-        lerpNumber(from[1], to[1], value),
-        lerpNumber(from[2], to[2], value));
-    return returnValue;
 }
 
 

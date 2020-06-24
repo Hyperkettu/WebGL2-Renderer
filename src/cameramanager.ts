@@ -1,6 +1,6 @@
 import { Camera } from './camera';
 import { vec3 } from 'gl-matrix';
-import { DEG_TO_RAD } from './util';
+import { DEG_TO_RAD } from './util/math';
 
 interface CameraSettings {
 	fovY: number;

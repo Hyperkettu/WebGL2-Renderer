@@ -1,5 +1,5 @@
 import { mat4, vec3 } from 'gl-matrix';
-import { DEG_TO_RAD } from '../util';
+import { DEG_TO_RAD } from '../util/math';
 
 export class OverlayCamera {
 

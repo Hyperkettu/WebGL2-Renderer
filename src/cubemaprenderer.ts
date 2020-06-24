@@ -3,7 +3,7 @@ import { Renderer } from './glrenderer';
 import { RenderTargetState } from './rendertarget';
 import { ShaderType } from './shader';
 import * as shader from './shadermanager';
-import { DEG_TO_RAD } from './util';
+import { DEG_TO_RAD } from './util/math';
 import { mat4, vec3, vec4 } from 'gl-matrix';
 import * as mesh from './meshmanager';
 import { VertexArrayObject } from './vertexarrayobject';
