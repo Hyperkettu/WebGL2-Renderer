@@ -17,6 +17,11 @@ export function setTexture(name: string, texture: Texture) {
 	textures[name] = texture;
 }
 
+export function destroyTexture(gl: WebGL2RenderingContext, texture: Texture) {
+	texture.destroy(gl);
+	delete textures[texture.path];
+}
+
 export function getType(textureData: TextureData) {
 	switch (textureData.type) {
 		case 'albedo': return TextureType.Albedo;

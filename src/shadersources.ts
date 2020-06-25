@@ -2147,7 +2147,7 @@ in vec4 color;
 out vec4 outColor;
 
 void main() {
-	vec3 tintedColor = texture(atlasTexture, uvs.st).rgb * color.rgb;
-	outColor = vec4(tintedColor, color.a);
+	vec4 imageColor = texture(atlasTexture, uvs.st).rgba;
+	outColor = vec4(imageColor.rgb * color.rgb, imageColor.a * color.a);
 }
 `;

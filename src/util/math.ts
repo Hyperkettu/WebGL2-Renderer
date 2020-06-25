@@ -21,6 +21,14 @@ export async function wait(millis: number) {
 	return promise;
 }
 
+export function getPowerOfTwo(value: number, pow?: number) {
+	let powDimension = pow || 1;
+	while(powDimension < value) {
+		powDimension *= 2;
+	}
+	return powDimension;
+}
+
 export function lerpNumber(from: number, to: number, t: number, easingFunction?: (x: number) => number) {
     const value = easingFunction ? easingFunction(t) : t;
     return value * to + (1 - value) * from;

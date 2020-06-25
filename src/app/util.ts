@@ -1,4 +1,4 @@
-export function createCanvas() {
+export function createCanvas(width?: number, height?: number) {
 	const canvas = document.createElement('canvas');
 	canvas.style.position = 'absolute';
 	canvas.style.left = '0px';
@@ -8,12 +8,9 @@ export function createCanvas() {
 	canvas.style.margin = '0px';
 	canvas.style.width = '100%';
 	canvas.style.height = '100%';
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
+	canvas.width = width ? width : window.innerWidth;
+	canvas.height = width ? width : window.innerHeight;
 	return canvas;
 }
-
-let seconds = 0;
-let fps = 0;
 
 

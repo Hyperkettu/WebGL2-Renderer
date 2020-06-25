@@ -29,6 +29,8 @@ import { runInThisContext } from 'vm';
 import { vec2, vec3 } from 'gl-matrix';
 import * as math from './util/math';
 import { Animation } from './overlay/animationsystem';
+import { TextTexture } from './texttexture';
+import { Color } from './util/color';
 
 export class Renderer {
 
@@ -106,26 +108,46 @@ export class Renderer {
 
 		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.SELDOM, ShaderType.PBR);
 
-		await texture.LoadTexture(this.gl, 'images/rock/rock-albedo.png');
-        const sprite = new Sprite('sprite', texture.GetTexture('images/rock/rock-albedo.png'));
+		await texture.LoadTexture(this.gl, 'images/A.png');
+
+		const texture2 = new TextTexture();
+		texture2.generateFromCanvas(this.gl, 'Testi', {
+			family: 'Verdana',
+			fontSize: 100,
+			fillStyle: 'rgba(255, 0, 0, 1)',
+			gradient: [ new Color(0, 1, 1, 1), new Color(1, 1, 0, 1) ],
+			textAlign: 'center',
+			textBaseLine: 'middle',
+			strokeColor: '#ff00ffff',
+			strokeThickness: 3.5
+		});
+
+		//this.overlay.setAtlas(texture.GetTexture('images/A.png'));
+		this.overlay.setAtlas(texture2);
+
+		console.log(texture2.width, texture2.height);
+
+        const sprite = new Sprite('sprite', texture2);
         this.overlay.stage.root.addChild(sprite);
         sprite.setPosition(vec2.fromValues(window.innerWidth / 2, window.innerHeight / 2));
 		sprite.setAnchor(0.5, 0.5);
-		sprite.setAlpha(0.2);
-		sprite.setAngle(45 * DEG_TO_RAD);
-		sprite.setSize(200, 200);
+		sprite.setAlpha(1.0);
+		//sprite.setAngle(45 * DEG_TO_RAD);
+		//sprite.setSize(512, 256);
+
+		console.log(sprite);
 
 		this.sprite = sprite;
 
-		const sprite2 = new Sprite('sprite', texture.GetTexture('images/rock/rock-albedo.png'));
+		/*const sprite2 = new Sprite('sprite', texture.GetTexture('images/rock/rock-albedo.png'));
         this.overlay.stage.root.addChild(sprite2);
         sprite2.setPosition(vec2.fromValues(window.innerWidth / 4, window.innerHeight / 4));
 		sprite2.setAnchor(0, 0);
 		sprite2.setAlpha(1);
 		sprite2.setAngle(90 * DEG_TO_RAD);
-		sprite2.setSize(100, 100);
+		//sprite2.setSize(100, 100);*/
 		
-		this.overlay.setAtlas(texture.GetTexture('images/rock/rock-albedo.png'));
+		//this.overlay.setAtlas(texture.GetTexture('images/rock/rock-albedo.png'));
 		
 		addEventListener('keypress', event => {
 
@@ -141,7 +163,7 @@ export class Renderer {
 			animationScaleDown.from = vec2.fromValues(this.sprite.scale[0], this.sprite.scale[1]);
 			animationScaleDown.to = vec2.fromValues(this.sprite.scale[0] * 0.5, this.sprite.scale[1] * 0.5);
 			const fadeout = new Animation(this.sprite, 'alpha', 'easeInOutBack', 4, 'animate', 5);
-			fadeout.from = 0.2;
+			fadeout.from = 1;
 			fadeout.to = 1;
 
 			const colorAnimate = new Animation(this.sprite, 'color', 'easeInOutBack', 4, 'animate', 5);
