@@ -11,6 +11,7 @@ import { ConstantBuffers } from '../constantbuffers';
 import { OverlayCamera } from './overlaycamera';
 import * as texture from '../texturemanager';
 import { AnimationSystem, Animation } from './animationsystem';
+import { TextureAtlas } from '../textureatlas';
  
 export class Overlay {
     
@@ -22,6 +23,37 @@ export class Overlay {
         this.mesh = new OverlayMesh(gl, Overlay.SPRITE_BATCH_SIZE);
         this.camera = new OverlayCamera();
         this.animationSystem = new AnimationSystem();
+        this.textureAtlas = new TextureAtlas(null);
+
+        this.textureAtlas.addTextures([
+            'images/A.png',
+            'images/B.png',
+            'images/C.png',
+            'images/D.png',
+            'images/E.png',
+            'images/F.png',
+            'images/G.png',
+            'images/H.png',
+            'images/I.png',
+            'images/J.png',
+            'images/K.png',
+            'images/L.png',
+            'images/M.png',
+            'images/N.png',
+            'images/O.png',
+            'images/P.png',
+            'images/Q.png',
+            'images/R.png',
+            'images/S.png',
+            'images/T.png',
+            'images/U.png',
+            'images/W.png',
+            'images/V.png',
+            'images/Z.png',
+            'images/Y.png',
+            'images/Z.png'
+        ]);
+        this.textureAtlas.generateJson();
     }
 
     startAnimation(animationSequence: Animation[]) {
@@ -29,7 +61,7 @@ export class Overlay {
     }
 
     setAtlas(texture: Texture) {
-        this.textureAtlas = texture;
+        this.textureAtlas.texture = texture;
     }
 
     overlayBegin(gl: WebGL2RenderingContext) {
@@ -41,6 +73,17 @@ export class Overlay {
 
     overlayEnd(gl: WebGL2RenderingContext) {
         gl.depthFunc(gl.LESS); // ? 
+    }
+
+    renderSprite(gl: WebGL2RenderingContext, sprite: Sprite) {
+        // add sprite to stage with texcoords |0,1]
+        // set pos, rotation, scale and this.render(gl,0);
+        //const currentTexture = this.textureAtlas.texture;
+        this.setAtlas(sprite.texture.texture);
+        this.stage.root.addChild(sprite);
+        this.render(gl, 0);
+        this.stage.root.removeChild(sprite);
+        //this.setAtlas(currentTexture);
     }
 
     render(gl: WebGL2RenderingContext, dt: number) {
@@ -59,7 +102,7 @@ export class Overlay {
 
         const overlayShader = shader.GetShader(ShaderType.OVERLAY, 'default');
         overlayShader.use(gl);
-        overlayShader.setSamplerTexture(gl, 'atlasTexture', this.textureAtlas, 0);
+        overlayShader.setSamplerTexture(gl, 'atlasTexture', this.textureAtlas.texture, 0);
 
         ConstantBuffers.overlayMatrices.update(gl, 'view', this.camera.view);
         ConstantBuffers.overlayMatrices.update(gl, 'ortho', this.camera.orthoProjection);
@@ -70,7 +113,7 @@ export class Overlay {
         gl.bindVertexArray(null);
     }
 
-    textureAtlas: Texture;
+    textureAtlas: TextureAtlas;
     sprites: Sprite[];
     stage: OverlaySceneGraph;
     mesh: OverlayMesh;

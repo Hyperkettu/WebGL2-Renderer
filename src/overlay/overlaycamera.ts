@@ -5,13 +5,13 @@ export class OverlayCamera {
 
     constructor() {
         this.orthoProjection = mat4.create();
-        this.setProjection();
+        this.setProjection(0.0, window.innerWidth, window.innerHeight, 0.0, -1.0, 1.0);
         this.view = mat4.create();
-     //   mat4.lookAt(this.view, [0, 0, 0], [0, 0, -1], [0, 1, 0]);
+        mat4.lookAt(this.view, [0, 0, 0], [0, 0, -1], [0, 1, 0]);
     }
 
-    setProjection() {
-        mat4.ortho(this.orthoProjection, 0.0, window.innerWidth, window.innerHeight, 0.0, -1.0, 1.0);
+    setProjection(left: number, right: number, bottom: number, top: number, near: number, far: number) {
+        mat4.ortho(this.orthoProjection, left, right, bottom, top, near, far);
     }
 
     move(dx: number, dy: number) {

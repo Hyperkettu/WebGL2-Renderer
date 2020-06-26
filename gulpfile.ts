@@ -20,6 +20,8 @@ gulp.task('webpack', async () => {
 gulp.task('copy-resources', function () {
 	return gulp.src([
 		`${paths.src}/images/**/*.png`,
+		`${paths.src}/images/**/*.json`,
+
 		`${paths.src}/materials/*.json`,
 		`${paths.src}/meshes/*.json`,
 		`${paths.src}/meshes/*.staticmesh`,

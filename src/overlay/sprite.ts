@@ -1,9 +1,9 @@
 import { vec2, vec3, mat3 } from 'gl-matrix';
-import { Texture } from '../texture';
+import { Subtexture } from '../subtexture';
 import { Container } from './container';
 
 export class Sprite extends Container {
-    constructor(name: string, texture: Texture) {
+    constructor(name: string, texture: Subtexture) {
         super(name);
         this.texture = texture;
         this.size = vec2.fromValues(this.texture.width, this.texture.height);
@@ -61,5 +61,5 @@ export class Sprite extends Container {
     size: vec2;
     tintColor: vec3;
     
-    texture: Texture; // TODO Subtexture with texcoords, textureatlas best fit
+    texture: Subtexture;
 }

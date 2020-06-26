@@ -31,6 +31,7 @@ import * as math from './util/math';
 import { Animation } from './overlay/animationsystem';
 import { TextTexture } from './texttexture';
 import { Color } from './util/color';
+import { Subtexture, TextureCoordinate } from './subtexture';
 
 export class Renderer {
 
@@ -108,7 +109,8 @@ export class Renderer {
 
 		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.SELDOM, ShaderType.PBR);
 
-		await texture.LoadTexture(this.gl, 'images/A.png');
+		//await texture.LoadTexture(this.gl, 'images/A.png');
+		//await texture.LoadTexture(this.gl, 'images/atlas.png');
 
 		const texture2 = new TextTexture();
 		texture2.generateFromCanvas(this.gl, 'Testi', {
@@ -122,30 +124,48 @@ export class Renderer {
 			strokeThickness: 3.5
 		});
 
-		//this.overlay.setAtlas(texture.GetTexture('images/A.png'));
-		this.overlay.setAtlas(texture2);
+		await this.overlay.textureAtlas.loadFromJson(this.gl, 'images/atlas.json', this);
+		//this.overlay.setAtlas(atlas);
+		//this.overlay.setAtlas(texture2);
+		//const atlas = texture.GetTexture('images/atlas.png');
+
+
 
 		console.log(texture2.width, texture2.height);
 
-        const sprite = new Sprite('sprite', texture2);
+		/*const x = 0;
+		const y = 0;
+		const width = 75;
+		const height = 75;
+		const subtexture = new Subtexture(atlas, x, y, width, height);*/
+		//const subtexture = this.overlay.textureAtlas.subtextures['images/E.png'];
+		//subtexture.textureCoordinates[TextureCoordinate.BOTTOM_LEFT] = vec2.fromValues(0,0);
+		//subtexture.textureCoordinates[TextureCoordinate.BOTTOM_RIGHT] = vec2.fromValues(1,0);
+		//subtexture.textureCoordinates[TextureCoordinate.TOP_LEFT] = vec2.fromValues(0,1);
+		//subtexture.textureCoordinates[TextureCoordinate.TOP_RIGHT] = vec2.fromValues(1,1);
+
+		const subtexture = new Subtexture(this.overlay.textureAtlas.texture, 0, 0, 1024, 1024);
+		//console.log('atlas', subtexture);
+        const sprite = new Sprite('sprite', subtexture);
         this.overlay.stage.root.addChild(sprite);
         sprite.setPosition(vec2.fromValues(window.innerWidth / 2, window.innerHeight / 2));
 		sprite.setAnchor(0.5, 0.5);
 		sprite.setAlpha(1.0);
 		//sprite.setAngle(45 * DEG_TO_RAD);
-		//sprite.setSize(512, 256);
+		sprite.setSize(512, 512);
 
 		console.log(sprite);
 
 		this.sprite = sprite;
 
-		/*const sprite2 = new Sprite('sprite', texture.GetTexture('images/rock/rock-albedo.png'));
+		const sprite2 = new Sprite('sprite', this.overlay.textureAtlas.subtextures['images/G.png']);
         this.overlay.stage.root.addChild(sprite2);
         sprite2.setPosition(vec2.fromValues(window.innerWidth / 4, window.innerHeight / 4));
 		sprite2.setAnchor(0, 0);
 		sprite2.setAlpha(1);
-		sprite2.setAngle(90 * DEG_TO_RAD);
-		//sprite2.setSize(100, 100);*/
+		console.log(sprite2, '2');
+		//sprite2.setAngle(90 * DEG_TO_RAD);
+		//sprite2.setSize(100, 100);
 		
 		//this.overlay.setAtlas(texture.GetTexture('images/rock/rock-albedo.png'));
 		

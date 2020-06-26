@@ -3,6 +3,7 @@ import { VertexArrayObject } from '../vertexarrayobject';
 import { VertexDataType } from '../vertexbuffer';
 import { Sprite } from './sprite';
 import { Overlay } from './overlay';
+import { TextureCoordinate } from '../subtexture';
 
 export class OverlayMesh {
 
@@ -11,9 +12,8 @@ export class OverlayMesh {
 
     constructor(gl: WebGL2RenderingContext, batchSize: number) {
         this.batchSize = batchSize;
-        this.vertices = [];
         const indices = this.computeIndicesForBatch();
-        this.vao = new VertexArrayObject(gl, this.vertices, indices, VertexDataType.SPRITE_VERTEX);
+        this.vao = new VertexArrayObject(gl, null, indices, VertexDataType.SPRITE_VERTEX);
     }
 
     updateMesh(gl: WebGL2RenderingContext, sprites: Sprite[]) {
@@ -41,8 +41,8 @@ export class OverlayMesh {
                 this.vao.vertexBuffer.floatArray[baseIndex + 0] = positions[2 * vertex + 0];
                 this.vao.vertexBuffer.floatArray[baseIndex + 1] = positions[2 * vertex + 1];
 
-                this.vao.vertexBuffer.floatArray[baseIndex + 2] = texCoords[2 * vertex + 0];
-                this.vao.vertexBuffer.floatArray[baseIndex + 3] = texCoords[2 * vertex + 1];
+                this.vao.vertexBuffer.floatArray[baseIndex + 2] = sprite.texture.textureCoordinates[vertex][0];
+                this.vao.vertexBuffer.floatArray[baseIndex + 3] = sprite.texture.textureCoordinates[vertex][1];
 
                 this.vao.vertexBuffer.floatArray[baseIndex + 4] = sprite.tintColor[0];
                 this.vao.vertexBuffer.floatArray[baseIndex + 5] = sprite.tintColor[1];
@@ -84,7 +84,7 @@ export class OverlayMesh {
         return indices;
     }
 
-    vertices: SpriteVertex[];
+   // vertices: SpriteVertex[];
     vao: VertexArrayObject<SpriteVertex>;
     batchSize: number;
 }
