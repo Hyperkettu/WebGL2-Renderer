@@ -57,7 +57,7 @@ export class Button extends Element {
     release() {
         const animation = new Animation(this.container, 'scale', 'easeInOutCubic', 0.15, 'animate', 0);
         animation.setFrom([this.container.scale[0], this.container.scale[1]]);
-        const releaseScale = 1;
+        const releaseScale = this.scale[0];
         animation.setTo([releaseScale, releaseScale]);
         this.overlay.animationSystem.startAnimation([animation]);
     }

@@ -164,12 +164,15 @@ export class Renderer {
 
 		 buttonText.setText('button');
 		 buttonText.setScale(vec2.fromValues(0.35, 0.35));
-		const button = new Button(this.overlay, buttonSprite, buttonText);
+		
+		 const button = new Button(this.overlay, buttonSprite, buttonText);
 		 this.overlay.stage.root.addChild(button.container);
-		 button.setPosition(vec2.fromValues(window.innerWidth * 0.5, 0.5 * window.innerHeight));
+		 button.setPosition(vec2.fromValues(window.innerWidth * 0.75, 0.5 * window.innerHeight));
 		 button.onClick((x,y) => {
 			 console.log(x,y);
 		 });
+
+		 button.setScale(vec2.fromValues(0.5, 0.5));
 
 		 console.log(buttonSprite, 'buttons', button);
 
