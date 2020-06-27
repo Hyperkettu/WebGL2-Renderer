@@ -15,6 +15,7 @@ export class UILayout {
 
     addText(text: Text) {
         this.data.texts.push(text);
+        this.overlay.stage.root.addChild(text.container);
     }
 
     data: LayoutData;

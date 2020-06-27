@@ -5,6 +5,7 @@ import { Container } from "../container";
 import { Overlay } from "../overlay";
 import * as math from '../../util/math';
 import { Animation } from "../animationsystem";
+import { Element } from "./element";
 
 export type TextAnimation = 'none' | 'bounce' | 'one-by-one';
 
@@ -19,17 +20,13 @@ export interface AtlasTextSettings {
     delay?: number;
 }
 
-export class Text {
+export class Text extends Element {
     constructor(overlay: Overlay, settings?: AtlasTextSettings) {
-        this.overlay = overlay;
+        super(overlay);
         this.atlas = settings ? settings.atlas : null;
         this.style = settings ? settings.style : 'normal';
         this.gapBetweeenLettersInPixels = settings?.gapInPixels;
         this.sprites = [];
-        this.position = vec2.create();
-        this.scale = vec2.create();
-        this.container = new Container('text');
-        this.overlay.stage.root.addChild(this.container);
         this.lineWidth = settings?.lineWidth;
         this.lineHeight = settings?.lineHeight;
         this.textAppearAnimation = settings?.textAppearAnimation;
@@ -137,12 +134,7 @@ export class Text {
 
     }
 
-    container: Container;
     text: string;
-
-    position: vec2;
-    scale: vec2;
-    rotation: number;
 
     sprites: Sprite[];
     atlas: TextureAtlas;
@@ -157,6 +149,4 @@ export class Text {
     delay: number;
 
     textAppearAnimation: TextAnimation;
-
-    overlay: Overlay;
 }

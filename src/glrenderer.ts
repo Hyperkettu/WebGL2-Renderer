@@ -34,6 +34,7 @@ import { Color } from './util/color';
 import { Subtexture, TextureCoordinate } from './subtexture';
 import { UILayout } from './overlay/ui/layout';
 import { Text } from './overlay/ui/text';
+import { Button } from './overlay/ui/button';
 
 export class Renderer {
 
@@ -149,19 +150,43 @@ export class Renderer {
 		text.hide();
 		text.show();
 
+		const buttonSprite = new Sprite('buttonSprite', this.overlay.textureAtlas.subtextures['images/button_bg.png']);
+		const buttonText = new Text(this.overlay, { 
+			atlas: this.overlay.textureAtlas,
+			gapInPixels: 45, 
+			style: 'normal',
+			lineHeight: 60,
+			lineWidth: 120,
+			textAppearAnimation: 'none'
+		 });
+
+		 buttonSprite.setAnchor(0.5, 0.5);
+
+		 buttonText.setText('button');
+		 buttonText.setPosition(vec2.fromValues(0, 0));
+		 buttonText.setScale(vec2.fromValues(0.35, 0.35));
+		const button = new Button(this.overlay, buttonSprite, buttonText);
+		 this.overlay.stage.root.addChild(button.container);
+		 button.setPosition(vec2.fromValues(window.innerWidth * 0.5, 0.5 * window.innerHeight));
+		 button.onClick((x,y) => {
+			 console.log(x,y);
+		 });
+
+		 console.log(buttonSprite, 'buttons', button);
 
 		/*const x = 0;
 		const y = 0;
 		const width = 75;
 		const height = 75;
 		const subtexture = new Subtexture(atlas, x, y, width, height);*/
-		//const subtexture = this.overlay.textureAtlas.subtextures['images/E.png'];
+		 //const subtexture = this.overlay.textureAtlas.subtextures['images/E.png'];
 		//subtexture.textureCoordinates[TextureCoordinate.BOTTOM_LEFT] = vec2.fromValues(0,0);
 		//subtexture.textureCoordinates[TextureCoordinate.BOTTOM_RIGHT] = vec2.fromValues(1,0);
 		//subtexture.textureCoordinates[TextureCoordinate.TOP_LEFT] = vec2.fromValues(0,1);
 		//subtexture.textureCoordinates[TextureCoordinate.TOP_RIGHT] = vec2.fromValues(1,1);
 
-		/*const subtexture = new Subtexture(this.overlay.textureAtlas.texture, 0, 0, 1024, 1024);
+		//const subtexture = new Subtexture(this.overlay.textureAtlas.texture, 0, 0, 1024, 1024);
+		/*const subtexture = this.overlay.textureAtlas.subtextures['images/button_bg.png'];
 		//console.log('atlas', subtexture);
         const sprite = new Sprite('sprite', subtexture);
         this.overlay.stage.root.addChild(sprite);
@@ -169,67 +194,11 @@ export class Renderer {
 		sprite.setAnchor(0.5, 0.5);
 		sprite.setAlpha(1.0);
 		//sprite.setAngle(45 * DEG_TO_RAD);
-		sprite.setSize(512, 512);
+		sprite.setSize(175, 51);
 
 		console.log(sprite);
 
-		this.sprite = sprite;
-
-		const sprite2 = new Sprite('sprite', this.overlay.textureAtlas.subtextures['images/G.png']);
-        this.overlay.stage.root.addChild(sprite2);
-        sprite2.setPosition(vec2.fromValues(window.innerWidth / 4, window.innerHeight / 4));
-		sprite2.setAnchor(0, 0);
-		sprite2.setAlpha(1);
-		console.log(sprite2, '2');*/
-		//sprite2.setAngle(90 * DEG_TO_RAD);
-		//sprite2.setSize(100, 100);
-		
-		//this.overlay.setAtlas(texture.GetTexture('images/rock/rock-albedo.png'));
-		
-		addEventListener('keypress', event => {
-
-			const animationMoveDown = new Animation(this.sprite, 'position', 'easeInOutBack', 4, 'animate', 0);
-			animationMoveDown.from = vec2.fromValues(this.sprite.position[0], this.sprite.position[0]);
-			animationMoveDown.to = vec2.fromValues(this.sprite.position[0], this.sprite.position[0] + 200);
-			const animationWait = new Animation(this.sprite, 'position', 'easeInOutBack', 4, 'wait', 2);
-			const animationMoveRight = new Animation(this.sprite, 'position', 'easeInOutBack', 4, 'animate', 0);
-			animationMoveRight.from = vec2.fromValues(this.sprite.position[0], this.sprite.position[0] + 200);
-			animationMoveRight.to = vec2.fromValues(this.sprite.position[0] + 300, this.sprite.position[0] + 200);
-			const animationWaitLonger = new Animation(this.sprite, 'position', 'easeInOutBack', 4, 'wait', 0);
-			const animationScaleDown = new Animation(this.sprite, 'scale', 'easeInOutBack', 4, 'animate', 0);
-			animationScaleDown.from = vec2.fromValues(this.sprite.scale[0], this.sprite.scale[1]);
-			animationScaleDown.to = vec2.fromValues(this.sprite.scale[0] * 0.5, this.sprite.scale[1] * 0.5);
-			const fadeout = new Animation(this.sprite, 'alpha', 'easeInOutBack', 4, 'animate', 5);
-			fadeout.from = 1;
-			fadeout.to = 1;
-
-			const colorAnimate = new Animation(this.sprite, 'color', 'easeInOutBack', 4, 'animate', 5);
-			colorAnimate.from = vec3.fromValues(1,1,1);
-			colorAnimate.to = vec3.fromValues(1, 0.5, 0);
-
-			const rotate = new Animation(this.sprite, 'angle', 'easeInOutBack', 4, 'animate', 0);
-			rotate.from = 90 * DEG_TO_RAD;
-			rotate.to = 135 * DEG_TO_RAD;
-
-			const rotate2 = new Animation(this.sprite, 'angle', 'easeInOutBack', 4, 'animate', 0);
-			rotate2.from = 45 * DEG_TO_RAD;
-			rotate2.to = 90 * DEG_TO_RAD;
-
-			this.overlay.startAnimation([
-				animationMoveDown,
-				animationWait,
-				animationMoveRight,
-				animationWaitLonger,
-				animationScaleDown,
-				fadeout,
-				colorAnimate,
-				rotate
-			]);
-
-			this.overlay.startAnimation([
-				rotate2
-			]);
-		});
+		this.sprite = sprite;*/		
 	
 	}
 
