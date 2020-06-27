@@ -137,12 +137,18 @@ export class Renderer {
 			 gapInPixels: 45,
 			style: 'tilted',
 			lineWidth: 1200,
-			lineHeight: 60 });
+			lineHeight: 60,
+		textAppearAnimation: 'one-by-one',
+		animationSpeed: 100,
+		delay: 0.25 });
 		this.overlay.currentLayout.addText(text);
 		text.setText('I was born amidst the purple waterfalls I was weak yet not unblessed dead for the ' +
 		'world alive for the journey one night I dreamt a white rose whithering A newborn drowning a lifetime loneliness I dreamt all my future relived my past and witnessed the beauty of the beast where have all the feelings gone why has all the laughter ceased')
 		text.setScale(vec2.fromValues(0.22, 0.22));
 		text.setPosition(vec2.fromValues(75, 50));
+		text.hide();
+		text.show();
+
 
 		/*const x = 0;
 		const y = 0;

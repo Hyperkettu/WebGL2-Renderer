@@ -59,20 +59,32 @@ export class AnimationSystem {
         const animations = this.animationSequences;
 
         for(let animationSequence of animations) {
-            if(animationSequence[0].type === 'wait') {
+
+            const animation = animationSequence[0];
+
+            if(!animation) {
+                this.animationSequences.splice(this.animationSequences.indexOf(animationSequence, 1));
+                continue;
+            }
+
+            if(animation.type === 'wait') {
                 this.pendingAnimationSequences[animationSequence[0].id] = animationSequence;
                 this.animationSequences.splice(this.animationSequences.indexOf(animationSequence), 1);
                 const waiting = async () => {
-                    await math.wait(animationSequence[0].duration * 1000);
+                    await math.wait(animation.duration * 1000);
                     animationSequence.shift();
                     this.animationSequences.push(animationSequence);
                     delete this.pendingAnimationSequences[animationSequence[0].id];
                 }; 
                 waiting();
             } else {
-                const animationReady = animationSequence[0].animate(dt);
+                const animationReady = animation.animate(dt);
                 if(animationReady) {
+                    if(animation.animationEndCallback) {
+                        animation.animationEndCallback();
+                    }
                     animationSequence.shift();
+
                     if(animationSequence.length === 0) {
                         this.animationSequences.splice(this.animationSequences.indexOf(animationSequence), 1);
                     }
@@ -101,6 +113,14 @@ export class Animation {
         this.delay = delay;
 
         this.easeFunction = this.getEasing(easing);
+    }
+
+    setEndCallback(callback: () => void) {
+        this.animationEndCallback = callback;
+    }
+
+    setStartCallback(callback: () => void) {
+        this.animationStartCallback = callback;
     }
 
     getEasing(easing: Easing) {
@@ -139,12 +159,19 @@ export class Animation {
 
         this.time += dt;
 
-        const t = math.clamp((this.time - this.delay) / this.duration, 0, 1);
+        const animateTime = this.time - this.delay;
+
+        if(animateTime > 0 && this.animationStartCallback) {
+            this.animationStartCallback();
+            this.animationStartCallback = null;
+        }
+
+        const t = math.clamp( animateTime / this.duration, 0, 1);
         const animator = getAnimator[this.target];
         this.value = animator(this.from, this.to, t, this.easeFunction);
         this.setValue();
                     
-        return (this.time - this.delay) >= this.duration;
+        return animateTime >= this.duration;
     }
 
     setFrom(from: number[]) {
@@ -181,4 +208,7 @@ export class Animation {
     delay: number;
     time: number;
     element: Sprite | Container;
+
+    animationStartCallback: () => void;
+    animationEndCallback: () => void;
 }

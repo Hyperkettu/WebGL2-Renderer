@@ -4,6 +4,9 @@ import { Sprite } from "../sprite";
 import { Container } from "../container";
 import { Overlay } from "../overlay";
 import * as math from '../../util/math';
+import { Animation } from "../animationsystem";
+
+export type TextAnimation = 'none' | 'bounce' | 'one-by-one';
 
 export interface AtlasTextSettings {
     gapInPixels: number;
@@ -11,6 +14,9 @@ export interface AtlasTextSettings {
     style: 'normal' | 'tilted';
     lineWidth: number;
     lineHeight: number;
+    textAppearAnimation: TextAnimation;
+    animationSpeed?: number;
+    delay?: number;
 }
 
 export class Text {
@@ -26,6 +32,59 @@ export class Text {
         this.overlay.stage.root.addChild(this.container);
         this.lineWidth = settings?.lineWidth;
         this.lineHeight = settings?.lineHeight;
+        this.textAppearAnimation = settings?.textAppearAnimation;
+        this.animationSpeed = settings?.animationSpeed;
+        this.delay = settings?.delay;
+    }
+
+    show() {
+        if(this.textAppearAnimation === 'bounce') {
+            this.appearTextBounceAnimation();
+        } else if(this.textAppearAnimation === 'one-by-one') {
+            this.appearTextOneByOne();
+        } else if(this.textAppearAnimation === 'none') {
+            this.sprites.forEach(sprite => sprite.setAlpha(1));
+        }
+    }
+
+    private appearTextOneByOne() {
+        const animations: Animation[] = [];
+
+        this.sprites.forEach(sprite => {
+            const animation = new Animation(sprite, 'alpha', 'easeInOutCubic', this.delay, 'animate', 0);
+            animation.setFrom([0]);
+            animation.setTo([1]);
+            animations.push(animation);
+        });
+
+        this.overlay.startAnimation(animations);
+    }
+
+    private appearTextBounceAnimation() {
+        const animations: Animation[] = [];
+        let animation: Animation = null;
+        let delay = 0;
+        this.sprites.forEach(sprite => {
+            const duration = 100 / this.animationSpeed;
+            animation = new Animation(sprite, 'position', 'easeOutBounce', duration , 'animate', delay);
+            animation.setTo([sprite.position[0], sprite.position[1]]);
+            animation.setFrom([ sprite.position[0], sprite.position[1] - 200 ]);
+            delay += (duration * this.delay);
+
+            animation.setStartCallback(() => {
+                sprite.setAlpha(1);
+            });
+
+            this.overlay.startAnimation([animation]);
+        });
+
+        this.overlay.startAnimation(animations);
+    }
+
+    hide() {
+        this.sprites.forEach(sprite => {
+            sprite.setAlpha(0);
+        });
     }
 
     setPosition(position: vec2) {
@@ -41,7 +100,6 @@ export class Text {
     setText(text: string) {
         this.text = text;
 
-        let widthCounter = 0;
         let heightOffset = 0;
         let offsetX = 0;
 
@@ -58,13 +116,12 @@ export class Text {
             for(let i = 0; i < word.length; i++) {
                 const char = word.charAt(i);
                 const subtexture = this.atlas.subtextures[`images/${char.toUpperCase()}.png`];
-                const sprite = new Sprite('text-' + char, subtexture);
+                const sprite = new Sprite('text-' + char + index, subtexture);
                 sprite.setPosition(vec2.fromValues(offsetX, heightOffset));
                 this.container.addChild(sprite);
                 this.container.setPosition(this.position);
                 this.sprites.push(sprite);
 
-                widthCounter += this.gapBetweeenLettersInPixels;
                 offsetX += this.gapBetweeenLettersInPixels
 
                 if(this.style === 'tilted') {
@@ -95,6 +152,11 @@ export class Text {
     gapBetweeenLettersInPixels: number;
     lineWidth: number;
     lineHeight: number;
+
+    animationSpeed: number;
+    delay: number;
+
+    textAppearAnimation: TextAnimation;
 
     overlay: Overlay;
 }
