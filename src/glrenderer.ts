@@ -32,6 +32,8 @@ import { Animation } from './overlay/animationsystem';
 import { TextTexture } from './texttexture';
 import { Color } from './util/color';
 import { Subtexture, TextureCoordinate } from './subtexture';
+import { UILayout } from './overlay/ui/layout';
+import { Text } from './overlay/ui/text';
 
 export class Renderer {
 
@@ -129,9 +131,18 @@ export class Renderer {
 		//this.overlay.setAtlas(texture2);
 		//const atlas = texture.GetTexture('images/atlas.png');
 
-
-
-		console.log(texture2.width, texture2.height);
+		this.overlay.currentLayout = new UILayout(this.overlay);
+		const text = new Text(this.overlay, 
+			{ atlas: this.overlay.textureAtlas,
+			 gapInPixels: 45,
+			style: 'tilted',
+			lineWidth: 1200,
+			lineHeight: 60 });
+		this.overlay.currentLayout.addText(text);
+		text.setText('I was born amidst the purple waterfalls I was weak yet not unblessed dead for the ' +
+		'world alive for the journey one night I dreamt a white rose whithering A newborn drowning a lifetime loneliness I dreamt all my future relived my past and witnessed the beauty of the beast where have all the feelings gone why has all the laughter ceased')
+		text.setScale(vec2.fromValues(0.22, 0.22));
+		text.setPosition(vec2.fromValues(75, 50));
 
 		/*const x = 0;
 		const y = 0;
@@ -144,7 +155,7 @@ export class Renderer {
 		//subtexture.textureCoordinates[TextureCoordinate.TOP_LEFT] = vec2.fromValues(0,1);
 		//subtexture.textureCoordinates[TextureCoordinate.TOP_RIGHT] = vec2.fromValues(1,1);
 
-		const subtexture = new Subtexture(this.overlay.textureAtlas.texture, 0, 0, 1024, 1024);
+		/*const subtexture = new Subtexture(this.overlay.textureAtlas.texture, 0, 0, 1024, 1024);
 		//console.log('atlas', subtexture);
         const sprite = new Sprite('sprite', subtexture);
         this.overlay.stage.root.addChild(sprite);
@@ -163,7 +174,7 @@ export class Renderer {
         sprite2.setPosition(vec2.fromValues(window.innerWidth / 4, window.innerHeight / 4));
 		sprite2.setAnchor(0, 0);
 		sprite2.setAlpha(1);
-		console.log(sprite2, '2');
+		console.log(sprite2, '2');*/
 		//sprite2.setAngle(90 * DEG_TO_RAD);
 		//sprite2.setSize(100, 100);
 		

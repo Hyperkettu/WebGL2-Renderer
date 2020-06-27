@@ -12,10 +12,11 @@ import { OverlayCamera } from './overlaycamera';
 import * as texture from '../texturemanager';
 import { AnimationSystem, Animation } from './animationsystem';
 import { TextureAtlas } from '../textureatlas';
+import { UILayout } from './ui/layout';
  
 export class Overlay {
     
-    static SPRITE_BATCH_SIZE = 100;
+    static SPRITE_BATCH_SIZE = 3000;
 
     constructor(gl: WebGL2RenderingContext) {
         this.stage = new OverlaySceneGraph();
@@ -121,4 +122,6 @@ export class Overlay {
     camera: OverlayCamera;
 
     animationSystem: AnimationSystem;
+
+    currentLayout: UILayout;
 }
