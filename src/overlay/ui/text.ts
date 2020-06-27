@@ -99,15 +99,21 @@ export class Text extends Element {
 
         let heightOffset = 0;
         let offsetX = 0;
+        this.numLines = 0;
+        this.maxLineWidth = 0;
 
         let words = this.text.split(' ');
+
+        const lineWidths: number[] = [];
 
         for(let index = 0; index < words.length; index++) {
             const word = words[index];
 
             if(offsetX + word.length * this.gapBetweeenLettersInPixels > this.lineWidth) {
                 offsetX = 0;
+                lineWidths.push(offsetX + this.gapBetweeenLettersInPixels);
                 heightOffset += this.lineHeight;
+                this.numLines++;
             }
 
             for(let i = 0; i < word.length; i++) {
@@ -132,6 +138,16 @@ export class Text extends Element {
 
         }
 
+        for(let width of lineWidths) {
+            if(width > this.maxLineWidth) {
+                this.maxLineWidth = width;
+            }
+        }
+
+        this.maxLineWidth = Math.max(this.maxLineWidth, offsetX);
+        this.numLines = Math.max(this.numLines, 1);
+
+        console.log(this.maxLineWidth, this.numLines, this.lineHeight);
     }
 
     text: string;
@@ -147,6 +163,9 @@ export class Text extends Element {
 
     animationSpeed: number;
     delay: number;
+
+    numLines: number;
+    maxLineWidth: number;
 
     textAppearAnimation: TextAnimation;
 }

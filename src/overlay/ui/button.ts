@@ -12,9 +12,11 @@ export class Button extends Element {
         this.invWorld = mat3.create();
         this.point = vec2.create();
         this.container.setAnchor(0.5, 0.5);
-        sprite.addChild(text.container);
         this.sprite = sprite;
         this.container.addChild(sprite);
+        this.container.addChild(text.container);
+        text.setPosition(vec2.fromValues(-0.5 * text.maxLineWidth * text.scale[0], -0.5 * text.numLines * text.lineHeight * text.scale[1]));
+
         this.rect = new Rectangle(0, 0, 1, 1);
         this.isClicked = false;
     }

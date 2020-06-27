@@ -156,14 +156,13 @@ export class Renderer {
 			gapInPixels: 45, 
 			style: 'normal',
 			lineHeight: 60,
-			lineWidth: 120,
+			lineWidth: 300,
 			textAppearAnimation: 'none'
 		 });
 
 		 buttonSprite.setAnchor(0.5, 0.5);
 
 		 buttonText.setText('button');
-		 buttonText.setPosition(vec2.fromValues(0, 0));
 		 buttonText.setScale(vec2.fromValues(0.35, 0.35));
 		const button = new Button(this.overlay, buttonSprite, buttonText);
 		 this.overlay.stage.root.addChild(button.container);
