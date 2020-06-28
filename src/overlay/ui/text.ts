@@ -21,8 +21,8 @@ export interface AtlasTextSettings {
 }
 
 export class Text extends Element {
-    constructor(overlay: Overlay, settings?: AtlasTextSettings) {
-        super(overlay);
+    constructor(name: string, overlay: Overlay, settings?: AtlasTextSettings) {
+        super(name, overlay);
         this.atlas = settings ? settings.atlas : null;
         this.style = settings ? settings.style : 'normal';
         this.gapBetweeenLettersInPixels = settings?.gapInPixels;

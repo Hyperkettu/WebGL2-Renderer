@@ -7,8 +7,8 @@ import { Animation } from "../animationsystem";
 import { Text } from "./text";
 
 export class Button extends Element {
-    constructor(overlay: Overlay, sprite: Sprite, text: Text) {
-        super(overlay);
+    constructor(name: string, overlay: Overlay, sprite: Sprite, text: Text) {
+        super(name, overlay);
         this.invWorld = mat3.create();
         this.point = vec2.create();
         this.container.setAnchor(0.5, 0.5);

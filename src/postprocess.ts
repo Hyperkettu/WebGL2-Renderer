@@ -60,11 +60,11 @@ export class PostProcess {
 			this.finalScreenTexture.destroy(gl);
 		}
 
-		this.hdrBuffer = Texture.createRenderTarget(gl, gl.RGBA32F, gl.RGBA, width, height);
+		this.hdrBuffer = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height);
 		this.screenDepthTexture = DepthTexture.create(gl, width, height);
-		this.bloomTexture = Texture.createRenderTarget(gl, gl.RGBA32F, gl.RGBA, width, height);
-		this.bloomLumaTexture = Texture.createRenderTarget(gl, gl.RGBA32F, gl.RGBA, width, height);
-		this.grayScaledTexture = Texture.createRenderTarget(gl, gl.RGBA32F, gl.RGBA, width, height);
+		this.bloomTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height);
+		this.bloomLumaTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height);
+		this.grayScaledTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height);
 		this.finalScreenTexture = Texture.createRenderTarget(gl, gl.RGBA, gl.RGBA,
 			width, height, gl.UNSIGNED_BYTE, gl.LINEAR);
 

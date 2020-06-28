@@ -35,6 +35,7 @@ import { Subtexture, TextureCoordinate } from './subtexture';
 import { UILayout } from './overlay/ui/layout';
 import { Text } from './overlay/ui/text';
 import { Button } from './overlay/ui/button';
+import { Container } from './overlay/container';
 
 export class Renderer {
 
@@ -112,9 +113,6 @@ export class Renderer {
 
 		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.SELDOM, ShaderType.PBR);
 
-		//await texture.LoadTexture(this.gl, 'images/A.png');
-		//await texture.LoadTexture(this.gl, 'images/atlas.png');
-
 		const texture2 = new TextTexture();
 		texture2.generateFromCanvas(this.gl, 'Testi', {
 			family: 'Verdana',
@@ -128,12 +126,10 @@ export class Renderer {
 		});
 
 		await this.overlay.textureAtlas.loadFromJson(this.gl, 'images/atlas.json', this);
-		//this.overlay.setAtlas(atlas);
-		//this.overlay.setAtlas(texture2);
-		//const atlas = texture.GetTexture('images/atlas.png');
 
-		this.overlay.currentLayout = new UILayout(this.overlay);
-		const text = new Text(this.overlay, 
+		this.overlay.currentLayout = new UILayout(this, this.overlay, vec2.fromValues(800, 720));
+		
+		const text = new Text('nightwish', this.overlay, 
 			{ atlas: this.overlay.textureAtlas,
 			 gapInPixels: 45,
 			style: 'tilted',
@@ -142,16 +138,16 @@ export class Renderer {
 		textAppearAnimation: 'one-by-one',
 		animationSpeed: 100,
 		delay: 0.25 });
-		this.overlay.currentLayout.addText(text);
 		text.setText('I was born amidst the purple waterfalls I was weak yet not unblessed dead for the ' +
 		'world alive for the journey one night I dreamt a white rose whithering A newborn drowning a lifetime loneliness I dreamt all my future relived my past and witnessed the beauty of the beast where have all the feelings gone why has all the laughter ceased')
 		text.setScale(vec2.fromValues(0.22, 0.22));
 		text.setPosition(vec2.fromValues(75, 50));
+		this.overlay.currentLayout.addElement(text);
 		text.hide();
 		text.show();
 
 		const buttonSprite = new Sprite('buttonSprite', this.overlay.textureAtlas.subtextures['images/button_bg.png']);
-		const buttonText = new Text(this.overlay, { 
+		const buttonText = new Text('mytext', this.overlay, { 
 			atlas: this.overlay.textureAtlas,
 			gapInPixels: 45, 
 			style: 'normal',
@@ -165,16 +161,16 @@ export class Renderer {
 		 buttonText.setText('button');
 		 buttonText.setScale(vec2.fromValues(0.35, 0.35));
 		
-		 const button = new Button(this.overlay, buttonSprite, buttonText);
-		 this.overlay.stage.root.addChild(button.container);
-		 button.setPosition(vec2.fromValues(window.innerWidth * 0.75, 0.5 * window.innerHeight));
+		 const button = new Button('myButton', this.overlay, buttonSprite, buttonText);
+		 button.setPosition(vec2.fromValues(0.5 * 800, 0.5 * 720));
 		 button.onClick((x,y) => {
-			 console.log(x,y);
+			 text.hide();
+			 text.show();
 		 });
 
-		 button.setScale(vec2.fromValues(0.5, 0.5));
+		 button.setScale(vec2.fromValues(1, 1));
 
-		 console.log(buttonSprite, 'buttons', button);
+		 this.overlay.currentLayout.addElement(button);
 
 		/*const x = 0;
 		const y = 0;
@@ -268,6 +264,8 @@ export class Renderer {
 	render(scene: Scene, time: number, dt: number) {
 
 		this.resetCounter();
+
+		this.overlay.currentLayout.resize(vec2.fromValues(window.innerWidth, window.innerHeight));
 
 		for (let index = 0; index < PointLight.NUM_LIGHTS; index++) {
 			scene.pointLights[index].shadowMap.render(this, index + 1);
