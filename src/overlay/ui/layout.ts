@@ -20,6 +20,7 @@ export function get(name: string) {
 
 export type ElementDataType = 'button' | 'text' | 'sprite';
 export type ElementType = Element | Button | Text;
+export type ClickHandler = (x: number, y: number) => boolean;
 
 export interface LayoutFile {
     logicalSize: vec2;
@@ -74,6 +75,9 @@ export class UILayout {
         this.children = [];
         this.root = new Container('root');
 
+        this.clickHandlers = [];
+        this.releaseClickHandlers = [];
+
         this.size = vec2.create();
         const size = vec2.fromValues(window.innerWidth, window.innerHeight);
         this.resize(size);
@@ -101,7 +105,11 @@ export class UILayout {
     async event(name: string, settings: { instant: boolean } = { instant: false }) {
 
         const event = this.events[name];
-        const actions = event.actions;
+        const actions: string[] = [];
+
+        for(let action of event.actions){
+            actions.push(action);
+        }
 
         while(actions.length > 0) {
 
@@ -139,6 +147,15 @@ export class UILayout {
         animation.setFrom(data.from);
         animation.setTo(data.to);
         return animation;
+    }
+
+    static async loadLayouts(renderer: Renderer, filePaths: string[]) {
+        const promises: Promise<void>[] = [];
+        for(let filePath of filePaths) {
+            promises.push(UILayout.loadFromFile(renderer, filePath));
+        }
+
+        await Promise.all(promises);
     }
 
     static async loadFromFile(renderer: Renderer, fileName: string) {
@@ -194,7 +211,7 @@ export class UILayout {
     }
 
     createButton(data: ButtonData, sprite: Sprite, text: Text) {
-        const button = new Button(data.name, this.overlay, sprite, text);
+        const button = new Button(data.name, this.overlay, sprite, text, this);
         button.setPosition(data.position);
         button.setScale(data.scale);
         button.setRotation(data.rotation);
@@ -213,7 +230,7 @@ export class UILayout {
     }
 
     createUISprite(data: SpriteData) {
-        const sprite = new UISprite(data.name, this.overlay, { 
+        const sprite = new UISprite(data.name, this.overlay, this, { 
             path: data.path
         });
         sprite.setPosition(data.position);
@@ -227,7 +244,7 @@ export class UILayout {
 
     createText(data: TextData) {
         
-        const text = new Text(data.name, this.overlay, { 
+        const text = new Text(data.name, this.overlay, this, { 
 			atlas: this.overlay.textureAtlas,
 			gapInPixels: data.atlasText.letterWidth, 
 			style: data.atlasText.letterStyle,
@@ -304,6 +321,9 @@ export class UILayout {
     }
 
     renderer: Renderer;
+
+    clickHandlers: ClickHandler[];
+    releaseClickHandlers: ClickHandler[];
 
     size: vec2;
 

@@ -6,15 +6,15 @@ import { Overlay } from "../overlay";
 import * as math from '../../util/math';
 import { Animation } from "../animationsystem";
 import { Element } from "./element";
-import { TextData, SpriteData } from "./layout";
+import { TextData, SpriteData, UILayout } from "./layout";
 
 export interface SpriteSettings {
     path: string;
 }
 
 export class UISprite extends Element {
-    constructor(name: string, overlay: Overlay, settings?: SpriteSettings) {
-        super(name, overlay);
+    constructor(name: string, overlay: Overlay, layout: UILayout, settings?: SpriteSettings) {
+        super(name, overlay, layout);
         this.sprite = new Sprite(name, overlay.textureAtlas.subtextures[settings?.path]);
         this.container.addChild(this.sprite);
     }

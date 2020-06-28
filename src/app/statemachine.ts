@@ -1,20 +1,30 @@
+import { Renderer } from "../glrenderer";
 
-interface Size {
+export interface Size {
 	x: number;
 	y: number;
 }
 
+export interface StateSettings {
+	renderer: Renderer;
+	mouseMoveCamera: boolean;
+}
+
 export abstract class State {
 
-	constructor(name: string) {
+	constructor(name: string, settings: StateSettings) {
 		this.name = name;
 		this.ready = false;
+		this.settings = settings;
 	}
 
 	public abstract enter(fsm: StateMachine, from?: State);
 	public abstract exit(fsm: StateMachine, to?: State);
 	public abstract postExit(fsm: StateMachine);
 	public abstract update(dt: number, time: number, inputDt: number);
+	public abstract enableInput(fsm: StateMachine);
+	public abstract disableInput(fsm: StateMachine);
+	public abstract handleInput(dt: number, keys: { [id: string]: boolean });
 	public abstract onResize(size: Size);
 
 	public getName() {
@@ -25,6 +35,7 @@ export abstract class State {
 	ready: boolean;
 
 	private name: string;
+	public settings: StateSettings;
 }
 
 

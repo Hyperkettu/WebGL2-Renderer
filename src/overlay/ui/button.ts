@@ -5,11 +5,11 @@ import { Sprite } from "../sprite";
 import { vec2, mat3 } from "gl-matrix";
 import { Animation } from "../animationsystem";
 import { Text } from "./text";
-import { ButtonData } from "./layout";
+import { ButtonData, UILayout } from "./layout";
 
 export class Button extends Element {
-    constructor(name: string, overlay: Overlay, sprite: Sprite, text: Text) {
-        super(name, overlay);
+    constructor(name: string, overlay: Overlay, sprite: Sprite, text: Text, layout: UILayout) {
+        super(name, overlay, layout);
         this.invWorld = mat3.create();
         this.point = vec2.create();
         this.container.setAnchor(0.5, 0.5);
@@ -24,28 +24,29 @@ export class Button extends Element {
     }
 
     onClick(callback: (x: number, y: number) => void) {
-        addEventListener('mousedown', event => {
-            const x = event.x;
-            const y = window.innerHeight - event.y;
 
+        this.layout.clickHandlers.push((x: number, y: number ) => {
             vec2.set(this.point,  x, y);
-
             mat3.invert(this.invWorld, this.sprite.worldTransform);
             vec2.transformMat3(this.point, this.point, this.invWorld);
-            
+            console.log(this.point);
             if(!this.isClicked && this.rect.containsPoint(this.point)) {
                 this.isClicked = true;
                 this.click();
                 callback(x, y);
+                return this.isClicked;
             }
+            return false;
         });
-        addEventListener('mouseup', event => {
+
+        this.layout.releaseClickHandlers.push((x: number, y: number) => {
             if(this.isClicked) {
                 this.isClicked = false;
                 this.release();
+                return true;
             }
-        });
-
+            return false;
+        })
     }
 
     click() {

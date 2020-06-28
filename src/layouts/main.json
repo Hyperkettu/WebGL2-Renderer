@@ -5,65 +5,43 @@
     },
     "atlasFile": "images/atlas.json",
     "events": {
-        "enter": {
-            "name": "enter",
-            "actions": [
-                "enter-1"
-            ]
-        },
         "exit": {
             "name": "exit",
             "actions": [
-                "exit-1"
+                "fadeOutAll"
+            ]
+        },
+        "enter": {
+            "name": "enter",
+            "actions": [
+                "fadeInAll"
             ]
         }
     },
     "actions": [
         {
-            "animationName": "enter-1",
-            "elementName": "myButton",
-            "target": "position", 
+            "animationName": "fadeOutAll",
+            "elementName": "root",
+            "target": "alpha", 
             "easing": "easeInOutCubic", 
-            "duration": 1.5, 
+            "duration": 3, 
             "type": "animate", 
             "delay": 0,
-            "from": [1300, 25],
-            "to": [670, 25]       
+            "from": [1],
+            "to": [0]       
         },
         {
-            "animationName": "enter-1",
-            "elementName": "nightwish",
-            "target": "position", 
+            "animationName": "fadeInAll",
+            "elementName": "root",
+            "target": "alpha", 
             "easing": "easeInOutCubic", 
-            "duration": 1.5, 
+            "duration": 3, 
             "type": "animate", 
             "delay": 0,
-            "from": [ -500, 50],
-            "to": [75, 50]       
-        },
-        {
-            "animationName": "exit-1",
-            "elementName": "myButton",
-            "target": "position", 
-            "easing": "easeInOutCubic", 
-            "duration": 1.5, 
-            "type": "animate", 
-            "delay": 0,
-            "from": [ 670, 25],
-            "to": [1300, 25]       
-        },
-        {
-            "animationName": "exit-1",
-            "elementName": "nightwish",
-            "target": "position", 
-            "easing": "easeInOutCubic", 
-            "duration": 1.5, 
-            "type": "animate", 
-            "delay": 0,
-            "from": [ 75, 50],
-            "to": [-500, 50]       
+            "from": [0],
+            "to": [1]       
         }
-    ],
+    ],  
     "elements": [
         {
             "name": "nightwish",
@@ -88,10 +66,10 @@
         },
         {
             "type": "button",
-            "name": "myButton",
+            "name": "MainButton",
             "position": {
-                "0": 670,
-                "1": 25
+                "0": 400,
+                "1": 360
             },
             "rotation": 0,
             "scale": {
@@ -109,7 +87,7 @@
                     "0": 0.3499999940395355,
                     "1": 0.3499999940395355
                 },
-                "text": "plus",
+                "text": "main menu",
                 "type": "text",
                 "atlasText": {
                     "letterStyle": "normal",

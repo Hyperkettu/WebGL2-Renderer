@@ -124,6 +124,9 @@ export class Overlay {
                 this.currentLayout.event('exit', { instant: true });
                 this.stage.root.addChild(this.currentLayout.root);
                 await this.currentLayout.event('enter');
+            } else {
+                this.currentLayout = layout;
+                this.stage.root.addChild(this.currentLayout.root);
             }
         } else {
             if(this.currentLayout) {

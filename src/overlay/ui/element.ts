@@ -4,14 +4,14 @@ import { Overlay } from "../overlay";
 import * as layout from './layout';
 
 export class Element {
-    constructor(name: string, overlay: Overlay, parent?: Element) {
+    constructor(name: string, overlay: Overlay, layout: layout.UILayout, parent?: Element) {
         this.name = name;
         this.overlay = overlay;
         this.position = vec2.create();
         this.scale = vec2.fromValues(1, 1);
         this.rotation = 0;
         this.container = new Container('container');
-      
+        this.layout = layout;
 
 
         this.parent = parent;
@@ -89,4 +89,6 @@ export class Element {
 
     parent: Element;
     children: Element[];
+
+    layout: layout.UILayout;
 }

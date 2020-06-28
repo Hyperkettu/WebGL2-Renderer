@@ -6,7 +6,7 @@ import { Overlay } from "../overlay";
 import * as math from '../../util/math';
 import { Animation } from "../animationsystem";
 import { Element } from "./element";
-import { TextData } from "./layout";
+import { TextData, UILayout } from "./layout";
 
 export type TextAnimation = 'none' | 'bounce' | 'one-by-one';
 
@@ -22,8 +22,8 @@ export interface AtlasTextSettings {
 }
 
 export class Text extends Element {
-    constructor(name: string, overlay: Overlay, settings?: AtlasTextSettings) {
-        super(name, overlay);
+    constructor(name: string, overlay: Overlay, layout: UILayout, settings?: AtlasTextSettings) {
+        super(name, overlay, layout);
         this.atlas = settings ? settings.atlas : null;
         this.style = settings ? settings.style : 'normal';
         this.gapBetweeenLettersInPixels = settings?.gapInPixels;

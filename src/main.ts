@@ -4,7 +4,13 @@ let app: Application = null;
 
 export async function main() {
 
-	app = new Application({ initSceneFilePath: 'scenes/testscene.json' });
+	app = new Application({ 
+		initSceneFilePath: 'scenes/testscene.json', 
+		mainMenuLayout: 'layouts/main.json',
+		layouts: [
+			'layouts/settings.json'
+		]
+	});
 	await app.init();
 	app.start();
 

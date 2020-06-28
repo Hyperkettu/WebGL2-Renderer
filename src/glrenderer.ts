@@ -91,11 +91,11 @@ export class Renderer {
 
 	sprite: Sprite;
 
-	async Load(scenePaths: string[]) {
+	async Load(resources: {scenePaths: string[], layouts: string[] }) {
 
 		await mesh.LoadMeshes(this.gl);
 		this.currentScene = new TestScene('test-scene', this);
-		await this.currentScene.initScene(this, scenePaths[0]);
+		await this.currentScene.initScene(this, resources.scenePaths[0]);
 
 		shader.LoadShaders(this.gl);
 
@@ -127,9 +127,11 @@ export class Renderer {
 			strokeThickness: 3.5
 		});
 
-		await UILayout.loadFromFile(this, 'layouts/testi2.json');
-		await UILayout.loadFromFile(this, 'layouts/testi.json');
-		const layoutInstance = layout.get('layouts/testi.json');
+		await UILayout.loadLayouts(this, resources.layouts);
+
+		//await UILayout.loadFromFile(this, 'layouts/testi2.json');
+		//await UILayout.loadFromFile(this, 'layouts/testi.json');
+		/*const layoutInstance = layout.get('layouts/testi.json');
 		this.overlay.setAsCurrent(layoutInstance);
 		const button = layoutInstance.find('myButton') as Button;
 		button.onClick((x,y) => {
@@ -144,7 +146,7 @@ export class Renderer {
 				children: []
 			});
 			this.overlay.setAsCurrent(layout.get('layouts/testi2.json'), true)
-		});
+		});*/
 
 		/*this.overlay.currentLayout = new UILayout(this, this.overlay, vec2.fromValues(800, 720));
 		
@@ -218,6 +220,10 @@ export class Renderer {
 
 		this.sprite = sprite;*/		
 	
+	}
+
+	getLayout(layoutPath: string) {
+		return layout.get(layoutPath);
 	}
 
 	getContext() {

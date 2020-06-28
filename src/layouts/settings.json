@@ -1,0 +1,161 @@
+{
+    "logicalSize": {
+        "0": 800,
+        "1": 720
+    },
+    "atlasFile": "images/atlas.json",
+    "events": {
+        "enter": {
+            "name": "enter",
+            "actions": [
+                "enter-1"
+            ]
+        },
+        "exit": {
+            "name": "exit",
+            "actions": [
+                "exit-1"
+            ]
+        }
+    },
+    "actions": [
+        {
+            "animationName": "enter-1",
+            "elementName": "myButton",
+            "target": "position", 
+            "easing": "easeInOutCubic", 
+            "duration": 1.5, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [1300, 25],
+            "to": [670, 25]       
+        },
+        {
+            "animationName": "enter-1",
+            "elementName": "echo",
+            "target": "position", 
+            "easing": "easeInOutCubic", 
+            "duration": 1.5, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [ -500, 50],
+            "to": [75, 50]       
+        },
+        {
+            "animationName": "exit-1",
+            "elementName": "myButton",
+            "target": "position", 
+            "easing": "easeInOutCubic", 
+            "duration": 1.5, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [ 670, 25],
+            "to": [1300, 25]       
+        },
+        {
+            "animationName": "exit-1",
+            "elementName": "echo",
+            "target": "position", 
+            "easing": "easeInOutCubic", 
+            "duration": 1.5, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [ 75, 50],
+            "to": [-500, 50]       
+        }
+    ],
+    "elements": [
+        {
+            "name": "echo",
+            "position": {
+                "0": 75,
+                "1": 50
+            },
+            "rotation": 0,
+            "scale": {
+                "0": 0.2199999988079071,
+                "1": 0.2199999988079071
+            },
+            "text": "here I go again",
+            "type": "text",
+            "atlasText": {
+                "letterStyle": "tilted",
+                "letterWidth": 45,
+                "letterHeight": 60,
+                "lineWidth": 1200,
+                "textAppearAnimation": "one-by-one"
+            }
+        },
+        {
+            "type": "button",
+            "name": "myButton",
+            "position": {
+                "0": 670,
+                "1": 25
+            },
+            "rotation": 0,
+            "scale": {
+                "0": 1,
+                "1": 1
+            },
+            "textData": {
+                "name": "mytext",
+                "position": {
+                    "0": -55.125,
+                    "1": -10.5
+                },
+                "rotation": 0,
+                "scale": {
+                    "0": 0.3499999940395355,
+                    "1": 0.3499999940395355
+                },
+                "text": "settings",
+                "type": "text",
+                "atlasText": {
+                    "letterStyle": "normal",
+                    "letterWidth": 45,
+                    "letterHeight": 60,
+                    "lineWidth": 315,
+                    "textAppearAnimation": "none"
+                }
+            },
+            "spriteData": {
+                "name": "buttonSprite",
+                "path": "images/button_bg.png",
+                "position": {
+                    "0": 0,
+                    "1": 0
+                },
+                "rotation": 0,
+                "scale": {
+                    "0": 1,
+                    "1": 1
+                },
+                "type": "sprite",
+                "anchor": {
+                    "0": 0.5,
+                    "1": 0.5
+                }
+            }
+        },
+        {
+            "name": "spraitti",
+            "position": {
+                "0": 100,
+                "1": 620
+            },
+            "rotation": 0.7853981633974483,
+            "scale": {
+                "0": 1.3333333730697632,
+                "1": 1.3333333730697632
+            },
+            "type": "sprite",
+            "path": "images/O.png",
+            "anchor": {
+                "0": 0.5,
+                "1": 0.5
+            },
+            "children": []
+        }
+    ]
+}
