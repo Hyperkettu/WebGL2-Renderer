@@ -9,9 +9,10 @@ export enum TextureCoordinate {
 }
 
 export class Subtexture {
-    constructor(texture: Texture, x: number, y: number, width: number, height: number) {
+    constructor(path: string, texture: Texture, x: number, y: number, width: number, height: number) {
         this.texture = texture;
         this.textureCoordinates = [];
+        this.path = path;
 
         for(let index = 0; index < 4; index++) {
             this.textureCoordinates[index] = vec2.create();
@@ -41,6 +42,7 @@ export class Subtexture {
         this.height = height;
     }
  
+    path: string;
     texture: Texture;
     width: number; 
     height: number;

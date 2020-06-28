@@ -6,6 +6,7 @@ import { Overlay } from "../overlay";
 import * as math from '../../util/math';
 import { Animation } from "../animationsystem";
 import { Element } from "./element";
+import { TextData } from "./layout";
 
 export type TextAnimation = 'none' | 'bounce' | 'one-by-one';
 
@@ -148,6 +149,25 @@ export class Text extends Element {
         this.numLines = Math.max(this.numLines, 1);
 
         console.log(this.maxLineWidth, this.numLines, this.lineHeight);
+    }
+
+    toJson() {
+        const data: TextData = {
+            name: this.name,
+            position: this.position,
+            rotation: this.rotation,
+            scale: this.scale,
+            text: this.text,
+            type: 'text',
+            atlasText: {
+                letterStyle: this.style,
+                letterWidth: this.gapBetweeenLettersInPixels,
+                letterHeight: this.lineHeight,
+                lineWidth: this.maxLineWidth,
+                textAppearAnimation: this.textAppearAnimation
+            }
+        };
+        return data;
     }
 
     text: string;

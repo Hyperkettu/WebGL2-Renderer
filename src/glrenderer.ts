@@ -36,6 +36,7 @@ import { UILayout } from './overlay/ui/layout';
 import { Text } from './overlay/ui/text';
 import { Button } from './overlay/ui/button';
 import { Container } from './overlay/container';
+import * as layout from './overlay/ui/layout';
 
 export class Renderer {
 
@@ -125,9 +126,15 @@ export class Renderer {
 			strokeThickness: 3.5
 		});
 
-		await this.overlay.textureAtlas.loadFromJson(this.gl, 'images/atlas.json', this);
+		await UILayout.loadFromFile(this, 'layouts/testi.json');
+		const layoutInstance = layout.get('layouts/testi.json');
+		this.overlay.setAsCurrent(layoutInstance);
+		const button = layoutInstance.find('myButton') as Button;
+		button.onClick((x,y) => {
+			console.log(layoutInstance.toJson());
+		});
 
-		this.overlay.currentLayout = new UILayout(this, this.overlay, vec2.fromValues(800, 720));
+		/*this.overlay.currentLayout = new UILayout(this, this.overlay, vec2.fromValues(800, 720));
 		
 		const text = new Text('nightwish', this.overlay, 
 			{ atlas: this.overlay.textureAtlas,
@@ -166,11 +173,12 @@ export class Renderer {
 		 button.onClick((x,y) => {
 			 text.hide();
 			 text.show();
+			 console.log(this.overlay.currentLayout.toJson());
 		 });
 
 		 button.setScale(vec2.fromValues(1, 1));
 
-		 this.overlay.currentLayout.addElement(button);
+		 this.overlay.currentLayout.addElement(button);*/
 
 		/*const x = 0;
 		const y = 0;

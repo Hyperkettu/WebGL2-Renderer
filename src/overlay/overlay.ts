@@ -114,6 +114,10 @@ export class Overlay {
         gl.bindVertexArray(null);
     }
 
+    setAsCurrent(layout: UILayout) {
+        this.currentLayout = layout;
+    }
+
     textureAtlas: TextureAtlas;
     sprites: Sprite[];
     stage: OverlaySceneGraph;

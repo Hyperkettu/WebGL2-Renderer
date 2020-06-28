@@ -5,6 +5,7 @@ import { Sprite } from "../sprite";
 import { vec2, mat3 } from "gl-matrix";
 import { Animation } from "../animationsystem";
 import { Text } from "./text";
+import { ButtonData } from "./layout";
 
 export class Button extends Element {
     constructor(name: string, overlay: Overlay, sprite: Sprite, text: Text) {
@@ -13,6 +14,7 @@ export class Button extends Element {
         this.point = vec2.create();
         this.container.setAnchor(0.5, 0.5);
         this.sprite = sprite;
+        this.text = text;
         this.container.addChild(sprite);
         this.container.addChild(text.container);
         text.setPosition(vec2.fromValues(-0.5 * text.maxLineWidth * text.scale[0], -0.5 * text.numLines * text.lineHeight * text.scale[1]));
@@ -60,6 +62,28 @@ export class Button extends Element {
         const releaseScale = this.scale[0];
         animation.setTo([releaseScale, releaseScale]);
         this.overlay.animationSystem.startAnimation([animation]);
+    }
+
+    toJson() {
+        const data: ButtonData = {
+            type: 'button',
+            name: this.name,
+            position: this.position,
+            rotation: this.rotation,
+            scale: this.scale,
+            textData: this.text.toJson(),
+            spriteData: {
+                name: this.sprite.name,
+                path: this.sprite.texture.path,
+                position: this.sprite.position,
+                rotation: this.sprite.angle,
+                scale: this.sprite.scale,
+                type: 'sprite',
+                anchor: this.sprite.anchor,
+            }
+        };
+
+        return data;
     }
 
     invWorld: mat3;

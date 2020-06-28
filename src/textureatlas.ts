@@ -71,7 +71,7 @@ export class TextureAtlas {
         for(let subtextureData of this.atlasData.subtextures) {
             
             const tex = texture.GetTexture(subtextureData.path);
-            const wholeTexture = new Subtexture(tex, 0, 0, tex.width, tex.height);
+            const wholeTexture = new Subtexture(subtextureData.path, tex, 0, 0, tex.width, tex.height);
             const sprite = new Sprite('temporary', wholeTexture);
             const bottomLeftPos = subtextureData.textureCoordinates[TextureCoordinate.BOTTOM_LEFT];
             const toprightPos = subtextureData.textureCoordinates[TextureCoordinate.TOP_RIGHT];
@@ -82,7 +82,7 @@ export class TextureAtlas {
 
             const topleftPos = subtextureData.textureCoordinates[TextureCoordinate.TOP_LEFT];
 
-            this.subtextures[subtextureData.path] = new Subtexture(this.renderTexture, topleftPos.x, topleftPos.y,
+            this.subtextures[subtextureData.path] = new Subtexture(subtextureData.path, this.renderTexture, topleftPos.x, topleftPos.y,
                 toprightPos.x - bottomLeftPos.x, bottomLeftPos.y - toprightPos.y);
         }
 

@@ -1,0 +1,82 @@
+{
+    "logicalSize": {
+        "0": 800,
+        "1": 720
+    },
+    "atlasFile": "images/atlas.json",
+    "elements": [
+        {
+            "name": "nightwish",
+            "position": {
+                "0": 75,
+                "1": 50
+            },
+            "rotation": 0,
+            "scale": {
+                "0": 0.2199999988079071,
+                "1": 0.2199999988079071
+            },
+            "text": "I was born amidst the purple waterfalls I was weak yet not unblessed dead for the world alive for the journey one night I dreamt a white rose whithering A newborn drowning a lifetime loneliness I dreamt all my future relived my past and witnessed the beauty of the beast where have all the feelings gone why has all the laughter ceased",
+            "type": "text",
+            "atlasText": {
+                "letterStyle": "tilted",
+                "letterWidth": 45,
+                "letterHeight": 60,
+                "lineWidth": 1080,
+                "textAppearAnimation": "one-by-one"
+            }
+        },
+        {
+            "type": "button",
+            "name": "myButton",
+            "position": {
+                "0": 400,
+                "1": 360
+            },
+            "rotation": 0,
+            "scale": {
+                "0": 1,
+                "1": 1
+            },
+            "textData": {
+                "name": "mytext",
+                "position": {
+                    "0": -55.125,
+                    "1": -10.5
+                },
+                "rotation": 0,
+                "scale": {
+                    "0": 0.3499999940395355,
+                    "1": 0.3499999940395355
+                },
+                "text": "button",
+                "type": "text",
+                "atlasText": {
+                    "letterStyle": "normal",
+                    "letterWidth": 45,
+                    "letterHeight": 60,
+                    "lineWidth": 315,
+                    "textAppearAnimation": "none"
+                }
+            },
+            "spriteData": {
+                "name": "buttonSprite",
+                "path": "images/button_bg.png",
+                "position": {
+                    "0": 0,
+                    "1": 0
+                },
+                "rotation": 0,
+                "scale": {
+                    "0": 1,
+                    "1": 1
+                },
+                "type": "sprite",
+                "anchor": {
+                    "0": 0.5,
+                    "1": 0.5
+                }
+            }
+        }
+    ]
+}

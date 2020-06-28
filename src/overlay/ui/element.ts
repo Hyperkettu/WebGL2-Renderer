@@ -1,10 +1,7 @@
 import { vec2 } from "gl-matrix";
 import { Container } from "../container";
 import { Overlay } from "../overlay";
-
-export interface ElementData {
-    parentAlign?: vec2;
-}
+import * as layout from './layout';
 
 export class Element {
     constructor(name: string, overlay: Overlay, parent?: Element) {
@@ -12,7 +9,7 @@ export class Element {
         this.overlay = overlay;
         this.position = vec2.create();
         this.scale = vec2.fromValues(1, 1);
-        this.angle = 0;
+        this.rotation = 0;
         this.container = new Container('container');
       
 
@@ -24,12 +21,12 @@ export class Element {
         this.children = [];
     }
 
-    recurse(name: string, element: Element): Element {
+    recurse<T extends Element>(name: string, element: Element) {
         for(let child of element.children) {
             if(child.name === name) {
                 return child;
             }
-            const element = this.recurse(name, child);
+            const element = this.recurse(name, child) as T;
             if(element) {
                 return element;
             }
@@ -38,8 +35,8 @@ export class Element {
         return undefined;
     }
 
-    find(name: string): Element {
-        return this.recurse(name, this);
+    find<T extends Element>(name: string) {
+        return this.recurse(name, this) as T;
     }
 
     setPosition(position: vec2) {
@@ -53,7 +50,7 @@ export class Element {
     }
 
     setRotation(angle: number) {
-        this.angle = angle;
+        this.rotation = angle;
     }
 
     addChild(element: Element) {
@@ -61,11 +58,26 @@ export class Element {
         this.container.addChild(element.container);
     }
 
+    toJson(): layout.ElementData {
+        const data: layout.ElementData = {
+            name: this.name,
+            position: this.position,
+            rotation: this.rotation,
+            scale: this.scale,
+            type: 'text',
+            children: []
+        };
+
+        for(let child of this.children) {
+            data.children.push(child.toJson());
+        }
+        return data;
+    }
+
     name: string;
 
     container: Container;
 
-    angle: number;
     position: vec2;
     scale: vec2;
     rotation: number;
