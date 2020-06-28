@@ -4,6 +4,44 @@
         "1": 720
     },
     "atlasFile": "images/atlas.json",
+    "events": {
+        "exit": {
+            "name": "exit",
+            "actions": [
+                "fadeOutAll"
+            ]
+        },
+        "enter": {
+            "name": "enter",
+            "actions": [
+                "fadeInAll"
+            ]
+        }
+    },
+    "actions": [
+        {
+            "animationName": "fadeOutAll",
+            "elementName": "root",
+            "target": "alpha", 
+            "easing": "easeInOutCubic", 
+            "duration": 3, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [1],
+            "to": [0]       
+        },
+        {
+            "animationName": "fadeInAll",
+            "elementName": "root",
+            "target": "alpha", 
+            "easing": "easeInOutCubic", 
+            "duration": 3, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [0],
+            "to": [1]       
+        }
+    ],  
     "elements": [
         {
             "name": "nightwish",

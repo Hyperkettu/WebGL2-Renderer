@@ -49,13 +49,13 @@ export class Text extends Element {
         const animations: Animation[] = [];
 
         this.sprites.forEach(sprite => {
-            const animation = new Animation(sprite, 'alpha', 'easeInOutCubic', this.delay, 'animate', 0);
+            const animation = new Animation('text-appear-one-by-one', sprite, 'alpha', 'easeInOutCubic', this.delay, 'animate', 0);
             animation.setFrom([0]);
             animation.setTo([1]);
             animations.push(animation);
         });
 
-        this.overlay.startAnimation(animations);
+        this.overlay.startAnimation(animations, false);
     }
 
     private appearTextBounceAnimation() {
@@ -64,7 +64,7 @@ export class Text extends Element {
         let delay = 0;
         this.sprites.forEach(sprite => {
             const duration = 100 / this.animationSpeed;
-            animation = new Animation(sprite, 'position', 'easeOutBounce', duration , 'animate', delay);
+            animation = new Animation('text-appear', sprite, 'position', 'easeOutBounce', duration , 'animate', delay);
             animation.setTo([sprite.position[0], sprite.position[1]]);
             animation.setFrom([ sprite.position[0], sprite.position[1] - 200 ]);
             delay += (duration * this.delay);
@@ -73,10 +73,10 @@ export class Text extends Element {
                 sprite.setAlpha(1);
             });
 
-            this.overlay.startAnimation([animation]);
+            this.overlay.startAnimation([animation], false);
         });
 
-        this.overlay.startAnimation(animations);
+        this.overlay.startAnimation(animations, false);
     }
 
     hide() {

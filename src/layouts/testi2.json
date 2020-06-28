@@ -4,6 +4,66 @@
         "1": 720
     },
     "atlasFile": "images/atlas.json",
+    "events": {
+        "enter": {
+            "name": "enter",
+            "actions": [
+                "enter-1"
+            ]
+        },
+        "exit": {
+            "name": "exit",
+            "actions": [
+                "exit-1"
+            ]
+        }
+    },
+    "actions": [
+        {
+            "animationName": "enter-1",
+            "elementName": "myButton",
+            "target": "position", 
+            "easing": "easeInOutCubic", 
+            "duration": 1.5, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [1300, 25],
+            "to": [670, 25]       
+        },
+        {
+            "animationName": "enter-1",
+            "elementName": "nightwish",
+            "target": "position", 
+            "easing": "easeInOutCubic", 
+            "duration": 1.5, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [ -500, 50],
+            "to": [75, 50]       
+        },
+        {
+            "animationName": "exit-1",
+            "elementName": "myButton",
+            "target": "position", 
+            "easing": "easeInOutCubic", 
+            "duration": 1.5, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [ 670, 25],
+            "to": [1300, 25]       
+        },
+        {
+            "animationName": "exit-1",
+            "elementName": "nightwish",
+            "target": "position", 
+            "easing": "easeInOutCubic", 
+            "duration": 1.5, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [ 75, 50],
+            "to": [-500, 50]       
+        }
+    ],
     "elements": [
         {
             "name": "nightwish",

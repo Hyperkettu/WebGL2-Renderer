@@ -49,19 +49,19 @@ export class Button extends Element {
     }
 
     click() {
-        const animation = new Animation(this.container, 'scale', 'easeInOutCubic', 0.3, 'animate', 0);
+        const animation = new Animation('click', this.container, 'scale', 'easeInOutCubic', 0.3, 'animate', 0);
         animation.setFrom([this.container.scale[0], this.container.scale[1]]);
         const clickedScale = 0.8;
         animation.setTo([this.container.scale[0] * clickedScale, this.container.scale[1] * clickedScale]);
-        this.overlay.animationSystem.startAnimation([animation]);
+        this.overlay.animationSystem.startAnimation([animation], false);
     }
 
     release() {
-        const animation = new Animation(this.container, 'scale', 'easeInOutCubic', 0.15, 'animate', 0);
+        const animation = new Animation('unclick', this.container, 'scale', 'easeInOutCubic', 0.15, 'animate', 0);
         animation.setFrom([this.container.scale[0], this.container.scale[1]]);
         const releaseScale = this.scale[0];
         animation.setTo([releaseScale, releaseScale]);
-        this.overlay.animationSystem.startAnimation([animation]);
+        this.overlay.animationSystem.startAnimation([animation], false);
     }
 
     toJson() {

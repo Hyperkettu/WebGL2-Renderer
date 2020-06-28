@@ -4,6 +4,17 @@ import * as math from '../util/math';
 import * as ease from '../util/easing';
 import { vec2, vec3 } from 'gl-matrix';
 
+export interface AnimationData {
+    animationName: string;
+    elementName: string;
+    target: AnimationTarget; 
+    easing: Easing; 
+    duration: number; 
+    type: 'animate' | 'wait'; 
+    delay: number;
+    from: number[];
+    to: number[];       
+}
 
 export type AnimationTarget = 'position' | 'angle' | 'scale' | 'alpha' | 'color';
 export type Variable = vec3 | vec2 | number;
@@ -49,7 +60,15 @@ export class AnimationSystem {
         setTarget['color'] = 'setTintColor';
     }
 
-    startAnimation(animationSequence: Animation[]) {
+    startAnimation(animationSequence: Animation[], instant: boolean) {
+        
+        if(instant) {
+            for(let animation of animationSequence) {
+                animation.value = animation.to;
+                animation.setValue();
+            }
+            return;
+        }
         this.animationSequences.push(animationSequence);
         Animation.STARTED_ANIMATION_NUMBER++;
     }
@@ -103,7 +122,8 @@ export class Animation {
 
     static STARTED_ANIMATION_NUMBER = 0;
 
-    constructor(element: Sprite | Container, target: AnimationTarget, easing: Easing, duration: number, type: 'animate' | 'wait', delay: number) {
+    constructor(name: string, element: Sprite | Container, target: AnimationTarget, easing: Easing, duration: number, type: 'animate' | 'wait', delay: number) {
+        this.name = name;
         this.element = element;
         this.time = 0;
         this.duration = duration;
@@ -194,6 +214,7 @@ export class Animation {
         }
     }
 
+    name: string;
     id: number;
     from: Variable;
     to: Variable;

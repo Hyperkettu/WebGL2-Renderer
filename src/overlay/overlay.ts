@@ -57,8 +57,8 @@ export class Overlay {
         this.textureAtlas.generateJson();
     }
 
-    startAnimation(animationSequence: Animation[]) {
-        this.animationSystem.startAnimation(animationSequence);
+    startAnimation(animationSequence: Animation[], instant: boolean) {
+        this.animationSystem.startAnimation(animationSequence, instant);
     }
 
     setAtlas(texture: Texture) {
@@ -115,24 +115,15 @@ export class Overlay {
         gl.bindVertexArray(null);
     }
 
-    setAsCurrent(layout: UILayout, animate: boolean = false) {
+   async setAsCurrent(layout: UILayout, animate: boolean = false) {
         if(animate) {
             if(this.currentLayout) {
-                layout.root.setAlpha(0);
-                const animationFadeOut = new Animation(this.currentLayout.root, 'alpha', 'easeInOutCubic', 3, 'animate', 0);
-                animationFadeOut.setFrom([1]);
-                animationFadeOut.setTo([0]);
-                animationFadeOut.setEndCallback(() => {
-                    this.stage.root.removeChild(this.currentLayout.root);
-                    this.currentLayout = layout;
-                    this.stage.root.addChild(this.currentLayout.root);            
-                    const animationFadeIn = new Animation(this.currentLayout.root, 'alpha', 'easeInOutCubic', 3, 'animate', 0);
-                    animationFadeIn.setFrom([0]);
-                    animationFadeIn.setTo([1]);
-                    this.startAnimation([animationFadeIn])
-                });
-
-                this.startAnimation([animationFadeOut]);
+                await this.currentLayout.event('exit');
+                this.stage.root.removeChild(this.currentLayout.root);
+                this.currentLayout = layout;
+                this.currentLayout.event('exit', { instant: true });
+                this.stage.root.addChild(this.currentLayout.root);
+                await this.currentLayout.event('enter');
             }
         } else {
             if(this.currentLayout) {

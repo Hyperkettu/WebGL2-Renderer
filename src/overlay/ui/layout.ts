@@ -10,6 +10,7 @@ import * as resource from "../../resource";
 import * as textelement from './text';
 import { Sprite } from "../sprite";
 import { UISprite } from "./sprite";
+import { AnimationData, Animation } from "../animationsystem";
 
 const layouts: { [name: string]: UILayout } = {};
 
@@ -24,6 +25,8 @@ export interface LayoutFile {
     logicalSize: vec2;
     atlasFile: string;
     elements?: ElementData[];
+    actions: AnimationData[];
+    events: { [ name: string ]: EventData };
 }
 
 export interface ElementData {
@@ -58,7 +61,10 @@ export interface AtlasTextData {
     textAppearAnimation: textelement.TextAnimation;
 }
 
-
+export interface EventData {
+    name: string; 
+    actions: string[];
+}
 
 export class UILayout {
     constructor(renderer: Renderer, overlay: Overlay, logicalSize: vec2) {
@@ -67,7 +73,6 @@ export class UILayout {
         this.logicalSize = logicalSize;
         this.children = [];
         this.root = new Container('root');
-//        this.overlay.stage.root.addChild(this.root);
 
         this.size = vec2.create();
         const size = vec2.fromValues(window.innerWidth, window.innerHeight);
@@ -75,10 +80,74 @@ export class UILayout {
 
     }
 
+    async runAnimation(elementName: string, animationName: string, settings: { instant: boolean }) {
+        let animationData: AnimationData = null;
+        for(let animation of this.animations) {
+            if(elementName === animation.elementName && animationName === animation.animationName) {
+                animationData = animation;
+            }
+        }
+ 
+        const promise =  new Promise<void>(resolve => {
+            const animation = this.createAnimation(animationData);
+            animation.setEndCallback(() => {
+                resolve();
+            });
+            this.overlay.startAnimation([animation], settings.instant);
+        });
+        await promise;
+    }
+
+    async event(name: string, settings: { instant: boolean } = { instant: false }) {
+
+        const event = this.events[name];
+        const actions = event.actions;
+
+        while(actions.length > 0) {
+
+            const action = actions.shift();
+            const animationDatas: AnimationData[] = [];
+            for(let data of this.animations) {
+                if(data.animationName === action) {
+                    animationDatas.push(data);
+                }
+            }
+
+            const promises: Promise<void>[] = [];
+
+            for(let animationData of animationDatas) {
+                const promise =  new Promise<void>(resolve => {
+                    const animation = this.createAnimation(animationData);
+                    animation.setEndCallback(() => {
+                        resolve();
+                    });
+                    this.overlay.startAnimation([animation], settings?.instant);
+                    if(settings?.instant) {
+                        resolve();
+                    }
+                });
+                promises.push(promise);
+            }
+            await Promise.all(promises);
+        }
+        
+    }
+
+    createAnimation(data: AnimationData) {
+        const animation = new Animation(data.animationName, this.find(data.elementName).container, 
+        data.target, data.easing, data.duration, data.type, data.delay);
+        animation.setFrom(data.from);
+        animation.setTo(data.to);
+        return animation;
+    }
+
     static async loadFromFile(renderer: Renderer, fileName: string) {
         const file: LayoutFile = await resource.loadFile<LayoutFile>(fileName);
         const layout = new UILayout(renderer, renderer.overlay, file.logicalSize);
         await renderer.overlay.textureAtlas.loadFromJson(renderer.gl, file.atlasFile, renderer);
+
+        layout.events = file.events;
+        layout.animations = file.actions;
 
         for(let elementData of file.elements) {
             let element: ElementType = null;
@@ -110,7 +179,9 @@ export class UILayout {
 
         const fileData: LayoutFile = { 
             logicalSize: this.logicalSize,
-            atlasFile: 'images/atlas.json'
+            atlasFile: 'images/atlas.json',
+            actions: this.animations,
+            events: this.events
          };
 
          fileData.elements = [];
@@ -183,6 +254,13 @@ export class UILayout {
     }
     
     find<T extends Element>(name: string) {
+
+        if(name === 'root') {
+            const element = new Element('root', this.overlay, null);
+            element.container = this.root;
+            return element;
+        }
+
         for(let child of this.children) {
             if(child.name === name) {
                 return child;
@@ -234,4 +312,7 @@ export class UILayout {
     root: Container;
     logicalSize: vec2;
     overlay: Overlay;
+
+    animations: AnimationData[];
+    events: { [name: string]: EventData };
 }
