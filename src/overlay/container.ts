@@ -1,10 +1,12 @@
 import { vec2, vec3, mat3 } from 'gl-matrix';
+import { threadId } from 'worker_threads';
 
 export class Container {
     constructor(name: string) {
         this.position = vec2.create();
         this.angle = 0;
         this.alpha = 1;
+        this.totalAlpha = 1;
         this.pivot = vec2.create();
         this.invPivot = vec2.create();
         this.anchor = vec2.create();
@@ -74,6 +76,10 @@ export class Container {
         this.enabled = enabled;
     }
 
+    updateAlpha(parentAlpha: number) {
+        this.totalAlpha = this.alpha * parentAlpha;
+    }
+
     updateWorldTransform(parentWorldTransform: mat3, updateWorldTransform: boolean) {
 
 		this.localTransformUpdated = this.updateLocalTransform();
@@ -107,6 +113,7 @@ export class Container {
     anchor: vec2;
     
     alpha: number;
+    totalAlpha: number;
 
     parent: Container;
 	children: Container[];

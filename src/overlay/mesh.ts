@@ -47,7 +47,7 @@ export class OverlayMesh {
                 this.vao.vertexBuffer.floatArray[baseIndex + 4] = sprite.tintColor[0];
                 this.vao.vertexBuffer.floatArray[baseIndex + 5] = sprite.tintColor[1];
                 this.vao.vertexBuffer.floatArray[baseIndex + 6] = sprite.tintColor[2];
-                this.vao.vertexBuffer.floatArray[baseIndex + 7] = sprite.alpha;
+                this.vao.vertexBuffer.floatArray[baseIndex + 7] = sprite.totalAlpha;
 
                 this.vao.vertexBuffer.floatArray[baseIndex + 8] = sprite.worldTransform[0];
                 this.vao.vertexBuffer.floatArray[baseIndex + 9] = sprite.worldTransform[1];

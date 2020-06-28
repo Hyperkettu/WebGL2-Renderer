@@ -143,7 +143,7 @@ export class Renderer {
 				anchor: vec2.fromValues(0.5, 0.5),
 				children: []
 			});
-			this.overlay.setAsCurrent(layout.get('layouts/testi2.json'))
+			this.overlay.setAsCurrent(layout.get('layouts/testi2.json'), true)
 		});
 
 		/*this.overlay.currentLayout = new UILayout(this, this.overlay, vec2.fromValues(800, 720));

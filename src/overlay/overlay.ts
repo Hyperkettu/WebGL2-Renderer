@@ -94,6 +94,7 @@ export class Overlay {
         this.sprites = [];
         this.stage.forEach((node, worldTransform, transformUpdated) => {
             const updated = node.updateWorldTransform(worldTransform, transformUpdated);
+            node.updateAlpha(node.parent ? node.parent?.totalAlpha : 1)
             if(node instanceof Sprite) {
                 this.sprites.push(node);
             }
@@ -114,13 +115,35 @@ export class Overlay {
         gl.bindVertexArray(null);
     }
 
-    setAsCurrent(layout: UILayout) {
-        if(this.currentLayout) {
-            this.stage.root.removeChild(layout.root);
+    setAsCurrent(layout: UILayout, animate: boolean = false) {
+        if(animate) {
+            if(this.currentLayout) {
+                layout.root.setAlpha(0);
+                const animationFadeOut = new Animation(this.currentLayout.root, 'alpha', 'easeInOutCubic', 3, 'animate', 0);
+                animationFadeOut.setFrom([1]);
+                animationFadeOut.setTo([0]);
+                animationFadeOut.setEndCallback(() => {
+                    this.stage.root.removeChild(this.currentLayout.root);
+                    this.currentLayout = layout;
+                    this.stage.root.addChild(this.currentLayout.root);            
+                    const animationFadeIn = new Animation(this.currentLayout.root, 'alpha', 'easeInOutCubic', 3, 'animate', 0);
+                    animationFadeIn.setFrom([0]);
+                    animationFadeIn.setTo([1]);
+                    this.startAnimation([animationFadeIn])
+                });
+
+                this.startAnimation([animationFadeOut]);
+            }
+        } else {
+            if(this.currentLayout) {
+                this.stage.root.removeChild(this.currentLayout.root);
+            }
+            this.currentLayout = layout;
+            this.stage.root.addChild(this.currentLayout.root);
+       
         }
-        this.currentLayout = layout;
-        this.stage.root.addChild(this.currentLayout.root);
-    }
+        
+       }
 
     textureAtlas: TextureAtlas;
     sprites: Sprite[];
