@@ -9,6 +9,7 @@ import * as math from '../../util/math';
 import * as resource from "../../resource";
 import * as textelement from './text';
 import { Sprite } from "../sprite";
+import { UISprite } from "./sprite";
 
 const layouts: { [name: string]: UILayout } = {};
 
@@ -66,7 +67,7 @@ export class UILayout {
         this.logicalSize = logicalSize;
         this.children = [];
         this.root = new Container('root');
-        this.overlay.stage.root.addChild(this.root);
+//        this.overlay.stage.root.addChild(this.root);
 
         this.size = vec2.create();
         const size = vec2.fromValues(window.innerWidth, window.innerHeight);
@@ -92,6 +93,9 @@ export class UILayout {
                 case 'text':
                     element = layout.createText(elementData as TextData);
                     break;
+                    case 'sprite':
+                        element = layout.createUISprite(elementData as SpriteData);
+                        break;
                 default: 
                     break;
             }
@@ -133,6 +137,19 @@ export class UILayout {
         sprite.setAngle(data.rotation);
         if(data.anchor) {
             sprite.setAnchor(data.anchor[0], data.anchor[1]);
+        }
+        return sprite;
+    }
+
+    createUISprite(data: SpriteData) {
+        const sprite = new UISprite(data.name, this.overlay, { 
+            path: data.path
+        });
+        sprite.setPosition(data.position);
+        sprite.setScale(data.scale);
+        sprite.setRotation(data.rotation);
+        if(data.anchor) {
+            sprite.setAnchor(data.anchor);
         }
         return sprite;
     }

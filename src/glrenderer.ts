@@ -37,6 +37,7 @@ import { Text } from './overlay/ui/text';
 import { Button } from './overlay/ui/button';
 import { Container } from './overlay/container';
 import * as layout from './overlay/ui/layout';
+import { maxHeaderSize } from 'http';
 
 export class Renderer {
 
@@ -126,12 +127,23 @@ export class Renderer {
 			strokeThickness: 3.5
 		});
 
+		await UILayout.loadFromFile(this, 'layouts/testi2.json');
 		await UILayout.loadFromFile(this, 'layouts/testi.json');
 		const layoutInstance = layout.get('layouts/testi.json');
 		this.overlay.setAsCurrent(layoutInstance);
 		const button = layoutInstance.find('myButton') as Button;
 		button.onClick((x,y) => {
-			console.log(layoutInstance.toJson());
+			const spr = layoutInstance.createUISprite({
+				name: 'spraitti',
+				path: 'images/O.png',
+				position: vec2.fromValues(100, 620),
+				scale: vec2.fromValues(100 / 75, 100/ 75),
+				rotation: DEG_TO_RAD * 45,
+				type: 'sprite',
+				anchor: vec2.fromValues(0.5, 0.5),
+				children: []
+			});
+			this.overlay.setAsCurrent(layout.get('layouts/testi2.json'))
 		});
 
 		/*this.overlay.currentLayout = new UILayout(this, this.overlay, vec2.fromValues(800, 720));

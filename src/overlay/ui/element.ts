@@ -51,6 +51,7 @@ export class Element {
 
     setRotation(angle: number) {
         this.rotation = angle;
+        this.container.setAngle(this.rotation);
     }
 
     addChild(element: Element) {

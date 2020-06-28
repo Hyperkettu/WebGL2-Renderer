@@ -115,7 +115,11 @@ export class Overlay {
     }
 
     setAsCurrent(layout: UILayout) {
+        if(this.currentLayout) {
+            this.stage.root.removeChild(layout.root);
+        }
         this.currentLayout = layout;
+        this.stage.root.addChild(this.currentLayout.root);
     }
 
     textureAtlas: TextureAtlas;
