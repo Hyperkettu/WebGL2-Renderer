@@ -95,6 +95,10 @@ export class Text extends Element {
         this.container.setScale(this.scale);
     }
 
+    getContentSize() {
+        return vec2.fromValues(this.maxLineWidth, this.numLines * this.lineHeight);
+    }
+
     setText(text: string) {
         this.text = text;
 

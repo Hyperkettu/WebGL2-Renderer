@@ -39,6 +39,12 @@ export class Element {
         return this.recurse(name, this) as T;
     }
 
+    setAnchor(anchor: vec2) {
+        this.anchor = anchor;
+        this.container.setAnchor(anchor[0], anchor[0]);
+        this.container.setPivot(this.anchor[0] * this.contentSize[0], this.anchor[1] * this.contentSize[1]);
+    }
+
     setPosition(position: vec2) {
         this.position = position;
         this.container.setPosition(this.position);
@@ -52,6 +58,14 @@ export class Element {
     setRotation(angle: number) {
         this.rotation = angle;
         this.container.setAngle(this.rotation);
+    }
+
+    getContentSize() {
+        return this.contentSize;
+    }
+
+    setContentSize(size: vec2) {
+        this.contentSize = size;
     }
 
     addChild(element: Element) {
@@ -79,9 +93,13 @@ export class Element {
 
     container: Container;
 
+    contentSize: vec2;
+
     position: vec2;
     scale: vec2;
     rotation: number;
+
+    anchor: vec2;
 
     parentAlign: vec2;
     

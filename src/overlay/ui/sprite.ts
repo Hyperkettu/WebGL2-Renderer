@@ -23,6 +23,10 @@ export class UISprite extends Element {
         return this.sprite.size;
     }
 
+    getContentSize() {
+        return vec2.fromValues(this.sprite.texture.width, this.sprite.texture.height);
+    }
+
     setAnchor(anchor: vec2) {
         this.anchor = anchor;
         this.sprite.setAnchor(anchor[0], anchor[1]);

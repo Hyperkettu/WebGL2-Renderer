@@ -50,7 +50,7 @@ export class Overlay {
             'images/U.png',
             'images/W.png',
             'images/V.png',
-            'images/Z.png',
+            'images/X.png',
             'images/Y.png',
             'images/Z.png'
         ]);

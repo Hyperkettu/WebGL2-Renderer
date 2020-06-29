@@ -23,6 +23,10 @@ export class Button extends Element {
         this.isClicked = false;
     }
 
+    getContentSize() {
+        return this.sprite.size;
+    }
+
     onClick(callback: (x: number, y: number) => void) {
 
         this.layout.clickHandlers.push((x: number, y: number ) => {

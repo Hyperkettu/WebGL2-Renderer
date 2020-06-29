@@ -11,6 +11,8 @@ import * as textelement from './text';
 import { Sprite } from "../sprite";
 import { UISprite } from "./sprite";
 import { AnimationData, Animation } from "../animationsystem";
+import { Grid } from "./grid";
+import { RSA_PKCS1_OAEP_PADDING } from "constants";
 
 const layouts: { [name: string]: UILayout } = {};
 
@@ -18,7 +20,7 @@ export function get(name: string) {
     return layouts[name];
 }
 
-export type ElementDataType = 'button' | 'text' | 'sprite';
+export type ElementDataType = 'button' | 'text' | 'sprite' | 'grid';
 export type ElementType = Element | Button | Text;
 export type ClickHandler = (x: number, y: number) => boolean;
 
@@ -38,6 +40,7 @@ export interface ElementData {
     anchor?: vec2;
     type: ElementDataType;
     children?: ElementData[];
+    contentSize?: vec2;
 }
 
 export interface ButtonData extends ElementData {
@@ -52,6 +55,10 @@ export interface TextData extends ElementData {
 
 export interface SpriteData extends ElementData {
     path: string;
+}
+
+export interface GridData extends ElementData {
+
 }
 
 export interface AtlasTextData {
@@ -182,6 +189,10 @@ export class UILayout {
                     case 'sprite':
                         element = layout.createUISprite(elementData as SpriteData);
                         break;
+                    case 'grid':
+                      element = layout.createGrid(elementData as GridData);
+                    
+                         break;
                 default: 
                     break;
             }
@@ -264,6 +275,18 @@ export class UILayout {
          
          return text;
     } 
+
+    createGrid(data: GridData) {
+        const grid = new Grid(data.name, this.overlay, this);
+        grid.setPosition(data.position);
+        grid.setRotation(data.rotation);
+        grid.setScale(data.scale);
+        grid.setContentSize(data.contentSize);
+        if(data.anchor) {
+            grid.setAnchor(data.anchor);
+        }
+        return grid;
+    }
 
     addElement<T extends Element>(element: T) {
         this.root.addChild(element.container);
