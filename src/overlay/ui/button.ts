@@ -33,7 +33,6 @@ export class Button extends Element {
             if(!this.isClicked && this.rect.containsPoint(this.point)) {
                 this.isClicked = true;
                 this.click();
-                callback(x, y);
                 return this.isClicked;
             }
             return false;
@@ -43,6 +42,7 @@ export class Button extends Element {
             if(this.isClicked) {
                 this.isClicked = false;
                 this.release();
+                callback(x, y);
                 return true;
             }
             return false;
