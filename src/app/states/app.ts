@@ -108,9 +108,14 @@ export class Application {
             this.keyUp(event.key);
         });
 
+        document.addEventListener('keypress', event => {
+            if(this.currentState) {
+                this.currentState.handleKeyPress(event.key);
+            }
+        });
+
         document.addEventListener('mousedown', event => {
             const settings = this.currentState.settings as MenuSettings;
-            console.log(settings.layout.clickHandlers.length);
             for(let onClick of settings.layout.clickHandlers){
                 if(onClick(event.x, event.y)) {
                     return; 

@@ -29,7 +29,6 @@ export class Button extends Element {
             vec2.set(this.point,  x, y);
             mat3.invert(this.invWorld, this.sprite.worldTransform);
             vec2.transformMat3(this.point, this.point, this.invWorld);
-            console.log(this.point);
             if(!this.isClicked && this.rect.containsPoint(this.point)) {
                 this.isClicked = true;
                 this.click();

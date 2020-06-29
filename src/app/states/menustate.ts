@@ -18,29 +18,16 @@ export abstract class MenuState extends State {
         this.enableInput(fsm);
     }
 
-    public handleInput(dt: number, keys: { [id: string]: boolean }) {
-
-    }
-
-
-	public enableInput(fsm: StateMachine) {
-
-    }
-	public disableInput(fsm: StateMachine) {
-        
-    }
-
     public exit(fsm: StateMachine, to?: State) {
         this.disableInput(fsm);
     }
 
-    public postExit(fsm: StateMachine) {
-    
-    }
+    public abstract handleInput(dt: number, keys: { [id: string]: boolean });
+    public abstract handleKeyPress(key: string);
+	public abstract enableInput(fsm: StateMachine);
+	public abstract disableInput(fsm: StateMachine);
 
-    public update(dt: number, time: number, inputDt: number) {
-        
-    }
-    public onResize(size: Size) {
-    }
+    public abstract postExit(fsm: StateMachine);
+    public abstract update(dt: number, time: number, inputDt: number);
+    public abstract onResize(size: Size);
 }

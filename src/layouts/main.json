@@ -40,36 +40,37 @@
             "delay": 0,
             "from": [0],
             "to": [1]       
+        },
+        {
+            "animationName": "show-menu-button",
+            "elementName": "MenuButton",
+            "target": "position", 
+            "easing": "easeInOutCubic", 
+            "duration": 1, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [-500, 55],
+            "to": [180, 55]       
+        },
+        {
+            "animationName": "hide-menu-button",
+            "elementName": "MenuButton",
+            "target": "position", 
+            "easing": "easeInOutCubic", 
+            "duration": 1, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [180, 55],
+            "to": [-500, 55]       
         }
     ],  
     "elements": [
         {
-            "name": "nightwish",
-            "position": {
-                "0": 75,
-                "1": 50
-            },
-            "rotation": 0,
-            "scale": {
-                "0": 0.2199999988079071,
-                "1": 0.2199999988079071
-            },
-            "text": "I was born amidst the purple waterfalls I was weak yet not unblessed dead for the world alive for the journey one night I dreamt a white rose whithering A newborn drowning a lifetime loneliness I dreamt all my future relived my past and witnessed the beauty of the beast where have all the feelings gone why has all the laughter ceased",
-            "type": "text",
-            "atlasText": {
-                "letterStyle": "tilted",
-                "letterWidth": 45,
-                "letterHeight": 60,
-                "lineWidth": 1200,
-                "textAppearAnimation": "one-by-one"
-            }
-        },
-        {
             "type": "button",
-            "name": "MainButton",
+            "name": "MenuButton",
             "position": {
-                "0": 400,
-                "1": 360
+                "0": 180,
+                "1": 55
             },
             "rotation": 0,
             "scale": {
@@ -87,7 +88,7 @@
                     "0": 0.3499999940395355,
                     "1": 0.3499999940395355
                 },
-                "text": "main menu",
+                "text": "Menu",
                 "type": "text",
                 "atlasText": {
                     "letterStyle": "normal",
@@ -115,25 +116,6 @@
                     "1": 0.5
                 }
             }
-        },
-        {
-            "name": "spraitti",
-            "position": {
-                "0": 100,
-                "1": 620
-            },
-            "rotation": 0.7853981633974483,
-            "scale": {
-                "0": 1.3333333730697632,
-                "1": 1.3333333730697632
-            },
-            "type": "sprite",
-            "path": "images/O.png",
-            "anchor": {
-                "0": 0.5,
-                "1": 0.5
-            },
-            "children": []
         }
     ]
 }

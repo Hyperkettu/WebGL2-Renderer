@@ -87,7 +87,6 @@ export class TextureAtlas {
         }
 
         context.renderTargetEnd();
-        console.log(viewport);
         context.setViewport(viewport);
         overlay.camera.setProjection(0.0, window.innerWidth, window.innerHeight, 0, -1.0, 1.0);
 

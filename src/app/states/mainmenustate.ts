@@ -1,5 +1,5 @@
 import { MenuState, MenuSettings } from "./menustate";
-import { StateMachine } from "../statemachine";
+import { StateMachine, Size, State } from "../statemachine";
 import { Button } from "../../overlay/ui/button";
 import { Scene } from "../../scene";
 
@@ -8,16 +8,24 @@ export interface MainMenuSettings extends MenuSettings {
 }
 
 export class MainMenuState extends MenuState {
+
     constructor(name: string, settings: MainMenuSettings) {
-        super(name, settings);
-    }
+		super(name, settings);
+		this.showMenuButton = true;
+	}
+	
+	public async enter(fsm: StateMachine, from?: State) {
+		await super.enter(fsm, from);
+		this.toggleMenu({ instant: true });
+	}
 
     public enableInput(fsm: StateMachine) {
-        const settings = this.settings as MainMenuSettings;
-        const button = settings.layout.find('MainButton') as Button;
+		const settings = this.settings as MainMenuSettings;
+		this.menuSettings = settings;
+        const button = settings.layout.find('MenuButton') as Button;
         button.onClick((x, y) => {
             fsm.set(fsm.getState('Settings'));
-        });
+		});
     }
 	public disableInput(fsm: StateMachine) {
         const settings = this.settings as MainMenuSettings;
@@ -95,5 +103,32 @@ export class MainMenuState extends MenuState {
 
 			camera.moveRight(speed * dt);
 		}
-    }
+	}
+	
+	public handleKeyPress(key: string) {
+		console.log(key);
+		if(key === 'm') {
+			this.toggleMenu({ instant: false });
+		}
+	}
+
+	public postExit(fsm: StateMachine) {
+	}
+
+	public update(dt: number, time: number, inputDt: number) {
+	}
+
+	public onResize(size: Size) {
+	}
+
+	private toggleMenu(settings: { instant: boolean }) {
+		this.showMenuButton = !this.showMenuButton;
+		if(this.showMenuButton) {
+			this.menuSettings.layout.runAnimation('MenuButton', 'show-menu-button', settings);
+		} else {
+			this.menuSettings.layout.runAnimation('MenuButton', 'hide-menu-button', settings);
+		}
+	}
+	menuSettings: MainMenuSettings;
+	showMenuButton: boolean;
 }
