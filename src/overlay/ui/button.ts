@@ -42,30 +42,35 @@ export class Button extends Element {
         });
 
         this.layout.releaseClickHandlers.push((x: number, y: number) => {
-            if(this.isClicked) {
-                this.isClicked = false;
+            if(this.isClicked && (performance.now() - this.clickTime) < 250) {
                 this.release();
                 callback(x, y);
                 return true;
+            } else {
+                this.isClicked = false;
             }
             return false;
         })
     }
 
-    click() {
-        const animation = new Animation('click', this.container, 'scale', 'easeInOutCubic', 0.3, 'animate', 0);
-        animation.setFrom([this.container.scale[0], this.container.scale[1]]);
-        const clickedScale = 0.8;
-        animation.setTo([this.container.scale[0] * clickedScale, this.container.scale[1] * clickedScale]);
-        this.overlay.animationSystem.startAnimation([animation], false);
+    async click() {
+        this.clickTime = performance.now();
     }
 
     release() {
-        const animation = new Animation('unclick', this.container, 'scale', 'easeInOutCubic', 0.15, 'animate', 0);
-        animation.setFrom([this.container.scale[0], this.container.scale[1]]);
+        const animationPress = new Animation('click', this.container, 'scale', 'easeInOutCubic', 0.35, 'animate', 0);
+        animationPress.setFrom([this.container.scale[0], this.container.scale[1]]);
+        const clickedScale = 0.8;
+        animationPress.setTo([this.container.scale[0] * clickedScale, this.container.scale[1] * clickedScale]);
+        const animationRelease = new Animation('unclick', this.container, 'scale', 'easeInOutCubic', 0.2, 'animate', 0);
+        animationRelease.setFrom([this.container.scale[0], this.container.scale[1]]);
         const releaseScale = this.scale[0];
-        animation.setTo([releaseScale, releaseScale]);
-        this.overlay.animationSystem.startAnimation([animation], false);
+        animationRelease.setTo([releaseScale, releaseScale]);
+        animationRelease.setEndCallback(() => {
+            this.isClicked = false;
+        });
+        this.overlay.animationSystem.startAnimation([animationPress, animationRelease], false);
+
     }
 
     toJson() {
@@ -89,6 +94,8 @@ export class Button extends Element {
 
         return data;
     }
+
+    clickTime: number;
 
     invWorld: mat3;
     point: vec2;
