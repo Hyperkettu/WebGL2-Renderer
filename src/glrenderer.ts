@@ -39,7 +39,6 @@ export class Renderer {
 		} else {
 			this.gl = canvas.getContext('webgl2') as any;
 
-			console.log(this.gl as WebGL2ComputeRenderingContext);
 			console.log(`Inited WebGL version ${this.gl.getParameter(this.gl.VERSION)}`);
 		}
 

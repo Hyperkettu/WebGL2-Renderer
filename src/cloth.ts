@@ -10,7 +10,7 @@ import { SceneNode } from './scenenode';
 import { Scene } from './scene';
 import { Layer } from './batchrenderer';
 import { vec3 } from "gl-matrix";
-import { Pendulum } from "./util/pendulum";
+//import { Pendulum } from "./util/pendulum";
 import * as math from './util/math';
 
 export class Cloth {
@@ -50,7 +50,7 @@ export class Cloth {
         this.node.transform.setPosition(this.spring.secondEndPosition[0], this.spring.secondEndPosition[1], this.spring.secondEndPosition[2]);
 
     }
-    pendulum: Pendulum;
+  //  pendulum: Pendulum;
     spring: Spring;
     sphere: StaticMesh;
     submesh: Submesh<Vertex>;
