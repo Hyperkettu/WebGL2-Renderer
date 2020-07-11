@@ -32,7 +32,7 @@ export class MainMenuState extends MenuState {
 
 		let index = 0;
 
-		grid.setGrid(2, 2, (x, y) => {
+		grid.setGrid(0, 0, (x, y) => {
 
 			const textElement = grid.layout.createText({
 				name: '`menu-${y}`',

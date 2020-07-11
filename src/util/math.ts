@@ -21,6 +21,26 @@ export async function wait(millis: number) {
 	return promise;
 }
 
+export function integrateEuler(y_n: vec3, derivative_Y_n: vec3, h: number) {
+	const y_n_plis_1 = vec3.create();
+	vec3.scaleAndAdd(y_n_plis_1, y_n, derivative_Y_n, h);
+	return y_n_plis_1;
+}
+
+export function integrateRungeKutta(y_n: vec3, derivative_Y_n: vec3, h: number) {
+	const k1 = derivative_Y_n;
+	const k2 = integrateEuler(y_n, k1, h * 0.5);
+	const k3 = integrateEuler(y_n, k2, h * 0.5);
+	const k4 = integrateEuler(y_n, k3, h);
+
+	const weightedSumK = vec3.create();
+	vec3.add(weightedSumK, k1, k4);
+	const k2k3 = vec3.create();
+	vec3.add(k2k3, k2, k3);
+	vec3.scaleAndAdd(weightedSumK, weightedSumK, k2k3, 2);
+	return integrateEuler(y_n, weightedSumK, h * 1/6);
+}
+
 export function getPowerOfTwo(value: number, pow?: number) {
 	let powDimension = pow || 1;
 	while(powDimension < value) {

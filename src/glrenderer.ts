@@ -19,25 +19,17 @@ import { CubeMapRenderer } from './cubemaprenderer';
 import { TestScene } from './testscene';
 import { PointLight } from './pointlight';
 import { ParticleSystem } from './particlesystem';
-import { Picker } from './raycast';
-import { wait, DEG_TO_RAD } from './util/math';
+import { wait } from './util/math';
 import { loadMaterial } from './material'; 
 import { VertexBase } from './vertex';
 import { Overlay } from './overlay/overlay';
 import { Sprite } from './overlay/sprite'; 
-import { runInThisContext } from 'vm';
 import { vec2, vec3 } from 'gl-matrix';
-import * as math from './util/math';
-import { Animation } from './overlay/animationsystem';
 import { TextTexture } from './texttexture';
 import { Color } from './util/color';
-import { Subtexture, TextureCoordinate } from './subtexture';
 import { UILayout } from './overlay/ui/layout';
-import { Text } from './overlay/ui/text';
-import { Button } from './overlay/ui/button';
-import { Container } from './overlay/container';
 import * as layout from './overlay/ui/layout';
-import { maxHeaderSize } from 'http';
+import { Cloth } from './cloth';
 
 export class Renderer {
 
@@ -46,6 +38,8 @@ export class Renderer {
 			this.gl = gl;
 		} else {
 			this.gl = canvas.getContext('webgl2') as any;
+
+			console.log(this.gl as WebGL2ComputeRenderingContext);
 			console.log(`Inited WebGL version ${this.gl.getParameter(this.gl.VERSION)}`);
 		}
 
@@ -58,38 +52,35 @@ export class Renderer {
 		this.cubeMapRenderer = new CubeMapRenderer(this.gl);
 		this.overlay = new Overlay(this.gl);
 
+		this.queryExtensions();
+
+		this.resetCounter();
+
+		ConstantBuffers.createUniformBuffers(this.gl);
+	}
+
+	queryExtensions() {
 		// use this extension to enable texture internal format gl.RG16F
 		const colorBufferExtension = this.gl.getExtension('EXT_color_buffer_float');
-
 		if (!colorBufferExtension) {
 			console.log('No color buffer extension available');
 		}
 
 		const cubemapArrayExtension = this.gl.getExtension('EXT_texture_cube_map_array');
-
 		if (!cubemapArrayExtension) {
 			console.log('No cubemap array extension');
 		}
 
 		const seamless = this.gl.getExtension('WEBGL_seamless_cube_map');
-
 		if (!seamless) {
 			console.log('No seamless cube map extension');
 		}
 
 		const tessellation = this.gl.getExtension('EXT_tessellation_shader');
-
 		if (!tessellation) {
 			console.log('No tessellation shader');
 		}
-
-		this.resetCounter();
-
-		ConstantBuffers.createUniformBuffers(this.gl);
-
 	}
-
-	sprite: Sprite;
 
 	async Load(resources: {scenePaths: string[], layouts: string[] }) {
 
@@ -128,6 +119,8 @@ export class Renderer {
 		});
 
 		await UILayout.loadLayouts(this, resources.layouts);
+
+		this.cloth = new Cloth(this.gl, this.currentScene);
 
 		//await UILayout.loadFromFile(this, 'layouts/testi2.json');
 		//await UILayout.loadFromFile(this, 'layouts/testi.json');
@@ -332,6 +325,8 @@ export class Renderer {
 		// ADD THIS BACK TO SEE BLENDMAPPED TERRAIN
 		//	this.currentScene.terrain.render(this.gl);
 
+		this.cloth.update(this.gl, dt);
+
 		this.resolveVisibility(scene);
 
 		//this.batchRenderer.sortInAscendingOrder(Layer.OPAQUE);
@@ -481,5 +476,7 @@ export class Renderer {
 	overlay: Overlay;
 
 	generatePBREnvironmentMaps: boolean = true;
+
+	cloth: Cloth;
 
 }

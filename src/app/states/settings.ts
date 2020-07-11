@@ -1,4 +1,4 @@
-import { State, StateMachine } from '../statemachine';
+import { State, StateMachine, Size } from '../statemachine';
 import * as settings from '../../settings';
 import { Renderer } from '../../glrenderer';
 import { Scene } from '../../scene';
@@ -11,6 +11,10 @@ import { Picker } from '../../raycast';
 import { Mesh } from '../../mesh';
 import { GetMesh } from '../../meshmanager';
 import { Transform } from '../../transform';
+import { getMeshVerticesWithinRadius } from '../../util/math';
+import { Vertex, VertexBase, PositionVertexType, GeneralVertexType, PositionVertex } from '../../vertex';
+import { GeometryGenerator } from '../../geometrygenerator';
+import * as mesh from '../../meshmanager';
 
 enum ColorSetting {
 	NONE = 0,
@@ -24,11 +28,13 @@ export interface SettingsParams {
 	renderer: Renderer;
 }
 
-export class SettingsState extends State {
+export class SettingsState {
 
 	constructor(params: SettingsParams) {
-		super('Settings');
+	//	super('Settings');
 		this.params = params;
+		this.selectedVertices = [];
+		this.hitPoint = vec3.create();
 	}
 
 	async enter(fsm: StateMachine, from: State) {
@@ -46,6 +52,23 @@ export class SettingsState extends State {
 
 	update(dt: number, time: number, inputDt: number) {
 		this.handleInput(inputDt);
+
+		if(this.selectedVertices.length > 0) {
+			const mesh = (this.scene.sceneGraph.find('terrain').getComponent('meshComponent') as MeshComponent<VertexBase>).mesh;
+			for(let vertex of this.selectedVertices) {
+				if(vec3.distance(vertex.position, this.hitPoint) < this.pickerRadius) {
+					const direction = vec3.create(); 
+					vec3.sub(direction, vertex.position, this.hitPoint);
+					vec3.normalize(direction, direction);
+					vec3.scaleAndAdd(vertex.position, this.hitPoint, direction, this.pickerRadius);
+					mesh.updateVertices(this.params.renderer.gl, mesh.vertices);
+				}
+
+			}
+			GeometryGenerator.ComputeNormals(mesh.vertices as PositionVertexType[], mesh.indices);
+			GeometryGenerator.ComputeTangents(mesh.vertices as GeneralVertexType[], mesh.indices);
+			this.selectedVertices = [];
+		}
 
 		this.fps++;
 
@@ -233,10 +256,10 @@ export class SettingsState extends State {
 
 		if (this.keys['m']) {
 			// 'sphere'
-			const mesh = this.scene.terrain.terrain; //this.scene.sceneGraph.find('terrainNode').getComponent('meshComponent') as MeshComponent;
+			const mesh = this.scene.terrain.terrain.getSubmesh('terrain'); //this.scene.sceneGraph.find('terrainNode').getComponent('meshComponent') as MeshComponent;
 			mesh.displacementFactor += 1.0 * dt;
 		} else if (this.keys['n']) {
-			const mesh = this.scene.terrain.terrain;
+			const mesh = this.scene.terrain.terrain.getSubmesh('terrain');
 			mesh.displacementFactor -= 1.0 * dt;
 
 			if (mesh.displacementFactor < 0) {
@@ -246,32 +269,73 @@ export class SettingsState extends State {
 
 		if (this.keys['z']) {
 			// 'sphere'
-			const meshComponent = this.scene.sceneGraph.find('sphere').getComponent('meshComponent') as MeshComponent;
+			const meshComponent = this.scene.sceneGraph.find('sphere').getComponent<MeshComponent<VertexBase>>('meshComponent');
 			meshComponent.mesh.displacementFactor += 1.0 * dt;
 		} else if (this.keys['x']) {
-			const meshComponent = this.scene.sceneGraph.find('sphere').getComponent('meshComponent') as MeshComponent;
+			const meshComponent = this.scene.sceneGraph.find('sphere').getComponent<MeshComponent<VertexBase>>('meshComponent')
 			meshComponent.mesh.displacementFactor -= 1.0 * dt;
 
 			if (meshComponent.mesh.displacementFactor < 0) {
 				meshComponent.mesh.displacementFactor = 0;
 			}
 		}
+
+		if(this.keys['v']) {
+			this.pickerRadius -= 3.0*dt;
+		}
+
+		if(this.keys['b']){
+			this.pickerRadius += 3.0 * dt;
+		}
+
+		if(this.keys['Escape']) {
+			this.selectedVertices = [];
+			this.hitPoint = vec3.create();
+		}
+
+		if(this.keys['Shift']) {
+		//	console.log('picker radius: ', this.pickerRadius);
+		
+			const mesh = this.scene.sceneGraph.find('terrain').getComponent<MeshComponent<VertexBase>>('meshComponent').mesh;
+			GeometryGenerator.ComputeNormals(mesh.vertices as PositionVertexType[], mesh.indices);
+			GeometryGenerator.ComputeTangents(mesh.vertices as GeneralVertexType[], mesh.indices);
+			console.log(JSON.stringify(mesh.vertices));
+		}
 	}
 
-	onResize(size: { x: number, y: number }) {
+	onResize(size: Size) {
 
 	}
 
 	enableInput(fsm: StateMachine) {
+		const m = this.scene.sceneGraph.find('terrain').getComponent<MeshComponent<VertexBase>>('meshComponent');
+
+		document.addEventListener('mousedown', event => {
+		/*	if(this.selectedVertices.length > 0) return;
+				const camera = this.params.renderer.getCurrentCamera();
+				const svp = this.params.renderer.context.screenViewPort;
+				const picker = new Picker(svp, 'closest');
+				const info = picker.castRay(camera, event.x, svp.height - event.y, this.scene.sceneGraph);
+				if (info.hit) {
+					this.selectedVertices = getMeshVerticesWithinRadius(info.hitPoint, this.pickerRadius, mesh.GetMesh(m.mesh.meshName));
+					if(this.hitPoint[0] === 0) {
+						this.hitPoint = info.hitPoint;
+						this.hitPoint[1] = this.deepness;
+					}
+					m.mesh.updateVertices(this.params.renderer.gl, m.mesh.vertices);
+				}*/
+		});
 
 		document.addEventListener('mouseup', event => {
-			const camera = this.params.renderer.getCurrentCamera();
-			const svp = this.params.renderer.context.screenViewPort;
-			const picker = new Picker(svp, 'closest');
-			const info = picker.castRay(camera, event.x, svp.height - event.y, this.scene.sceneGraph);
-			console.log(info);
-			if (info.hit) {
-			//	info.hitObject.enabled = false;
+			if(this.selectedVertices.length > 0) {
+				this.selectedVertices = [];
+				const numSections = 96;
+				const dimension = 0.2;
+					//	GeometryGenerator.computeTangentAndNormal(i, j, mesh.vertices, numSections, dimension);
+				//GeometryGenerator.ComputeNormals(mesh.vertices, mesh.indices);
+				//GeometryGenerator.ComputeTangents(mesh.vertices, mesh.indices);
+
+				m.mesh.updateVertices(this.params.renderer.gl, m.mesh.vertices);
 			}
 		});
 
@@ -442,7 +506,7 @@ export class SettingsState extends State {
 			} else if (event.key === '7') {
 				settings.setEnabledDebugWireframe(!settings.debugWireFrame);
 				//	(this.scene.sceneGraph.find('terrainNode').getComponent('meshComponent') as MeshComponent).mesh.wireFrame = settings.debugWireFrame;
-				this.scene.terrain.terrain.wireFrame = settings.debugWireFrame;
+				this.scene.terrain.terrain.getSubmesh('terrain').wireFrame = settings.debugWireFrame;
 			}
 
 			if (event.key === 'F1') {
@@ -472,6 +536,12 @@ export class SettingsState extends State {
 	fps: number = 0;
 	seconds: number = 0;
 
+	pickerRadius = 2;
+	hitPoint: vec3;
+	deepness: number = -1;
+
 	colorSettingState: ColorSetting = ColorSetting.NONE;
 	skyboxIntensityToggle: boolean = false;
+
+	selectedVertices: Vertex[]; 
 }

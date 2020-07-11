@@ -231,41 +231,41 @@ interface WebGL2ComputeRenderingContext extends WebGL2RenderingContext
   uniform4iv(location:WebGLUniformLocation | null, data:Int32Array | ArrayLike<number>, srcOffset?:number,
              srcLength?:number):void;
 
-  uniform1uiv(location:WebGLUniformLocation | null, data:Uint32Array | ArrayLike<number>, srcOffset?:number,
-              srcLength?:number):void;
+ // uniform1uiv(location:WebGLUniformLocation | null, data:Uint32Array | ArrayLike<number>, srcOffset?:number,
+  //            srcLength?:number):void;
 
-  uniform2uiv(location:WebGLUniformLocation | null, data:Uint32Array | ArrayLike<number>, srcOffset?:number,
-              srcLength?:number):void;
+//  uniform2uiv(location:WebGLUniformLocation | null, data:Uint32Array | ArrayLike<number>, srcOffset?:number,
+ //             srcLength?:number):void;
 
-  uniform3uiv(location:WebGLUniformLocation | null, data:Uint32Array | ArrayLike<number>, srcOffset?:number,
-              srcLength?:number):void;
+ /// uniform3uiv(location:WebGLUniformLocation | null, data:Uint32Array | ArrayLike<number>, srcOffset?:number,
+   //           srcLength?:number):void;
 
-  uniform4uiv(location:WebGLUniformLocation | null, data:Uint32Array | ArrayLike<number>, srcOffset?:number,
-              srcLength?:number):void;
+ // uniform4uiv(location:WebGLUniformLocation | null, data:Uint32Array | ArrayLike<number>, srcOffset?:number,
+  //            srcLength?:number):void;
 
   uniformMatrix2fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
                    srcOffset?:number, srcLength?:number):void;
 
-  uniformMatrix3x2fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
-                     srcOffset?:number, srcLength?:number):void;
+  //uniformMatrix3x2fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
+   //                  srcOffset?:number, srcLength?:number):void;
 
-  uniformMatrix4x2fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
-                     srcOffset?:number, srcLength?:number):void;
+  //uniformMatrix4x2fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
+    //                 srcOffset?:number, srcLength?:number):void;
 
-  uniformMatrix2x3fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
-                     srcOffset?:number, srcLength?:number):void;
+ // uniformMatrix2x3fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
+   //                  srcOffset?:number, srcLength?:number):void;
 
   uniformMatrix3fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
                    srcOffset?:number, srcLength?:number):void;
 
-  uniformMatrix4x3fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
-                     srcOffset?:number, srcLength?:number):void;
+ // uniformMatrix4x3fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
+   //                  srcOffset?:number, srcLength?:number):void;
 
-  uniformMatrix2x4fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
-                     srcOffset?:number, srcLength?:number):void;
+ // uniformMatrix2x4fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
+   //                  srcOffset?:number, srcLength?:number):void;
 
-  uniformMatrix3x4fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
-                     srcOffset?:number, srcLength?:number):void;
+//  uniformMatrix3x4fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
+  //                   srcOffset?:number, srcLength?:number):void;
 
   uniformMatrix4fv(location:WebGLUniformLocation | null, transpose:boolean, data:Float32Array | ArrayLike<number>,
                    srcOffset?:number, srcLength?:number):void;
@@ -311,14 +311,14 @@ interface WebGL2ComputeRenderingContext extends WebGL2RenderingContext
   /* Multiple Render Targets */
   drawBuffers(buffers:number[]):void;
 
-  clearBufferfv(buffer:number, drawbuffer:number, values:Float32Array | ArrayLike<number>,
-                srcOffset?:number):void;
+  //clearBufferfv(buffer:number, drawbuffer:number, values:Float32Array | ArrayLike<number>,
+   //             srcOffset?:number):void;
 
-  clearBufferiv(buffer:number, drawbuffer:number, values:Int32Array | ArrayLike<number>,
-                srcOffset?:number):void;
+ // clearBufferiv(buffer:number, drawbuffer:number, values:Int32Array | ArrayLike<number>,
+  //              srcOffset?:number):void;
 
-  clearBufferuiv(buffer:number, drawbuffer:number, values:Uint32Array | ArrayLike<number>,
-                 srcOffset?:number):void;
+//  clearBufferuiv(buffer:number, drawbuffer:number, values:Uint32Array | ArrayLike<number>,
+  //               srcOffset?:number):void;
 
   clearBufferfi(buffer:number, drawbuffer:number, depth:number, stencil:number):void;
 

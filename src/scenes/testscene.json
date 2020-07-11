@@ -2,21 +2,6 @@
 	"data": {
 		"skybox": "images/space-blue/",
 		"objects": [
-			{
-				"name": "terrainNode",
-				"position": {
-					"x": 0,
-					"y": 0,
-					"z": 0
-				},
-				"rotation": {
-					"x": 0,
-					"y": 0,
-					"z": 0
-				},
-				"meshPath": "meshes/terrain.morphedmesh",
-				"children": []
-			}
 		]
 	}
 }
