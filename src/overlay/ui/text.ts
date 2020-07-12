@@ -113,6 +113,9 @@ export class Text extends Element {
     }
 
     setText(text: string) {
+
+        this.container.children = [];
+
         this.text = text;
 
         let heightOffset = 0;

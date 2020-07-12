@@ -41,7 +41,7 @@ export class Renderer {
 
 			console.log(`Inited WebGL version ${this.gl.getParameter(this.gl.VERSION)}`);
 		}
-
+		settings.populateDefaultOptions();
 		this.context = new Context(this.gl);
 		this.materialID = null;
 		this.shader = null;
@@ -82,7 +82,6 @@ export class Renderer {
 	}
 
 	async Load(resources: {scenePaths: string[], layouts: string[] }) {
-		settings.populateDefaultOptions();
 		await mesh.LoadMeshes(this.gl);
 		this.currentScene = new TestScene('test-scene', this);
 		await this.currentScene.initScene(this, resources.scenePaths[0]);
@@ -230,7 +229,7 @@ export class Renderer {
 		this.gl.enable(this.gl.DEPTH_TEST);
 		this.gl.depthFunc(this.gl.LESS);
 
-		if (settings.enableBlending) {
+		if (settings.getSetting('Blending')) {
 			this.gl.enable(this.gl.BLEND);
 			this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 		} else {
@@ -355,18 +354,18 @@ export class Renderer {
 		this.postProcess.Begin(this);
 
 		let bloomTexture: Texture = null;
-		if (settings.enableBloom) {
+		if (settings.getSetting('Bloom')) {
 			bloomTexture = this.postProcess.Bloom(this, this.postProcess.hdrBuffer);
 		}
 		let toneMapSource: Texture = null;
-		if (settings.enableGrayScale) {
-			if (settings.enableBloom) {
+		if (settings.getSetting('Gray Scale')) {
+			if (settings.getSetting('Bloom')) {
 				toneMapSource = this.postProcess.GrayScale(this, bloomTexture);
 			} else {
 				toneMapSource = this.postProcess.GrayScale(this, this.postProcess.hdrBuffer);
 			}
 		} else {
-			if (settings.enableBloom) {
+			if (settings.getSetting('Bloom')) {
 				toneMapSource = bloomTexture;
 			} else {
 				toneMapSource = this.postProcess.hdrBuffer;
@@ -377,7 +376,7 @@ export class Renderer {
 
 		this.postProcess.renderToScreen(this, this.postProcess.finalScreenTexture);
 
-		if (settings.enableShadowMapDebug) {
+		if (settings.getSetting('Shadow Map Debug')) {
 			if (this.postProcess.screenDepthTexture) {
 				const viewport = this.context.screenViewPort;
 				const bottomRightCorner = { x: viewport.width / 2, y: 0, width: viewport.width / 2, height: viewport.height / 2 };

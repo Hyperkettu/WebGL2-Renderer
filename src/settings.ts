@@ -1,20 +1,35 @@
 import { ConstantBuffers, BufferDirtyFlag } from './constantbuffers';
 import { ShaderType } from './shader';
-import { settings } from 'cluster';
 
 const settingOptions: {[name: string]: Settings } = {};
+
+export type SettingType = 'Gamma Correction' | 'Blending' | 'Tone Mapping' |
+							'Displacement Mapping' | 'Normal Mapping' | 'Gray Scale' | 
+							'Bloom' | 'Shadow Map Debug' | 'Wireframe Debug' | 'Normal Debug';
 
 export function getSettings() {
 	return settingOptions;
 }
 
+export function getSetting(key: SettingType): number {
+	const setting = settingOptions[key];
+	if(setting.setting !== undefined) {
+		return setting.setting;
+	} else {
+		return setting.option;
+	}
+}
+
 export function populateDefaultOptions() {
+	settingOptions['Blending'] = {
+		setting: Setting.ENABLED
+	}
 	settingOptions['Gamma Correction'] = {
 		setting: Setting.DISABLED
 	};
 	settingOptions['Tone Mapping'] = {
 		numberOfOptions: ToneMapping.MAX_TONEMAPPINGS,
-		option: ToneMapping.MY_TONEMAP
+		option: ToneMapping.NONE
 	};
 	settingOptions['Displacement Mapping'] = {
 		setting: Setting.DISABLED
@@ -31,7 +46,7 @@ export function populateDefaultOptions() {
 	settingOptions['Shadow Map Debug'] = {
 		setting: Setting.DISABLED
 	};
-	settingOptions['Debug Wireframe'] = {
+	settingOptions['Wireframe Debug'] = {
 		setting: Setting.DISABLED
 	};
 	settingOptions['Normal Debug'] = {
@@ -50,12 +65,10 @@ export function getSettingText(key: string) {
 			case 'Normal Debug': 
 				return getNormalDebugOptionText(option);
 			case 'Tone Mapping':
-				return getToneMapping();
+				return getToneMapping(option);
 		}
 	}
-
 	return "None";
-
 }
 
 function getNormalDebugOptionText(option: NormalDebugSettings) {
@@ -69,10 +82,15 @@ function getNormalDebugOptionText(option: NormalDebugSettings) {
 	}
 }
 
-function updateSettings() {
-	for(let option of Object.keys(settingOptions)) {
-
-	}
+export function changeSetting(key: string) {
+	const setting = settingOptions[key];
+	if(setting.setting !== undefined) {
+		setting.setting = setting.setting == Setting.ENABLED ? Setting.DISABLED : Setting.ENABLED;
+	} else {
+		let option = setting.option;
+		option = (option + 1) % setting.numberOfOptions;
+		setting.option = option;
+		}
 }
 
 export interface Settings {
@@ -108,8 +126,8 @@ export enum ToneMapping {
 	MAX_TONEMAPPINGS
 }
 
-export function getToneMapping() {
-	switch (enableToneMapping) {
+export function getToneMapping(option: ToneMapping) {
+	switch (option) {
 		case ToneMapping.NONE: return 'Disabled';
 		case ToneMapping.LINEAR: return 'Linear';
 		case ToneMapping.SIMPLE_REINHARD: return 'Simple Reinhard';

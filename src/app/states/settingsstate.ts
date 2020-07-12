@@ -99,16 +99,25 @@ export class SettingsState extends MenuState {
 				path: 'images/button_bg.png',
 				position: [0, 0],
 				rotation: 0,
-				scale: [1.5 , 1],
+				scale: [1.75 , 1.25],
 				type: 'button',
 				anchor: [0.5, 0.5]
 			});
 			const button = new Button(`menu-${index}`, grid.overlay, sprite, buttonText, grid.layout);
-			button.setPosition([700, 0]);
+			button.setPosition([750, 0]);
 
 			button.setScale(vec2.fromValues(0.75, 0.75));
-			button.setAnchor([0, 1]);
-			button.onClick((x,y) => {});
+            button.setAnchor([0, 1]);
+            
+            const key = array[y].key;
+
+			button.onClick((x,y) => {
+
+                setting.changeSetting(key);
+                const text = setting.getSettingText(key);
+                button.setText(text);
+
+            });
 
 			container.addChild(button);
 

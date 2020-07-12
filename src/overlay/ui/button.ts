@@ -27,6 +27,12 @@ export class Button extends Element {
         this.isClicked = false;
     }
 
+    setText(text: string) {
+        this.text.setText(text);
+        this.text.setPosition(vec2.fromValues(-0.5 * this.text.maxLineWidth * 
+            this.text.scale[0], -0.5 * this.text.numLines * this.text.lineHeight * this.text.scale[1]));
+    }
+
     setAnchor(anchor: vec2) {
         this.anchor = anchor;
         const size = this.getContentSize();

@@ -26,7 +26,7 @@ export class Context {
 		this.gl.enable(this.gl.DEPTH_TEST);
 		this.gl.depthFunc(this.gl.LESS);
 
-		if (settings.enableBlending) {
+		if (settings.getSetting('Blending') == settings.Setting.ENABLED) {
 			this.gl.enable(this.gl.BLEND);
 		} else {
 			this.gl.disable(this.gl.BLEND);

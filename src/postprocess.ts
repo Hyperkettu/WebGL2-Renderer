@@ -130,8 +130,8 @@ export class PostProcess {
 		const toneMappingShader = shader.GetShader(ShaderType.TONEMAPPING);
 		toneMappingShader.use(gl);
 		toneMappingShader.setSamplerTexture(gl, 'hdrScreenBuffer', source, 0);
-		toneMappingShader.setInt(gl, 'enableToneMapping', settings.enableToneMapping);
-		toneMappingShader.setInt(gl, 'enableGammaCorrection', settings.enableGammaCorrection);
+		toneMappingShader.setInt(gl, 'enableToneMapping', settings.getSetting('Tone Mapping'));
+		toneMappingShader.setInt(gl, 'enableGammaCorrection', settings.getSetting('Gamma Correction'));
 
 		ConstantBuffers.generalData.update(gl, 'dataVec1', vec4.fromValues(settings.saturation, settings.contrast, settings.brightness, 0));
 		ConstantBuffers.generalData.sendToGPU(gl);
