@@ -26,7 +26,7 @@ export class Text extends Element {
         super(name, overlay, layout);
         this.atlas = settings ? settings.atlas : null;
         this.style = settings ? settings.style : 'normal';
-        this.gapBetweeenLettersInPixels = settings?.gapInPixels;
+        this.gapBetweenLettersInPixels = settings?.gapInPixels;
         this.sprites = [];
         this.lineWidth = settings?.lineWidth;
         this.lineHeight = settings?.lineHeight;
@@ -96,7 +96,20 @@ export class Text extends Element {
     }
 
     getContentSize() {
-        return vec2.fromValues(this.maxLineWidth, this.numLines * this.lineHeight);
+        this.contentSize = vec2.fromValues(this.maxLineWidth, this.numLines * this.lineHeight);
+        return this.contentSize;
+    }
+
+    getSize() {
+        const contentSize = this.getContentSize();
+        return { x: this.scale[0] * contentSize[0], y: this.scale[1] * contentSize[1] };
+    }
+
+    setAnchor(anchor: vec2) {
+        this.anchor = anchor;
+        const contentSize = this.getContentSize();
+        this.container.setAnchor(anchor[0], anchor[1]);
+        this.container.setPivot(this.anchor[0] * contentSize[0], this.anchor[1] * contentSize[1]);
     }
 
     setText(text: string) {
@@ -114,9 +127,9 @@ export class Text extends Element {
         for(let index = 0; index < words.length; index++) {
             const word = words[index];
 
-            if(offsetX + word.length * this.gapBetweeenLettersInPixels > this.lineWidth) {
+            if(offsetX + word.length * this.gapBetweenLettersInPixels > this.lineWidth) {
                 offsetX = 0;
-                lineWidths.push(offsetX + this.gapBetweeenLettersInPixels);
+                lineWidths.push(offsetX + this.gapBetweenLettersInPixels);
                 heightOffset += this.lineHeight;
                 this.numLines++;
             }
@@ -130,7 +143,7 @@ export class Text extends Element {
                 this.container.setPosition(this.position);
                 this.sprites.push(sprite);
 
-                offsetX += this.gapBetweeenLettersInPixels
+                offsetX += this.gapBetweenLettersInPixels
 
                 if(this.style === 'tilted') {
                     if(math.randomFloat(0, 100) < 25) {
@@ -139,7 +152,7 @@ export class Text extends Element {
                 }
             }
             
-            offsetX += this.gapBetweeenLettersInPixels
+            offsetX += this.gapBetweenLettersInPixels
 
         }
 
@@ -152,7 +165,7 @@ export class Text extends Element {
         this.maxLineWidth = Math.max(this.maxLineWidth, offsetX);
         this.numLines = Math.max(this.numLines, 1);
 
-        console.log(this.maxLineWidth, this.numLines, this.lineHeight);
+       
     }
 
     toJson() {
@@ -165,7 +178,7 @@ export class Text extends Element {
             type: 'text',
             atlasText: {
                 letterStyle: this.style,
-                letterWidth: this.gapBetweeenLettersInPixels,
+                letterWidth: this.gapBetweenLettersInPixels,
                 letterHeight: this.lineHeight,
                 lineWidth: this.maxLineWidth,
                 textAppearAnimation: this.textAppearAnimation
@@ -181,7 +194,7 @@ export class Text extends Element {
 
     style: 'normal' | 'tilted';
 
-    gapBetweeenLettersInPixels: number;
+    gapBetweenLettersInPixels: number;
     lineWidth: number;
     lineHeight: number;
 

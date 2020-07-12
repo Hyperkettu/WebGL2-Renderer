@@ -20,7 +20,7 @@ export class UISprite extends Element {
     }
 
     getSize() {
-        return this.sprite.size;
+        return { x: this.sprite.size[0], y: this.sprite.size[1] };
     }
 
     getContentSize() {

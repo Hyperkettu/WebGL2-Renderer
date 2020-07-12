@@ -2,6 +2,7 @@ import { vec2 } from "gl-matrix";
 import { Container } from "../container";
 import { Overlay } from "../overlay";
 import * as layout from './layout';
+import { Size } from "../../app/statemachine";
 
 export class Element {
     constructor(name: string, overlay: Overlay, layout: layout.UILayout, parent?: Element) {
@@ -41,7 +42,7 @@ export class Element {
 
     setAnchor(anchor: vec2) {
         this.anchor = anchor;
-        this.container.setAnchor(anchor[0], anchor[0]);
+        this.container.setAnchor(anchor[0], anchor[1]);
         this.container.setPivot(this.anchor[0] * this.contentSize[0], this.anchor[1] * this.contentSize[1]);
     }
 
@@ -62,6 +63,10 @@ export class Element {
 
     getContentSize() {
         return this.contentSize;
+    }
+
+    getSize(): Size {
+        return null;
     }
 
     setContentSize(size: vec2) {

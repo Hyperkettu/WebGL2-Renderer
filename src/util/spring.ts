@@ -38,7 +38,6 @@ export class Spring {
             const deltaVelocity = vec3.fromValues(accelerationSecondEnd[0] * dt, accelerationSecondEnd[1] * dt, accelerationSecondEnd[2] * dt);
             vec3.scaleAndAdd(this.velocitySecondEnd, this.velocitySecondEnd, deltaVelocity, dt);
             vec3.scaleAndAdd(this.secondEndPosition, this.secondEndPosition, this.velocitySecondEnd, dt);
-            console.log('velocity', this.velocitySecondEnd);
         }
 
         if(!this.firstEndAnchored) {

@@ -6,7 +6,6 @@ import { Overlay } from "./overlay/overlay";
 import { Sprite } from "./overlay/sprite";
 import * as texture from './texturemanager';
 import { loadFile } from "./resource";
-import { type } from "os";
 import { vec2, vec3 } from "gl-matrix";
 
 interface TextureAtlasFile {
@@ -153,7 +152,7 @@ export class TextureAtlas {
             }
         }
 
-        console.log(JSON.stringify(data));
+      //  console.log(JSON.stringify(data));
     }
 
     renderTexture: Texture;

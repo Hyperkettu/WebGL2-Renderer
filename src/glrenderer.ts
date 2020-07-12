@@ -82,7 +82,7 @@ export class Renderer {
 	}
 
 	async Load(resources: {scenePaths: string[], layouts: string[] }) {
-
+		settings.populateDefaultOptions();
 		await mesh.LoadMeshes(this.gl);
 		this.currentScene = new TestScene('test-scene', this);
 		await this.currentScene.initScene(this, resources.scenePaths[0]);

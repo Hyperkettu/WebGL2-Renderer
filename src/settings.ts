@@ -1,5 +1,98 @@
 import { ConstantBuffers, BufferDirtyFlag } from './constantbuffers';
 import { ShaderType } from './shader';
+import { settings } from 'cluster';
+
+const settingOptions: {[name: string]: Settings } = {};
+
+export function getSettings() {
+	return settingOptions;
+}
+
+export function populateDefaultOptions() {
+	settingOptions['Gamma Correction'] = {
+		setting: Setting.DISABLED
+	};
+	settingOptions['Tone Mapping'] = {
+		numberOfOptions: ToneMapping.MAX_TONEMAPPINGS,
+		option: ToneMapping.MY_TONEMAP
+	};
+	settingOptions['Displacement Mapping'] = {
+		setting: Setting.DISABLED
+	};
+	settingOptions['Normal Mapping'] = {
+		setting: Setting.ENABLED
+	};
+	settingOptions['Gray Scale'] = {
+		setting: Setting.DISABLED
+	};
+	settingOptions['Bloom'] = {
+		setting: Setting.DISABLED
+	};
+	settingOptions['Shadow Map Debug'] = {
+		setting: Setting.DISABLED
+	};
+	settingOptions['Debug Wireframe'] = {
+		setting: Setting.DISABLED
+	};
+	settingOptions['Normal Debug'] = {
+		numberOfOptions: NormalDebugSettings.MAX_OPTIONS,
+		option: NormalDebugSettings.NONE
+	};	
+}
+
+export function getSettingText(key: string) {
+	const setting = settingOptions[key];
+	if(setting.setting !== undefined) {
+		return setting.setting === Setting.ENABLED ? 'Enabled' : 'Disabled';
+	} else {
+		const option = setting.option;
+		switch(key) {
+			case 'Normal Debug': 
+				return getNormalDebugOptionText(option);
+			case 'Tone Mapping':
+				return getToneMapping();
+		}
+	}
+
+	return "None";
+
+}
+
+function getNormalDebugOptionText(option: NormalDebugSettings) {
+	switch(option) {
+		case NormalDebugSettings.NONE: 
+			return 'None';
+			case NormalDebugSettings.NORMALS:
+				return 'Normals';
+			case NormalDebugSettings.NORMAL_MAP:
+				return 'Normal Map';
+	}
+}
+
+function updateSettings() {
+	for(let option of Object.keys(settingOptions)) {
+
+	}
+}
+
+export interface Settings {
+	setting?: Setting;
+	option?: number;
+	options?: any;
+	numberOfOptions?: number;
+}
+
+export enum NormalDebugSettings {
+	NONE = 0,
+	NORMALS,
+	NORMAL_MAP,
+	MAX_OPTIONS
+}
+
+export enum Setting {
+	DISABLED = 0,
+	ENABLED = 1
+}
 
 export enum ToneMapping {
 	NONE = 0,
@@ -17,16 +110,16 @@ export enum ToneMapping {
 
 export function getToneMapping() {
 	switch (enableToneMapping) {
-		case ToneMapping.NONE: return 'disabled';
-		case ToneMapping.LINEAR: return 'linear';
-		case ToneMapping.SIMPLE_REINHARD: return 'simple reinhard';
-		case ToneMapping.LUMA_BASED_REINHARD: return 'luma based reinhard';
-		case ToneMapping.WHITE_PRESERVING_LUMA_BASED_REINHARD: return 'white preserving luma based reinhard';
-		case ToneMapping.ROM_BIN_DA_HOUSE: return 'rom bin da house';
-		case ToneMapping.FILMIC: return 'filmic';
-		case ToneMapping.UNCHARTED_2: return 'uncharted 2';
-		case ToneMapping.SIMPLE: return 'simple';
-		case ToneMapping.MY_TONEMAP: return 'olli tonemap';
+		case ToneMapping.NONE: return 'Disabled';
+		case ToneMapping.LINEAR: return 'Linear';
+		case ToneMapping.SIMPLE_REINHARD: return 'Simple Reinhard';
+		case ToneMapping.LUMA_BASED_REINHARD: return 'Luma based reinhard';
+		case ToneMapping.WHITE_PRESERVING_LUMA_BASED_REINHARD: return 'White preserving luma based reinhard';
+		case ToneMapping.ROM_BIN_DA_HOUSE: return 'Rom bin da house';
+		case ToneMapping.FILMIC: return 'Filmic';
+		case ToneMapping.UNCHARTED_2: return 'Uncharted 2';
+		case ToneMapping.SIMPLE: return 'Simple';
+		case ToneMapping.MY_TONEMAP: return 'Olli tonemap';
 	}
 }
 

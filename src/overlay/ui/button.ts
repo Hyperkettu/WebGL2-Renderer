@@ -6,25 +6,40 @@ import { vec2, mat3 } from "gl-matrix";
 import { Animation } from "../animationsystem";
 import { Text } from "./text";
 import { ButtonData, UILayout } from "./layout";
+import { Container } from '../container';
 
 export class Button extends Element {
     constructor(name: string, overlay: Overlay, sprite: Sprite, text: Text, layout: UILayout) {
         super(name, overlay, layout);
         this.invWorld = mat3.create();
         this.point = vec2.create();
-        this.container.setAnchor(0.5, 0.5);
+        this.centerContainer = new Container('center');
+        this.container.addChild(this.centerContainer);
+        this.centerContainer.setAnchor(0.5, 0.5);
         this.sprite = sprite;
         this.text = text;
-        this.container.addChild(sprite);
-        this.container.addChild(text.container);
+        this.centerContainer.addChild(sprite);
+        this.centerContainer.addChild(text.container);
         text.setPosition(vec2.fromValues(-0.5 * text.maxLineWidth * text.scale[0], -0.5 * text.numLines * text.lineHeight * text.scale[1]));
-
+      //  text.setPosition([0 * 0.5, 0 * 0.5]);
+      //  text.setAnchor([0.5, 0.5]);
         this.rect = new Rectangle(0, 0, 1, 1);
         this.isClicked = false;
     }
 
+    setAnchor(anchor: vec2) {
+        this.anchor = anchor;
+        const size = this.getContentSize();
+        this.container.setAnchor(anchor[0], anchor[1]);
+        this.container.setPivot((1 - this.anchor[0]) * size[0] * this.sprite.scale[0], ( 1 - this.anchor[1]) * size[1] * this.sprite.scale[1]);
+    }
+
     getContentSize() {
-        return this.sprite.size;
+        return vec2.fromValues(this.sprite.texture.width, this.sprite.texture.height);
+    }
+
+    getSize() {
+        return { x: this.sprite.size[0] * this.container.scale[0], y: this.sprite.size[1] * this.container.scale[1] };
     }
 
     onClick(callback: (x: number, y: number) => void) {
@@ -96,6 +111,8 @@ export class Button extends Element {
     }
 
     clickTime: number;
+
+    centerContainer: Container;
 
     invWorld: mat3;
     point: vec2;

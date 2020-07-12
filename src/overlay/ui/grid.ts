@@ -12,6 +12,27 @@ export class Grid<T extends Element> extends Element {
         super(name, overlay, layout, parent);
     }
 
+    getSize() {
+        return { x: this.scale[0] * this.contentSize[0], y: this.scale[1] * this.contentSize[1] };
+    }
+
+    clear() {
+        if(this.elements) {
+            for(let i = 0; i < this.yElements; i++) {
+                for(let j = 0; j < this.xElements; j++) {
+                    const element = this.elements[j][i];
+                    this.container.removeChild(element.container);
+                }
+              }
+        }
+
+        this.elements = [];
+
+        for(let i = 0; i < this.elements.length; i++) {
+           this.elements[i] = [];
+         }
+    }
+
     setGrid(numX: number, numY: number, callback: (x: number, y: number) => T) {
         this.xElements = numX;
         this.yElements = numY;

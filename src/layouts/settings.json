@@ -32,14 +32,14 @@
         },
         {
             "animationName": "enter-1",
-            "elementName": "echo",
+            "elementName": "MenuGrid",
             "target": "position", 
             "easing": "easeInOutCubic", 
             "duration": 1.5, 
             "type": "animate", 
             "delay": 0,
-            "from": [ -500, 50],
-            "to": [75, 50]       
+            "from": [ 400, -1000],
+            "to": [400, 360]       
         },
         {
             "animationName": "exit-1",
@@ -54,38 +54,17 @@
         },
         {
             "animationName": "exit-1",
-            "elementName": "echo",
+            "elementName": "MenuGrid",
             "target": "position", 
             "easing": "easeInOutCubic", 
             "duration": 1.5, 
             "type": "animate", 
             "delay": 0,
-            "from": [ 75, 50],
-            "to": [-500, 50]       
+            "from": [400, 360],
+            "to": [400, -1000]       
         }
     ],
     "elements": [
-        {
-            "name": "echo",
-            "position": {
-                "0": 75,
-                "1": 50
-            },
-            "rotation": 0,
-            "scale": {
-                "0": 0.2199999988079071,
-                "1": 0.2199999988079071
-            },
-            "text": "here I go again",
-            "type": "text",
-            "atlasText": {
-                "letterStyle": "tilted",
-                "letterWidth": 45,
-                "letterHeight": 60,
-                "lineWidth": 1200,
-                "textAppearAnimation": "one-by-one"
-            }
-        },
         {
             "type": "button",
             "name": "myButton",
@@ -109,7 +88,7 @@
                     "0": 0.3499999940395355,
                     "1": 0.3499999940395355
                 },
-                "text": "settings",
+                "text": "close",
                 "type": "text",
                 "atlasText": {
                     "letterStyle": "normal",
@@ -139,23 +118,25 @@
             }
         },
         {
-            "name": "spraitti",
+            "type": "grid",
+            "name": "MenuGrid",
             "position": {
-                "0": 100,
-                "1": 620
+                "0": 400,
+                "1": 360
             },
-            "rotation": 0.7853981633974483,
+            "rotation": 0,
             "scale": {
-                "0": 1.3333333730697632,
-                "1": 1.3333333730697632
+                "0": 1,
+                "1": 1
             },
-            "type": "sprite",
-            "path": "images/O.png",
+            "contentSize": {
+                "0": 1000,
+                "1": 720
+            },
             "anchor": {
                 "0": 0.5,
                 "1": 0.5
-            },
-            "children": []
+            }
         }
     ]
 }

@@ -12,7 +12,7 @@ import { Sprite } from "../sprite";
 import { UISprite } from "./sprite";
 import { AnimationData, Animation } from "../animationsystem";
 import { Grid } from "./grid";
-import { RSA_PKCS1_OAEP_PADDING } from "constants";
+import * as ui from './container';
 
 const layouts: { [name: string]: UILayout } = {};
 
@@ -20,8 +20,8 @@ export function get(name: string) {
     return layouts[name];
 }
 
-export type ElementDataType = 'button' | 'text' | 'sprite' | 'grid';
-export type ElementType = Element | Button | Text;
+export type ElementDataType = 'button' | 'text' | 'sprite' | 'grid' | 'container';
+export type ElementType = Element | Button | Text | ui.Container;
 export type ClickHandler = (x: number, y: number) => boolean;
 
 export interface LayoutFile {
@@ -60,6 +60,8 @@ export interface SpriteData extends ElementData {
 export interface GridData extends ElementData {
 
 }
+
+export interface ContainerData extends ElementData {}
 
 export interface AtlasTextData {
     letterWidth: number;
@@ -174,33 +176,40 @@ export class UILayout {
         layout.animations = file.actions;
 
         for(let elementData of file.elements) {
-            let element: ElementType = null;
-
-            switch(elementData.type) {
-                case 'button':
-                    const data = elementData as ButtonData;
-                    const sprite = layout.createSprite(data.spriteData);
-                    const text = layout.createText(data.textData);
-                    element = layout.createButton(data, sprite, text);
-                    break;
-                case 'text':
-                    element = layout.createText(elementData as TextData);
-                    break;
-                    case 'sprite':
-                        element = layout.createUISprite(elementData as SpriteData);
-                        break;
-                    case 'grid':
-                      element = layout.createGrid(elementData as GridData);
-                    
-                         break;
-                default: 
-                    break;
-            }
+            const element = layout.createElement(elementData);
 
             layout.addElement(element);
         }
 
         layouts[fileName] = layout;
+    }
+
+    createElement(elementData: ElementData) {
+        let element: ElementType = null;
+
+        switch(elementData.type) {
+            case 'button':
+                const data = elementData as ButtonData;
+                const sprite = this.createSprite(data.spriteData);
+                const text = this.createText(data.textData);
+                element = this.createButton(data, sprite, text);
+                break;
+            case 'text':
+                element = this.createText(elementData as TextData);
+                break;
+            case 'sprite':
+                 element = this.createUISprite(elementData as SpriteData);
+                 break;
+            case 'grid':
+                 element = this.createGrid(elementData as GridData);
+                 break;
+           case 'container': 
+                 element = this.createContainer(elementData as ContainerData);
+                 break;
+            default: 
+                break;
+        }
+        return element;
     }
 
     toJson() {
@@ -219,6 +228,26 @@ export class UILayout {
         }
 
         return JSON.stringify(fileData);
+    }
+
+    createContainer(data: ContainerData) {
+        const container = new ui.Container(data.name, this.overlay, this);
+        container.setPosition(data.position);
+        container.setScale(data.scale);
+        container.setRotation(data.rotation);
+
+        if(data.children) {
+            for(let child of data.children) {
+                const element = this.createElement(child);
+                container.addChild(element);
+            }
+        }
+
+        if(data.anchor) {
+            container.setAnchor(data.anchor);
+        }
+
+        return container;
     }
 
     createButton(data: ButtonData, sprite: Sprite, text: Text) {
