@@ -31,6 +31,17 @@
             "to": [670, 25]       
         },
         {
+            "animationName": "show",
+            "elementName": "DebugMenu",
+            "target": "position", 
+            "easing": "easeInOutCubic", 
+            "duration": 1.5, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [ 400, -1000],
+            "to": [400, 360]       
+        },
+        {
             "animationName": "enter-1",
             "elementName": "MenuGrid",
             "target": "position", 
@@ -55,6 +66,17 @@
         {
             "animationName": "exit-1",
             "elementName": "MenuGrid",
+            "target": "position", 
+            "easing": "easeInOutCubic", 
+            "duration": 1.5, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [400, 360],
+            "to": [400, -1000]       
+        },
+        {
+            "animationName": "exit-1",
+            "elementName": "DebugMenu",
             "target": "position", 
             "easing": "easeInOutCubic", 
             "duration": 1.5, 
@@ -118,8 +140,81 @@
             }
         },
         {
+            "type": "button",
+            "name": "categoryButton",
+            "position": {
+                "0": 160,
+                "1": 55
+            },
+            "rotation": 0,
+            "scale": {
+                "0": 0.8,
+                "1": 0.8
+            },
+            "textData": {
+                "name": "mytext",
+                "position": {
+                    "0": -55.125,
+                    "1": -10.5
+                },
+                "rotation": 0,
+                "scale": {
+                    "0": 0.3499999940395355,
+                    "1": 0.3499999940395355
+                },
+                "text": "category",
+                "type": "text",
+                "atlasText": {
+                    "letterStyle": "normal",
+                    "letterWidth": 45,
+                    "letterHeight": 60,
+                    "lineWidth": 500,
+                    "textAppearAnimation": "none"
+                }
+            },
+            "spriteData": {
+                "name": "buttonSprite",
+                "path": "images/button_bg.png",
+                "position": {
+                    "0": 0,
+                    "1": 0
+                },
+                "rotation": 0,
+                "scale": {
+                    "0": 1,
+                    "1": 1
+                },
+                "type": "sprite",
+                "anchor": {
+                    "0": 0.5,
+                    "1": 0.5
+                }
+            }
+        },
+        {
             "type": "grid",
             "name": "MenuGrid",
+            "position": {
+                "0": 400,
+                "1": 360
+            },
+            "rotation": 0,
+            "scale": {
+                "0": 1,
+                "1": 1
+            },
+            "contentSize": {
+                "0": 1000,
+                "1": 720
+            },
+            "anchor": {
+                "0": 0.5,
+                "1": 0.5
+            }
+        },
+        {
+            "type": "grid",
+            "name": "DebugMenu",
             "position": {
                 "0": 400,
                 "1": 360

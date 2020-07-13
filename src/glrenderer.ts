@@ -31,6 +31,13 @@ import { UILayout } from './overlay/ui/layout';
 import * as layout from './overlay/ui/layout';
 import { Cloth } from './cloth';
 
+export enum ShaderMode {
+	DEFAULT = 0,
+	NORMAL = 1,
+	NORMAL_MAP = 2,
+	NUM_MODES
+};
+
 export class Renderer {
 
 	constructor(canvas: HTMLCanvasElement, gl?: WebGL2RenderingContext) {
@@ -38,11 +45,12 @@ export class Renderer {
 			this.gl = gl;
 		} else {
 			this.gl = canvas.getContext('webgl2') as any;
-
 			console.log(`Inited WebGL version ${this.gl.getParameter(this.gl.VERSION)}`);
 		}
-		settings.populateDefaultOptions();
-		this.context = new Context(this.gl);
+
+		this.settings = new settings.SettingsManager(this);
+		this.settings.populateDefaultOptions();
+		this.context = new Context(this.gl, this);
 		this.materialID = null;
 		this.shader = null;
 
@@ -87,8 +95,14 @@ export class Renderer {
 		await this.currentScene.initScene(this, resources.scenePaths[0]);
 
 		shader.LoadShaders(this.gl);
+		this.shaderModes = [];
+		this.shaderModes[ShaderMode.DEFAULT] = { shader: null, tech: 'default' };
+		this.shaderModes[ShaderMode.NORMAL] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'normals' };
+		this.shaderModes[ShaderMode.NORMAL_MAP] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'normalMap' };
+		this.setShaderMode(ShaderMode.DEFAULT);
 
 		loadMaterial('materials/default.mat.json', true, this.gl);
+		await loadMaterial('materials/stone.mat.json', true, this.gl);
 
 		this.particleSystem = new ParticleSystem({
 			birthRate: 400,
@@ -229,7 +243,7 @@ export class Renderer {
 		this.gl.enable(this.gl.DEPTH_TEST);
 		this.gl.depthFunc(this.gl.LESS);
 
-		if (settings.getSetting('Blending')) {
+		if (this.settings.getSetting('Blending')) {
 			this.gl.enable(this.gl.BLEND);
 			this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 		} else {
@@ -333,7 +347,7 @@ export class Renderer {
 		this.batchRenderer.flushSortedArray(this, Layer.OPAQUE, false);
 		this.batchRenderer.flushSortedArray(this, Layer.TRANSPARENT, false);
 
-		if (settings.enableSkybox) {
+		if (this.settings.getSetting('Skybox')) {
 			this.skybox.renderSkybox(this, this.gl);
 		}
 
@@ -354,18 +368,18 @@ export class Renderer {
 		this.postProcess.Begin(this);
 
 		let bloomTexture: Texture = null;
-		if (settings.getSetting('Bloom')) {
+		if (this.settings.getSetting('Bloom')) {
 			bloomTexture = this.postProcess.Bloom(this, this.postProcess.hdrBuffer);
 		}
 		let toneMapSource: Texture = null;
-		if (settings.getSetting('Gray Scale')) {
-			if (settings.getSetting('Bloom')) {
+		if (this.settings.getSetting('Gray Scale')) {
+			if (this.settings.getSetting('Bloom')) {
 				toneMapSource = this.postProcess.GrayScale(this, bloomTexture);
 			} else {
 				toneMapSource = this.postProcess.GrayScale(this, this.postProcess.hdrBuffer);
 			}
 		} else {
-			if (settings.getSetting('Bloom')) {
+			if (this.settings.getSetting('Bloom')) {
 				toneMapSource = bloomTexture;
 			} else {
 				toneMapSource = this.postProcess.hdrBuffer;
@@ -376,7 +390,7 @@ export class Renderer {
 
 		this.postProcess.renderToScreen(this, this.postProcess.finalScreenTexture);
 
-		if (settings.getSetting('Shadow Map Debug')) {
+		if (this.settings.getSetting('Shadow Map Debug', settings.SettingCategory.DEBUG)) {
 			if (this.postProcess.screenDepthTexture) {
 				const viewport = this.context.screenViewPort;
 				const bottomRightCorner = { x: viewport.width / 2, y: 0, width: viewport.width / 2, height: viewport.height / 2 };
@@ -413,8 +427,10 @@ export class Renderer {
 		const mat = material.GetMaterial(materialID);
 
 		if (!shadowPass) {
-			this.shader = settings.debugNormals ? ShaderType.VISUALIZE_NORMALS : mat.shader;
-			this.shaderTech = settings.debugNormals ? shader.GetShader(ShaderType.VISUALIZE_NORMALS) : shader.GetShader(mat.shader, mat.tech);
+			this.shaderModes[ShaderMode.DEFAULT].shader = mat.shader;
+			this.shaderModes[ShaderMode.DEFAULT].tech = mat.tech;
+			this.shader = this.shaderModes[this.shaderMode].shader;
+			this.shaderTech = shader.GetShader(this.shaderModes[this.shaderMode].shader, this.shaderModes[this.shaderMode].tech);
 			this.shaderTech.use(this.gl);
 		} else {
 			return; // skip material textures for depth passes
@@ -452,12 +468,20 @@ export class Renderer {
 		Renderer.numDrawCallsPerFrame = 0;
 	}
 
+	setShaderMode(mode: ShaderMode) {
+		this.shaderMode = mode;
+	}
+
 	static numDrawCallsPerFrame: number;
 
 	context: Context;
 	materialID: string;
 	shaderTech: ShaderTech;
 	shader: ShaderType;
+
+	shaderModes: { shader: ShaderType, tech: string }[];
+	shaderMode: ShaderMode;
+	
 	gl: WebGL2RenderingContext;
 
 	batchRenderer: BatchRenderer;
@@ -476,5 +500,8 @@ export class Renderer {
 	generatePBREnvironmentMaps: boolean = true;
 
 	cloth: Cloth;
+
+
+	settings: settings.SettingsManager;
 
 }

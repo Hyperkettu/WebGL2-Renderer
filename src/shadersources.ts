@@ -1344,7 +1344,9 @@ void main()	{
 }
 `;
 
-export const visualizeNormalsFsSrc =
+export function getVisualizeNormalsShaderSource(normalMap: boolean) {
+
+	const visualizeNormalsFsSrc =
 	`#version 300 es
 
 	precision highp float;
@@ -1354,7 +1356,7 @@ export const visualizeNormalsFsSrc =
 	in vec3 normalW;
 	in mat3 TBN;
 
-	${ true /** normal map */ ?
+	${ normalMap ?
 		'uniform sampler2D normalMap;' :
 		''}
 
@@ -1363,7 +1365,7 @@ export const visualizeNormalsFsSrc =
 
 	void main() {
 
-	${true /** normal map = true */ ?
+	${ normalMap ?
 			'vec3 N = (2.0 * texture(normalMap, uvs.st) - 1.0).rgb;' +
 			'N = normalize(TBN * N);' :
 			'vec3 N = normalize(normalW);'}
@@ -1371,6 +1373,10 @@ export const visualizeNormalsFsSrc =
 		outColor = vec4(N, 1.0f);
 		bloomColor = vec4(uvs.st, 1.0f, 1.0f);
 	}`;
+
+	return visualizeNormalsFsSrc;
+}
+
 
 export const visualizeNormalMapsTerrainFsSrc =
 	`#version 300 es

@@ -1,6 +1,6 @@
 import { StaticMesh } from './mesh';
 import * as texture from './texturemanager';
-import { Renderer } from './glrenderer';
+import { Renderer, ShaderMode } from './glrenderer';
 import { GeometryGenerator } from './geometrygenerator';
 import * as mesh from './meshmanager';
 import { ShaderType } from './shader';
@@ -17,6 +17,7 @@ export class Terrain {
 	}
 
 	async load(renderer: Renderer) {
+		this.renderer = renderer;
 		const gl = renderer.gl;
 		[
 			this.albedos,
@@ -37,19 +38,26 @@ export class Terrain {
 
 		await Promise.all([
 			texture.LoadTexture(gl, 'images/blendmap.png'),
-			GeometryGenerator.GenerateTerrain(gl, 'terrain', 50.0, 2, 1.0, 0.0, 'images/height-map10.png')
+			GeometryGenerator.GenerateTerrain(gl, 'terrain', 50.0, 2, 1.0, 0.0, 'images/height-map11.png')
 		]);
 		this.terrain = mesh.GetMesh('terrain');
 
 		this.world = mat4.create();
 		this.tileScale = 1.0;
+
+		this.shaderModes = [];
+		this.shaderModes[ShaderMode.DEFAULT] = { shader: ShaderType.TERRAIN, tech: 'default'};
+		this.shaderModes[ShaderMode.NORMAL] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'normals'};
+		this.shaderModes[ShaderMode.NORMAL_MAP] = { shader: ShaderType.VISUALIZE_NORMALS_TERRAIN, tech: 'default'};
+
+
 	}
 
 	render(gl: WebGL2RenderingContext) {
 
-		const terrainTech = settings.debugNormals ? shader.GetShader(ShaderType.VISUALIZE_NORMALS_TERRAIN) : shader.GetShader(ShaderType.TERRAIN);
+		const terrainTech = shader.GetShader(this.shaderModes[this.renderer.shaderMode].shader, this.shaderModes[this.renderer.shaderMode].tech);
 		terrainTech.use(gl);
-		if (!settings.debugNormals) {
+		if (this.renderer.shaderMode === ShaderMode.DEFAULT) {
 			terrainTech.setSamplerTexture(gl, 'blendMap', texture.GetTexture('images/blendmap.png'), 6);
 			terrainTech.setSamplerTextureArray(gl, 'albedos', this.albedos, 0);
 			terrainTech.setSamplerTextureArray(gl, 'normals', this.normals, 1);
@@ -66,9 +74,10 @@ export class Terrain {
 				terrainTech.setSamplerTexture(gl, `pointLightShadowMap${index}`, texture.GetDepthTexture(`pointLightShadowMap${index}`), 10 + (index - 1));
 			}
 		} else {
-			terrainTech.setSamplerTexture(gl, 'blendMap', texture.GetTexture('images/blendmap.png'), 6);
-			terrainTech.setSamplerTextureArray(gl, 'normals', this.normals, 1);
-
+			if(this.renderer.shaderMode === ShaderMode.NORMAL_MAP) {
+				terrainTech.setSamplerTexture(gl, 'blendMap', texture.GetTexture('images/blendmap.png'), 6);
+				terrainTech.setSamplerTextureArray(gl, 'normals', this.normals, 1);
+			}
 		}
 
 		const submesh = this.terrain.getSubmesh('terrain');
@@ -104,4 +113,7 @@ export class Terrain {
 	metallic: Texture;
 
 	tileScale: number;
+
+	renderer: Renderer;
+	shaderModes: { shader: ShaderType, tech: string }[];
 }

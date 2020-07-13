@@ -27,7 +27,7 @@ export class Cloth {
 
 		const submesh = this.sphere.getSubmesh('sphere');
 			submesh.wireFrame = false;
-			submesh.materialID = 'default';
+			submesh.materialID = 'stone-with-displacement';
 			const node = new SceneNode('sphereNode', scene);
 			node.transform.setPosition(0, 0, 0);
 			node.transform.setRotation(0, 0, 0);
@@ -47,7 +47,7 @@ export class Cloth {
     update(gl: WebGL2RenderingContext, dt: number) {
         
         this.spring.applyForces(this.gravity, dt);
-        this.node.transform.setPosition(this.spring.secondEndPosition[0], this.spring.secondEndPosition[1], this.spring.secondEndPosition[2]);
+     //   this.node.transform.setPosition(this.spring.secondEndPosition[0], this.spring.secondEndPosition[1], this.spring.secondEndPosition[2]);
 
     }
   //  pendulum: Pendulum;

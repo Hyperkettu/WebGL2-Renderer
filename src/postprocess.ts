@@ -7,7 +7,6 @@ import { screenVertexToFloat32Array } from './vertex';
 import { VertexArrayObject } from './vertexarrayobject';
 import { RenderTargetState } from './rendertarget';
 import { DepthTexture } from './depthtexture';
-import * as settings from './settings';
 import { Viewport } from './context';
 import { Camera } from './camera';
 import { ConstantBuffers } from './constantbuffers';
@@ -130,10 +129,13 @@ export class PostProcess {
 		const toneMappingShader = shader.GetShader(ShaderType.TONEMAPPING);
 		toneMappingShader.use(gl);
 		toneMappingShader.setSamplerTexture(gl, 'hdrScreenBuffer', source, 0);
-		toneMappingShader.setInt(gl, 'enableToneMapping', settings.getSetting('Tone Mapping'));
-		toneMappingShader.setInt(gl, 'enableGammaCorrection', settings.getSetting('Gamma Correction'));
+		toneMappingShader.setInt(gl, 'enableToneMapping', renderer.settings.getSetting('Tone Mapping'));
+		toneMappingShader.setInt(gl, 'enableGammaCorrection', renderer.settings.getSetting('Gamma Correction'));
 
-		ConstantBuffers.generalData.update(gl, 'dataVec1', vec4.fromValues(settings.saturation, settings.contrast, settings.brightness, 0));
+		ConstantBuffers.generalData.update(gl, 'dataVec1', vec4.fromValues(
+			renderer.settings.getSettingValue('Saturation'), 
+			renderer.settings.getSettingValue('Contrast'), 
+			renderer.settings.getSettingValue('Brightness'), 0));
 		ConstantBuffers.generalData.sendToGPU(gl);
 
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

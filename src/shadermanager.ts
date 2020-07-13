@@ -29,9 +29,13 @@ function LoadShader(gl: WebGL2RenderingContext, vertexSrc: string, fragmentSrc: 
 
 		if (type === ShaderType.VISUALIZE_NORMALS) {
 			const src = shaderSrc.GetPbrSrc(false, false, false, false, false, false);
-			shader.addTechnique(gl, 'default', src.pbrVsSrc, fragmentSrc);
-			shader.techniques['default'].bindTo(gl, 'MatricesPerFrame', 0);
-			shader.techniques['default'].bindTo(gl, 'PerObject', 1);
+			shader.addTechnique(gl, 'normals', src.pbrVsSrc, shaderSrc.getVisualizeNormalsShaderSource(false));
+			shader.addTechnique(gl, 'normalMap', src.pbrVsSrc, shaderSrc.getVisualizeNormalsShaderSource(true));
+			shader.techniques['normals'].bindTo(gl, 'MatricesPerFrame', 0);
+			shader.techniques['normals'].bindTo(gl, 'PerObject', 1);
+
+			shader.techniques['normalMap'].bindTo(gl, 'MatricesPerFrame', 0);
+			shader.techniques['normalMap'].bindTo(gl, 'PerObject', 1);
 
 		} else if (type === ShaderType.PARTICLE_UPDATE) {
 
@@ -117,7 +121,7 @@ export function LoadShaders(gl: WebGL2RenderingContext) {
 	LoadShader(gl, shaderSrc.fillScreenVsSrc, shaderSrc.visualizeDepthFsSrc, ShaderType.VISUALIZE_DEPTH);
 	LoadShader(gl, shaderSrc.shadowMapVsSrc, shaderSrc.shadowMapFsSrc, ShaderType.SHADOW_MAP);
 	LoadShader(gl, shaderSrc.skyboxVsSrc, shaderSrc.skyboxDepthFsSrc, ShaderType.VISUALIZE_CUBEMAP_DEPTH);
-	LoadShader(gl, null, shaderSrc.visualizeNormalsFsSrc, ShaderType.VISUALIZE_NORMALS);
+	LoadShader(gl, null, null, ShaderType.VISUALIZE_NORMALS);
 	LoadShader(gl, null, null, ShaderType.TERRAIN);
 	LoadShader(gl, null, null, ShaderType.VISUALIZE_NORMALS_TERRAIN);
 	LoadShader(gl, shaderSrc.particleUpdateVsSrc, shaderSrc.particleUpdateFsSrc, ShaderType.PARTICLE_UPDATE);

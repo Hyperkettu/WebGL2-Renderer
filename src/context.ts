@@ -4,9 +4,9 @@ import { ConstantBuffers } from './constantbuffers';
 import { ShaderType, ShaderTech } from './shader';
 import { RenderTargetState } from './rendertarget';
 import { Texture } from './texture';
-import * as settings from './settings';
 import { Renderer } from './glrenderer';
 import { VertexBase } from './vertex';
+import { Setting } from './settings';
 
 export interface Viewport {
 	x: number;
@@ -17,16 +17,16 @@ export interface Viewport {
 
 export class Context {
 
-	constructor(gl: WebGL2RenderingContext) {
+	constructor(gl: WebGL2RenderingContext, renderer: Renderer) {
 		this.gl = gl;
-		this.setupGL();
+		this.setupGL(renderer);
 	}
 
-	setupGL() {
+	setupGL(renderer: Renderer) {
 		this.gl.enable(this.gl.DEPTH_TEST);
 		this.gl.depthFunc(this.gl.LESS);
 
-		if (settings.getSetting('Blending') == settings.Setting.ENABLED) {
+		if (renderer.settings.getSetting('Blending') == Setting.ENABLED) {
 			this.gl.enable(this.gl.BLEND);
 		} else {
 			this.gl.disable(this.gl.BLEND);

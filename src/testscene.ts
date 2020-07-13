@@ -9,6 +9,7 @@ import { Layer } from './batchrenderer';
 import * as material from './material';
 import * as texture from './texturemanager';
 import { GeometryGenerator } from './geometrygenerator';
+import { StaticMesh } from './mesh';
 
 export class TestScene extends Scene {
 	constructor(name: string, renderer: Renderer) {
@@ -32,15 +33,15 @@ export class TestScene extends Scene {
 
 		//this.sceneGraph.find('sphere').addComponent(new CubeScript());
 
-			/*const terrain = mesh.GetMesh('terrain');
-			terrain.materialID = ''; //'stone-with-displacement';  //'rock -with-displacement'; //'rock';
-			terrain.wireFrame = false;
+		/*	const terrain = mesh.GetMesh<StaticMesh>('terrain');
+			terrain.getSubmesh('terrain').materialID = 'stone-with-displacement';  //'rock -with-displacement'; //'rock';
+			terrain.getSubmesh('terrain').wireFrame = false;
 
 			const node = new SceneNode('terrainNode', this);
 			node.transform.setPosition(0, 10, 0);
 			node.transform.setRotation(0, 0, 0);
-			node.addMesh(terrain, Layer.OPAQUE);
-			this.addObject(node);*/
+			node.addMesh(terrain.getSubmesh('terrain'), Layer.OPAQUE);
+			this.addObject(node); */
 
 		/*	await GeometryGenerator.GeneratePlaneTerrain(renderer.gl, 'planeTerrain', 0.2, 20, 1.2, 0);
 			const terrain = mesh.GetMesh('planeTerrain');
