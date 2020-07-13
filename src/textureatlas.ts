@@ -57,7 +57,7 @@ export class TextureAtlas {
             { x: 0, y: 0, width: TextureAtlas.ATLAS_SIZE.WIDTH, 
                 height: TextureAtlas.ATLAS_SIZE.HEIGHT });
         this.renderTexture = Texture.createRenderTarget(gl, gl.RGBA, gl.RGBA, TextureAtlas.ATLAS_SIZE.WIDTH,
-            TextureAtlas.ATLAS_SIZE.HEIGHT, gl.UNSIGNED_BYTE, gl.NEAREST, false, gl.NEAREST);
+            TextureAtlas.ATLAS_SIZE.HEIGHT, gl.UNSIGNED_BYTE, gl.LINEAR, false, gl.LINEAR);
         rts.addColorTarget(gl, 0, this.renderTexture);
         context.renderTargetBegin(rts); 
         gl.clearColor(0, 0.0, 0.0, 0.0);
