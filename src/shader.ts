@@ -1,7 +1,6 @@
 import { Texture } from './texture';
 import { mat4, vec3 } from 'gl-matrix';
 import { DepthTexture } from './depthtexture';
-import { GetPbrSrc } from './shadersources';
 
 export enum ShaderType {
 	PBR = 0,
@@ -157,9 +156,9 @@ export class ShaderTech {
 	 * Technique names like this:
 	 * albedo - normal - roughness - metallic - ao -displacement - emission ->  ANRMADE
 	 */
-	static permutePBRShaders(settings: { morphed: boolean }) {
+	static permutePBRShaders() {
 
-		const techSources: { [name: string]: { pbrVsSrc: string, pbrFsSrc: string } } = {};
+		const techs: string[] = [];
 
 		for (let emission = 0; emission < 2; emission++) {
 			for (let displacement = 0; displacement < 2; displacement++) {
@@ -188,16 +187,14 @@ export class ShaderTech {
 									techName += 'E';
 								}
 
-								techSources[techName] = GetPbrSrc(normal === 1,
-									roughness === 1, metallic === 1, ao === 1, displacement === 1, emission === 1, settings.morphed);
+								techs.push(techName);
 							}
 						}
 					}
 				}
 			}
 		}
-
-		return techSources;
+		return techs;
 	}
 
 

@@ -1,25 +1,24 @@
 
 import { Shader, ShaderType, ShaderTech } from './shader';
-import * as shaderSrc from './shadersources';
-//import { vsSource, fsSource } from './uitests/matrixprecalctest';
+import { getShaderSource, init } from './shaders/shadersources';
 
 const shaders: { [id: number]: Shader } = {};
 
-function LoadShader(gl: WebGL2RenderingContext, vertexSrc: string, fragmentSrc: string, type: ShaderType) {
+function LoadShader(gl: WebGL2RenderingContext, vertexPrefix: string, fragmentPrefix: string, type: ShaderType) {
 	const shader = new Shader(type);
 
 	if (type === ShaderType.PBR) {
-		const techs = ShaderTech.permutePBRShaders({ morphed: false });
-		for (let techName in techs) {
-			shader.addTechnique(gl, techName, techs[techName].pbrVsSrc, techs[techName].pbrFsSrc);
+		const techs = ShaderTech.permutePBRShaders();
+		for (let techName of techs) {
+			shader.addTechnique(gl, techName, getShaderSource(`${vertexPrefix}/${techName}`), getShaderSource(`${fragmentPrefix}/${techName}`));
 			shader.techniques[techName].bindTo(gl, 'MatricesPerFrame', 0);
 			shader.techniques[techName].bindTo(gl, 'PerObject', 1);
 			shader.techniques[techName].bindTo(gl, 'Lights', 2);
 		}
 	} else if(type === ShaderType.MORPHED_PBR) {
-		const techs = ShaderTech.permutePBRShaders({ morphed: true });
-		for(let techName in techs) {
-			shader.addTechnique(gl, techName, techs[techName].pbrVsSrc, techs[techName].pbrFsSrc);
+		const techs = ShaderTech.permutePBRShaders();
+		for(let techName of techs) {
+			shader.addTechnique(gl, techName, getShaderSource(`${vertexPrefix}/${techName}`), getShaderSource(`${fragmentPrefix}/${techName}`));
 			shader.techniques[techName].bindTo(gl, 'MatricesPerFrame', 0);
 			shader.techniques[techName].bindTo(gl, 'PerObject', 1);
 			shader.techniques[techName].bindTo(gl, 'Lights', 2);
@@ -28,9 +27,8 @@ function LoadShader(gl: WebGL2RenderingContext, vertexSrc: string, fragmentSrc: 
 	} else {
 
 		if (type === ShaderType.VISUALIZE_NORMALS) {
-			const src = shaderSrc.GetPbrSrc(false, false, false, false, false, false);
-			shader.addTechnique(gl, 'normals', src.pbrVsSrc, shaderSrc.getVisualizeNormalsShaderSource(false));
-			shader.addTechnique(gl, 'normalMap', src.pbrVsSrc, shaderSrc.getVisualizeNormalsShaderSource(true));
+			shader.addTechnique(gl, 'normals', getShaderSource(vertexPrefix), getShaderSource(`${fragmentPrefix}/normals`));
+			shader.addTechnique(gl, 'normalMap', getShaderSource(vertexPrefix), getShaderSource(`${fragmentPrefix}/normalMap`));
 			shader.techniques['normals'].bindTo(gl, 'MatricesPerFrame', 0);
 			shader.techniques['normals'].bindTo(gl, 'PerObject', 1);
 
@@ -39,7 +37,7 @@ function LoadShader(gl: WebGL2RenderingContext, vertexSrc: string, fragmentSrc: 
 
 		} else if (type === ShaderType.PARTICLE_UPDATE) {
 
-			shader.addTechnique(gl, 'default', vertexSrc, fragmentSrc, [
+			shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix), [
 				'positionW',
 				'velocityW',
 				'currentAge',
@@ -49,27 +47,27 @@ function LoadShader(gl: WebGL2RenderingContext, vertexSrc: string, fragmentSrc: 
 			shader.techniques['default'].bindTo(gl, 'Particle', 4);
 
 		} else if (type === ShaderType.BILLBOARD_PARTICLE) {
-			shader.addTechnique(gl, 'default', vertexSrc, fragmentSrc);
+			shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix));
 			shader.techniques['default'].bindTo(gl, 'MatricesPerFrame', 0);
 			shader.techniques['default'].bindTo(gl, 'Lights', 2);
 		} else if (type === ShaderType.TERRAIN) {
+			const techs = ShaderTech.permutePBRShaders();
+			for(let techName of techs) {
+				shader.addTechnique(gl, techName, getShaderSource(`${vertexPrefix}/${techName}`), getShaderSource(`${fragmentPrefix}/${techName}`));
+				shader.techniques[techName].bindTo(gl, 'MatricesPerFrame', 0);
+				shader.techniques[techName].bindTo(gl, 'PerObject', 1);
+				shader.techniques[techName].bindTo(gl, 'Lights', 2);
+				shader.techniques[techName].bindTo(gl, 'Data', 3);
+			}
 
-			const src = shaderSrc.GetTerrainSrc(true, true, true, true, true, false);
-			shader.addTechnique(gl, 'default', src.vsSrc, src.fsSrc);
-			shader.techniques['default'].bindTo(gl, 'MatricesPerFrame', 0);
-			shader.techniques['default'].bindTo(gl, 'PerObject', 1);
-			shader.techniques['default'].bindTo(gl, 'Lights', 2);
-			shader.techniques['default'].bindTo(gl, 'Data', 3);
 		} else if (type === ShaderType.VISUALIZE_NORMALS_TERRAIN) {
 
-			const src = shaderSrc.GetPbrSrc(false, false, false, false, false, false);
-			shader.addTechnique(gl, 'default', src.pbrVsSrc, shaderSrc.visualizeNormalMapsTerrainFsSrc);
+			shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix));
 			shader.techniques['default'].bindTo(gl, 'MatricesPerFrame', 0);
 			shader.techniques['default'].bindTo(gl, 'PerObject', 1);
-			//	shader.techniques['default'].bindTo(gl, 'Lights', 2);
 			shader.techniques['default'].bindTo(gl, 'Data', 3);
 		} else {
-			shader.addTechnique(gl, 'default', vertexSrc, fragmentSrc);
+			shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix));
 		}
 	}
 
@@ -90,7 +88,7 @@ function LoadShader(gl: WebGL2RenderingContext, vertexSrc: string, fragmentSrc: 
 	}
 
 	if(type === ShaderType.OVERLAY) {
-		shader.addTechnique(gl, 'default', vertexSrc, fragmentSrc);
+		shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix));
 		shader.techniques['default'].bindTo(gl, 'OverlayMatrices', 5);
 	}
 
@@ -106,25 +104,28 @@ export function GetShaderOfType(type: ShaderType) {
 }
 
 export function LoadShaders(gl: WebGL2RenderingContext) {
-	LoadShader(gl, null, null, ShaderType.PBR);
-	LoadShader(gl, null, null, ShaderType.MORPHED_PBR);
-	LoadShader(gl, shaderSrc.fillScreenVsSrc, shaderSrc.fillScreenFsSrc, ShaderType.FILL_SCREEN);
-	LoadShader(gl, shaderSrc.fillScreenVsSrc, shaderSrc.brdfFsSrc, ShaderType.BRDF_INTEGRATION);
-	LoadShader(gl, shaderSrc.skyboxVsSrc, shaderSrc.skyboxFsSrc, ShaderType.SKYBOX);
-	LoadShader(gl, shaderSrc.irradianceVsSrc, shaderSrc.irradianceFsSrc, ShaderType.IRRADIANCE);
-	LoadShader(gl, shaderSrc.prefilterVsSrc, shaderSrc.prefilterFsSrc, ShaderType.PREFILTER_ENV_MAP);
-	LoadShader(gl, shaderSrc.fillScreenVsSrc, shaderSrc.tonemappingFsSrc, ShaderType.TONEMAPPING);
-	LoadShader(gl, shaderSrc.fillScreenVsSrc, shaderSrc.grayScaleFsSrc, ShaderType.GRAY_SCALE);
-	LoadShader(gl, shaderSrc.fillScreenVsSrc, shaderSrc.bloomFsSrc, ShaderType.BLOOM);
-	LoadShader(gl, shaderSrc.fillScreenVsSrc, shaderSrc.sharpEdgesFsSrc, ShaderType.SHARP_EDGES);
-	LoadShader(gl, shaderSrc.fillScreenVsSrc, shaderSrc.gaussianBlurFsSrc, ShaderType.GAUSSIAN_BLUR);
-	LoadShader(gl, shaderSrc.fillScreenVsSrc, shaderSrc.visualizeDepthFsSrc, ShaderType.VISUALIZE_DEPTH);
-	LoadShader(gl, shaderSrc.shadowMapVsSrc, shaderSrc.shadowMapFsSrc, ShaderType.SHADOW_MAP);
-	LoadShader(gl, shaderSrc.skyboxVsSrc, shaderSrc.skyboxDepthFsSrc, ShaderType.VISUALIZE_CUBEMAP_DEPTH);
-	LoadShader(gl, null, null, ShaderType.VISUALIZE_NORMALS);
-	LoadShader(gl, null, null, ShaderType.TERRAIN);
-	LoadShader(gl, null, null, ShaderType.VISUALIZE_NORMALS_TERRAIN);
-	LoadShader(gl, shaderSrc.particleUpdateVsSrc, shaderSrc.particleUpdateFsSrc, ShaderType.PARTICLE_UPDATE);
-	LoadShader(gl, shaderSrc.billboardParticleVsSrc, shaderSrc.billboardParticleFsSrc, ShaderType.BILLBOARD_PARTICLE);
-	LoadShader(gl, shaderSrc.overlayVsSrc, shaderSrc.overlayFsSrc, ShaderType.OVERLAY);
+
+	init();
+
+	LoadShader(gl, 'pbrStaticVS', 'pbrStaticFS', ShaderType.PBR);
+	LoadShader(gl, 'pbrMorphedVS', 'pbrMorphedFS', ShaderType.MORPHED_PBR);
+	LoadShader(gl, 'fillScreenVS', 'fillScreenFS', ShaderType.FILL_SCREEN);
+	LoadShader(gl, 'fillScreenVS', 'brdfIntegrationFS', ShaderType.BRDF_INTEGRATION);
+	LoadShader(gl, 'skyboxVS', 'skyboxFS', ShaderType.SKYBOX);
+	LoadShader(gl, 'irradianceVS', 'irradianceFS', ShaderType.IRRADIANCE);
+	LoadShader(gl, 'prefilterVS', 'prefilterFS', ShaderType.PREFILTER_ENV_MAP);
+	LoadShader(gl, 'fillScreenVS', 'toneMappingFS', ShaderType.TONEMAPPING);
+	LoadShader(gl, 'fillScreenVS', 'grayScaleFS', ShaderType.GRAY_SCALE);
+	LoadShader(gl, 'fillScreenVS', 'bloomFS', ShaderType.BLOOM);
+	LoadShader(gl, 'fillScreenVS', 'sharpEdgeFS', ShaderType.SHARP_EDGES);
+	LoadShader(gl, 'fillScreenVS', 'gaussianBlurFS', ShaderType.GAUSSIAN_BLUR);
+	LoadShader(gl, 'fillScreenVS', 'visualizeDepthFS', ShaderType.VISUALIZE_DEPTH);
+	LoadShader(gl, 'shadowMapVS', 'shadowMapFS', ShaderType.SHADOW_MAP);
+	LoadShader(gl, 'skyboxVS', 'visualizeDepthCubemapFS', ShaderType.VISUALIZE_CUBEMAP_DEPTH);
+	LoadShader(gl, 'pbrStaticVS/A', 'visualizeNormalsFS', ShaderType.VISUALIZE_NORMALS);
+	LoadShader(gl, 'terrainVS', 'terrainFS', ShaderType.TERRAIN);
+	LoadShader(gl, 'pbrStaticVS/A', 'visualizeTerrainNormalMapsFS', ShaderType.VISUALIZE_NORMALS_TERRAIN);
+	LoadShader(gl, 'particleUpdateVS', 'particleUpdateFS', ShaderType.PARTICLE_UPDATE);
+	LoadShader(gl, 'billboardParticleVS', 'billboardParticleFS', ShaderType.BILLBOARD_PARTICLE);
+	LoadShader(gl, 'overlayVS', 'overlayFS', ShaderType.OVERLAY);
 }
