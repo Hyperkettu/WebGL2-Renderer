@@ -114,7 +114,6 @@ export class MainMenuState extends MenuState {
 	}
 	
 	public handleKeyPress(key: string) {
-		console.log(key);
 		if(key === 'm') {
 			this.toggleMenu({ instant: false });
 		}

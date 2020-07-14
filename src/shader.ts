@@ -1,6 +1,8 @@
 import { Texture } from './texture';
 import { mat4, vec3 } from 'gl-matrix';
 import { DepthTexture } from './depthtexture';
+import * as resource from './resource';
+import { UniformType } from './constantbuffers';
 
 export enum ShaderType {
 	PBR = 0,
@@ -47,12 +49,48 @@ export class Shader {
 	addTechnique(gl: WebGL2RenderingContext, name: string, vsSrc: string, fsSrc: string, transformFeedbackVaryings?: string[]) {
 		const tech = new ShaderTech(gl, vsSrc, fsSrc, name, transformFeedbackVaryings);
 		this.techniques[name] = tech;
+		return tech;
 	}
 
 	type: ShaderType;
 
 	techniques: { [id: string]: ShaderTech };
 
+}
+
+export interface TechniqueFile {
+	shaderId: number;
+	shaders: ShaderData[];
+	technique: TechniqueData;
+}
+
+export interface Pass {
+	name: string;
+	vertexShader: string;
+	fragmentShader: string;  
+}
+
+export interface TechniqueData {
+	name: string;
+	permutationVariables: string[];
+	passes: Pass[];
+}
+
+export interface ShaderData {
+	type: 'vertexShader' | 'fragmentShader';
+	uniforms: UniformData[]
+	source: string;
+}
+
+export interface UniformData {
+	name: string;
+	type: UniformType | 'buffer';
+	arraySize?: number; 
+	bindIndex?: number;
+	fields?: {
+		name: string;
+		type: UniformType;
+	} [];
 }
 
 export class ShaderTech {
@@ -197,7 +235,8 @@ export class ShaderTech {
 		return techs;
 	}
 
-
+	vertexShaderData: ShaderData;
+	fragmentShaderData: ShaderData;
 	program: WebGLProgram;
 	dirtyFlags: number;
 	name: string;

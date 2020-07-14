@@ -1,8 +1,12 @@
 
-import { Shader, ShaderType, ShaderTech } from './shader';
+import { Shader, ShaderType, ShaderTech, TechniqueFile, ShaderData, TechniqueData } from './shader';
 import { getShaderSource, init } from './shaders/shadersources';
+import { loadFile } from './resource';
+import { string } from 'is';
 
 const shaders: { [id: number]: Shader } = {};
+
+let techniques: TechniqueFile[] = []; 
 
 function LoadShader(gl: WebGL2RenderingContext, vertexPrefix: string, fragmentPrefix: string, type: ShaderType) {
 	const shader = new Shader(type);
@@ -103,11 +107,79 @@ export function GetShaderOfType(type: ShaderType) {
 	return shaders[type];
 }
 
+export async function LoadTechniques() {
+	const promises: Promise<TechniqueFile>[] = [];
+	promises.push(loadFile<TechniqueFile>('techniques/staticpbr.technique'));
+
+	techniques = await Promise.all(promises);
+}
+
+function permuteShaders(techName:string, permutationVariables: string[]) {
+	const permutations: string[] = [];
+	permute(permutations, techName, permutationVariables, 0);
+	return permutations;
+}
+
+function permute(permutations: string[], permutation: string, permutationVariables: string[], index: number) {
+	
+	if(index === permutationVariables.length) {
+		permutations.push(permutation);
+		return;
+	}
+	permute(permutations, permutation, permutationVariables, index + 1);
+	permute(permutations, permutation + permutationVariables[index], permutationVariables, index + 1);
+}
+
+export function loadShaderFromData(gl: WebGL2RenderingContext, techniqueFile: TechniqueFile) {
+
+	const shader = shaders[techniqueFile.shaderId] || new Shader(techniqueFile.shaderId);
+	const techs = permuteShaders(techniqueFile.technique.name, techniqueFile.technique.permutationVariables);
+	for (let techName of techs) {
+		for(let pass = 0; pass < techniqueFile.technique.passes.length; pass++) {
+			const vertexPrefix = techniqueFile.technique.passes[pass].vertexShader;
+			const fragmentPrefix = techniqueFile.technique.passes[pass].fragmentShader;
+			const tech = shader.addTechnique(gl, techName, getShaderSource(`${vertexPrefix}/${techName}`), getShaderSource(`${fragmentPrefix}/${techName}`));
+			
+			let vertexShader: ShaderData = null;
+			let fragmentShader: ShaderData = null;
+
+			for(let shaderIndex = 0; shaderIndex < techniqueFile.shaders.length; shaderIndex++) {
+				if(techniqueFile.technique.passes[pass].vertexShader == techniqueFile.shaders[shaderIndex].source) {
+					vertexShader = techniqueFile.shaders[shaderIndex];
+				}
+				if(techniqueFile.technique.passes[pass].fragmentShader == techniqueFile.shaders[shaderIndex].source) {
+					fragmentShader = techniqueFile.shaders[shaderIndex];
+				}
+			}
+
+			for(let uniform of vertexShader.uniforms) {
+				if(uniform.type === 'buffer') {
+					tech.bindTo(gl, uniform.name, uniform.bindIndex);
+				}
+			}
+			for(let uniform of fragmentShader.uniforms) {
+				if(uniform.type === 'buffer') {
+					console.log('bindto', uniform.name, uniform.bindIndex);
+					tech.bindTo(gl, uniform.name, uniform.bindIndex);
+				}
+			}
+
+			tech.vertexShaderData = vertexShader;
+			tech.fragmentShaderData = fragmentShader;
+		}
+	}
+	shaders[techniqueFile.shaderId as number] = shader;
+}
+
 export function LoadShaders(gl: WebGL2RenderingContext) {
 
 	init();
 
-	LoadShader(gl, 'pbrStaticVS', 'pbrStaticFS', ShaderType.PBR);
+	for(let technique of techniques) {
+		loadShaderFromData(gl, technique);
+	}
+
+//	LoadShader(gl, 'pbrStaticVS', 'pbrStaticFS', ShaderType.PBR);
 	LoadShader(gl, 'pbrMorphedVS', 'pbrMorphedFS', ShaderType.MORPHED_PBR);
 	LoadShader(gl, 'fillScreenVS', 'fillScreenFS', ShaderType.FILL_SCREEN);
 	LoadShader(gl, 'fillScreenVS', 'brdfIntegrationFS', ShaderType.BRDF_INTEGRATION);

@@ -26,7 +26,8 @@ gulp.task('copy-resources', function () {
 		`${paths.src}/meshes/*.json`,
 		`${paths.src}/meshes/*.staticmesh`,
 		`${paths.src}/meshes/*.morphedmesh`,
-		`${paths.src}/scenes/*.json`
+		`${paths.src}/scenes/*.json`,
+		`${paths.src}/techniques/*.technique`
 	],{
 	"base" : paths.src
 	})

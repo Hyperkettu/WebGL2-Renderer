@@ -195,7 +195,7 @@ export class ConstantBuffers {
 
 }
 
-type UniformType = 'float' | 'int' | 'bool' | 'vec2' | 'vec3' | 'vec4' | 'mat3' | 'mat4';
+export type UniformType = 'float' | 'int' | 'bool' | 'vec2' | 'vec3' | 'vec4' | 'mat3' | 'mat4';
 
 export interface UniformVariable {
 	type: UniformType;

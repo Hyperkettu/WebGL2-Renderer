@@ -94,6 +94,7 @@ export class Renderer {
 		this.currentScene = new TestScene('test-scene', this);
 		await this.currentScene.initScene(this, resources.scenePaths[0]);
 
+		await shader.LoadTechniques();
 		shader.LoadShaders(this.gl);
 		this.shaderModes = [];
 		this.shaderModes[ShaderMode.DEFAULT] = { shader: null, tech: 'default' };
