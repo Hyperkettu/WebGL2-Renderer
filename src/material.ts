@@ -11,6 +11,7 @@ export function GetMaterial(name: string) {
 
 export interface Material {
 	textures?: Texture[];
+	customTextures?: Texture[];
 	shader?: ShaderType;
 	tech?: string;
 	name?: string;
@@ -25,6 +26,7 @@ export interface MaterialData {
 	shader: 'pbr' | 'morphed-pbr';
 	tech: string;
 	textures: texture.TextureData[];
+	customTextures?: { name: string, path: string }[];
 }
 
 export async function loadMaterial(path: string, load: boolean = false, gl: WebGL2RenderingContext = null) {
@@ -44,5 +46,18 @@ export async function loadMaterial(path: string, load: boolean = false, gl: WebG
 		}
 		material.textures[texture.getType(textureData) as number] = texture.GetTexture(textureData.path);
 	}
+
+	if(file.material.customTextures) {
+		material.customTextures = [];
+		for(let customTexture of file.material.customTextures) {
+			if(load) {
+				await texture.LoadTexture(gl, customTexture.path);
+			}
+			const tex = texture.GetTexture(customTexture.path);
+			tex.name = customTexture.name;
+			material.customTextures.push(tex);
+		}
+	}
+
 	materials[material.name] = material;
 }

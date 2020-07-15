@@ -48,6 +48,9 @@ import * as brdfFS from './brdffs';
 import * as pbrStatic from './pbrstatic';
 import * as pbrMorphed from './pbrmorphed';
 
+// custom
+import * as pbrMorphedTextureTransform from './pbr-morphed-texture-transform';
+
 const prefixToShaderSource: {[name: string]: string } = {};
 
 export function getShaderSource(prefix: string) {
@@ -142,6 +145,18 @@ export function init() {
 	for(let vertexTechnique in staticPbrTechs.vertexTechSources) {
 		const sources = morphedPbrTechs.vertexTechSources[vertexTechnique];
 		prefixToShaderSource[`${pbrMorphed.prefixVS}/${vertexTechnique}`] = sources.vsSrc;
+	}
+
+	const morphedTextureTransformTechs = iteratePBR(pbrMorphedTextureTransform.getPbrSrc);
+	
+	for(let tech in morphedTextureTransformTechs.fragmentTechSources) {
+		const source = morphedTextureTransformTechs.fragmentTechSources[tech];
+		prefixToShaderSource[`${pbrMorphedTextureTransform.prefixFS}/${tech}`] = source.fsSrc;
+	}
+
+	for(let vertexTechnique in morphedTextureTransformTechs.vertexTechSources) {
+		const source = morphedTextureTransformTechs.vertexTechSources[vertexTechnique];
+		prefixToShaderSource[`${pbrMorphedTextureTransform.prefixVS}/${vertexTechnique}`] =  source.vsSrc;
 	}
 }
 

@@ -574,6 +574,46 @@ export class GeometryGenerator {
 		//terrain.wireFrame = true;
 	}
 
+	static GenerateCylinder(gl: WebGL2RenderingContext, name: string, radius: number, numSegmentsAngle, numSegments: number, height: number) {
+		
+		const vertices: Vertex[] = [];
+
+		for(let angle = 0; angle <= 2 * Math.PI; angle += (2 * Math.PI) / numSegmentsAngle) {
+			for(let i = 0; i <= numSegments; i++) {
+				const vertex = new Vertex();
+				vertex.position = vec3.fromValues(Math.cos(angle) * radius, (height / numSegments) * i, Math.sin(angle) * radius);
+				vertex.normal = vec3.fromValues(vertex.position[0], 0, vertex.position[2]);
+				vec3.normalize(vertex.normal, vertex.normal);
+				vertex.tangent = vec3.fromValues(Math.sin(angle), 0, -Math.cos(angle));
+				vertex.textureCoords = vec2.fromValues(angle / (2.0 * Math.PI), vertex.position[1] / height);
+				vertices.push(vertex);
+			}
+		}
+
+		const indices: number[] = [];
+
+		let x = 0, y = 0;
+		for (let i = 0; i < numSegmentsAngle; i++) {
+			for (let j = 0; j < numSegments; j++) {
+				// first triangle
+				indices.push((numSegments + 1) * x + y);
+				indices.push((numSegments + 1) * x + y + 1);
+				indices.push((numSegments + 1) * (x + 1) + y);
+				// second triangle
+				indices.push((numSegments + 1) * (x + 1) + y);
+				indices.push((numSegments + 1) * x + y + 1);
+				indices.push((numSegments + 1) * (x + 1) + y + 1);
+				y++;
+			}
+			y = 0;
+			x++;
+		}
+
+		const cylinder = new StaticMesh(name);
+		cylinder.createSubmesh(gl, 'cylinder', vertices, indices, 'default');
+		mesh.SetMesh(name, cylinder);
+	}
+
 	static ComputeTangents(vertices: GeneralVertexType[], indices: number[]) {
 
 		for (let i = 0; i < indices.length; i += 3) {

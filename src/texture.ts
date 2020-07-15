@@ -234,6 +234,7 @@ export class Texture {
 
 	width: number;
 	height: number;
+	name: string;
 	path: string;
 	type: TextureType;
 	textureId: WebGLTexture;

@@ -22,10 +22,22 @@ export class Cloth {
     }
 
     async init(gl: WebGL2RenderingContext, scene: Scene) {
-        GeometryGenerator.GenerateSphere(gl, "sphere", 0.1, 32, 32);
-        this.sphere = mesh.GetMesh("sphere") as StaticMesh;
+        //GeometryGenerator.GenerateSphere(gl, "sphere", 0.1, 32, 32);
+        //this.sphere = mesh.GetMesh("sphere") as StaticMesh;
 
-		const submesh = this.sphere.getSubmesh('sphere');
+        GeometryGenerator.GenerateCylinder(gl, 'cylinder', 1.0, 24, 24, 3);
+        const cylinder = mesh.GetMesh<StaticMesh>('cylinder');
+        const sb = cylinder.getSubmesh('cylinder');
+
+        sb.wireFrame = false;
+        sb.materialID = 'stone-with-displacement';
+        const node = new SceneNode('cylinderNode', scene);
+        node.transform.setPosition(0,0,0);
+        node.transform.setRotation(0,0,0);
+        node.addMesh(sb, Layer.OPAQUE);
+        scene.addObject(node);
+
+        /*const submesh = this.sphere.getSubmesh('sphere');
 			submesh.wireFrame = false;
 			submesh.materialID = 'stone-with-displacement';
 			const node = new SceneNode('sphereNode', scene);
@@ -41,12 +53,12 @@ export class Cloth {
             this.spring.addSecondEnd(vec3.fromValues(0, -3.0, 0.5), 0.5, false);
             this.node.transform.setPosition(this.spring.secondEndPosition[0], this.spring.secondEndPosition[1], this.spring.secondEndPosition[2]);
 
-            this.gravity = vec3.fromValues(0, this.spring.secondEndMass * -9.81, 0);
+            this.gravity = vec3.fromValues(0, this.spring.secondEndMass * -9.81, 0); */
     }
 
     update(gl: WebGL2RenderingContext, dt: number) {
         
-        this.spring.applyForces(this.gravity, dt);
+      //  this.spring.applyForces(this.gravity, dt);
      //   this.node.transform.setPosition(this.spring.secondEndPosition[0], this.spring.secondEndPosition[1], this.spring.secondEndPosition[2]);
 
     }

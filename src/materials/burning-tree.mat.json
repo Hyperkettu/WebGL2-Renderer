@@ -1,0 +1,42 @@
+{
+	"material" : {
+		"name" : "burning-tree",
+		"shader": "pbr-morphed-texture-transform",
+		"tech": "ANRMAD",
+		"textures": [
+			{
+				"path" : "images/tree/tree-albedo.png",
+				"type" : "albedo"
+			},
+			{
+				"path" : "images/tree/tree-normal.png",
+				"type" : "normal"
+			},			
+			{
+				"path" : "images/tree/tree-metallic.png",
+				"type" : "metallic"
+			},
+			{
+				"path" : "images/tree/tree-roughness.png",
+				"type" : "roughness"
+			},	
+			{
+				"path" : "images/tree/tree-ao.png",
+				"type" : "ambient-occlusion"
+			},
+			{
+				"path" : "images/tree/tree-displacement.png",
+				"type" : "displacement"
+            }],
+        "customTextures": [
+            {
+                "path": "images/coal/albedo.png",
+                "name": "targetAlbedo"
+            },
+            {
+                "path": "images/coal/normal.png",
+                "name": "targetNormal"
+            }
+        ]
+	}
+}

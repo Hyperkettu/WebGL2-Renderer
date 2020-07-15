@@ -443,6 +443,14 @@ export class Renderer {
 				this.shaderTech.setSamplerTexture(this.gl, Shader.uniformSamplers[index], mat.textures[index], index);
 			}
 		}
+
+		if(mat.customTextures) {
+			for(let index = 15; index < 15 + mat.customTextures.length; index++) {
+				if(mat.customTextures[index]) {
+					this.shaderTech.setSamplerTexture(this.gl, mat.customTextures[index].name, mat.customTextures[index], index);
+				}
+			}
+		}
 	}
 
 	materialEnd(shadowPass: boolean = false) {

@@ -1,6 +1,6 @@
 {
 	"data": {
-		"skybox": "images/space-blue/",
+		"skybox": "images/skybox/",
 		"objects": [
 			{
 				"name": "joku",
