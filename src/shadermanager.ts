@@ -10,16 +10,7 @@ let techniques: TechniqueFile[] = [];
 function LoadShader(gl: WebGL2RenderingContext, vertexPrefix: string, fragmentPrefix: string, type: ShaderType) {
 	const shader = new Shader(type);
 
-	if (type === ShaderType.VISUALIZE_NORMALS) {
-			shader.addTechnique(gl, 'N', getShaderSource(vertexPrefix), getShaderSource(`${fragmentPrefix}/N`));
-			shader.addTechnique(gl, 'NM', getShaderSource(vertexPrefix), getShaderSource(`${fragmentPrefix}/NM`));
-			shader.techniques['N'].bindTo(gl, 'MatricesPerFrame', 0);
-			shader.techniques['N'].bindTo(gl, 'PerObject', 1);
-
-			shader.techniques['NM'].bindTo(gl, 'MatricesPerFrame', 0);
-			shader.techniques['NM'].bindTo(gl, 'PerObject', 1);
-
-		} else if (type === ShaderType.PARTICLE_UPDATE) {
+	if (type === ShaderType.PARTICLE_UPDATE) {
 
 			shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix), [
 				'positionW',
@@ -34,22 +25,6 @@ function LoadShader(gl: WebGL2RenderingContext, vertexPrefix: string, fragmentPr
 			shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix));
 			shader.techniques['default'].bindTo(gl, 'MatricesPerFrame', 0);
 			shader.techniques['default'].bindTo(gl, 'Lights', 2);
-		} else if (type === ShaderType.TERRAIN) {
-			const techs = ShaderTech.permutePBRShaders();
-			for(let techName of techs) {
-				shader.addTechnique(gl, techName, getShaderSource(`${vertexPrefix}/${techName}`), getShaderSource(`${fragmentPrefix}/${techName}`));
-				shader.techniques[techName].bindTo(gl, 'MatricesPerFrame', 0);
-				shader.techniques[techName].bindTo(gl, 'PerObject', 1);
-				shader.techniques[techName].bindTo(gl, 'Lights', 2);
-				shader.techniques[techName].bindTo(gl, 'Data', 3);
-			}
-
-		} else if (type === ShaderType.VISUALIZE_NORMALS_TERRAIN) {
-
-			shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix));
-			shader.techniques['default'].bindTo(gl, 'MatricesPerFrame', 0);
-			shader.techniques['default'].bindTo(gl, 'PerObject', 1);
-			shader.techniques['default'].bindTo(gl, 'Data', 3);
 		} else {
 			shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix));
 		}
@@ -95,6 +70,10 @@ export async function LoadTechniques() {
 	promises.push(loadFile<TechniqueFile>('techniques/visualizenormalsmorphed.technique'));
 	promises.push(loadFile<TechniqueFile>('techniques/terrainpbr.technique'));
 	promises.push(loadFile<TechniqueFile>('techniques/visualizenormalsterrain.technique'));
+	promises.push(loadFile<TechniqueFile>('techniques/irradiance.technique'));
+	promises.push(loadFile<TechniqueFile>('techniques/prefilter.technique'));
+	promises.push(loadFile<TechniqueFile>('techniques/skybox.technique'));
+	promises.push(loadFile<TechniqueFile>('techniques/visualizecubemapdepth.technique'));
 
 
 
@@ -142,8 +121,12 @@ export function loadShaderFromData(gl: WebGL2RenderingContext, techniqueFile: Te
 					vertexTechName = 'V';
 				}
 			}
-
-			const tech = shader.addTechnique(gl, techName, getShaderSource(`${vertexPrefix}/${vertexTechName}`), getShaderSource(`${fragmentPrefix}/${techName}`));
+			let tech: ShaderTech = null; 
+			if(techName === 'default') {
+				tech = shader.addTechnique(gl, techName, getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix));
+			} else {
+				tech = shader.addTechnique(gl, techName, getShaderSource(`${vertexPrefix}/${vertexTechName}`), getShaderSource(`${fragmentPrefix}/${techName}`));
+			}
 			
 			let vertexShader: ShaderData = null;
 			let fragmentShader: ShaderData = null;
@@ -159,9 +142,7 @@ export function loadShaderFromData(gl: WebGL2RenderingContext, techniqueFile: Te
 
 			for(let uniform of vertexShader.uniforms) {
 				if(uniform.type === 'buffer') {
-					if(uniform.bindIndex === 3) {
-					//	console.log('bindto', uniform.name, uniform.bindIndex, vertexShader.source, getShaderSource(`${vertexPrefix}/${vertexTechName}`));
-					}
+				//	console.log('bindto', uniform.name, uniform.bindIndex, vertexShader.source); //, getShaderSource(`${vertexPrefix}/${vertexTechName}`));
 					tech.bindTo(gl, uniform.name, uniform.bindIndex);
 				}
 			}
@@ -189,9 +170,7 @@ export function LoadShaders(gl: WebGL2RenderingContext) {
 
 	LoadShader(gl, 'fillScreenVS', 'fillScreenFS', ShaderType.FILL_SCREEN);
 	LoadShader(gl, 'fillScreenVS', 'brdfIntegrationFS', ShaderType.BRDF_INTEGRATION);
-	LoadShader(gl, 'skyboxVS', 'skyboxFS', ShaderType.SKYBOX);
-	LoadShader(gl, 'irradianceVS', 'irradianceFS', ShaderType.IRRADIANCE);
-	LoadShader(gl, 'prefilterVS', 'prefilterFS', ShaderType.PREFILTER_ENV_MAP);
+
 	LoadShader(gl, 'fillScreenVS', 'toneMappingFS', ShaderType.TONEMAPPING);
 	LoadShader(gl, 'fillScreenVS', 'grayScaleFS', ShaderType.GRAY_SCALE);
 	LoadShader(gl, 'fillScreenVS', 'bloomFS', ShaderType.BLOOM);
@@ -199,10 +178,6 @@ export function LoadShaders(gl: WebGL2RenderingContext) {
 	LoadShader(gl, 'fillScreenVS', 'gaussianBlurFS', ShaderType.GAUSSIAN_BLUR);
 	LoadShader(gl, 'fillScreenVS', 'visualizeDepthFS', ShaderType.VISUALIZE_DEPTH);
 	LoadShader(gl, 'shadowMapVS', 'shadowMapFS', ShaderType.SHADOW_MAP);
-	LoadShader(gl, 'skyboxVS', 'visualizeDepthCubemapFS', ShaderType.VISUALIZE_CUBEMAP_DEPTH);
-//	LoadShader(gl, 'pbrStaticVS/A', 'visualizeNormalsFS', ShaderType.VISUALIZE_NORMALS);
-//	LoadShader(gl, 'terrainVS', 'terrainFS', ShaderType.TERRAIN);
-	//LoadShader(gl, 'pbrStaticVS/A', 'visualizeTerrainNormalMapsFS', ShaderType.VISUALIZE_NORMALS_TERRAIN);
 	LoadShader(gl, 'particleUpdateVS', 'particleUpdateFS', ShaderType.PARTICLE_UPDATE);
 	LoadShader(gl, 'billboardParticleVS', 'billboardParticleFS', ShaderType.BILLBOARD_PARTICLE);
 	LoadShader(gl, 'overlayVS', 'overlayFS', ShaderType.OVERLAY);
