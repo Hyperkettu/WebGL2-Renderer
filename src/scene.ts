@@ -132,7 +132,7 @@ export abstract class Scene {
 		}
 
 		// TO SEE TERRAIN UNCOMMENT THIS
-		await this.terrain.load(renderer);
+		//await this.terrain.load(renderer);
 		
 	}
 

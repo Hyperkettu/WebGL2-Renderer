@@ -1,0 +1,36 @@
+{
+    "shaderId": 20,
+    "shaders":  
+    [
+        {
+            "type": "vertexShader",
+            "uniforms": [
+                {
+                    "name": "OverlayMatrices",
+                    "type": "buffer",
+                    "bindIndex": 5
+                }
+            ],
+            "source": "overlayVS"
+        },
+        {
+            "type": "fragmentShader",
+            "uniforms": [
+            ],
+            "source": "overlayFS"
+        }
+    ],
+    "technique": {
+        "name": "default",
+        "permutationVariables": [
+
+        ],
+        "passes": [
+            {
+                "name": "pass0",
+                "vertexShader": "overlayVS",
+                "fragmentShader": "overlayFS"
+            }
+        ]
+    }
+}

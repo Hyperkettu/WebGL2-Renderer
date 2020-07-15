@@ -74,6 +74,8 @@ export async function LoadTechniques() {
 	promises.push(loadFile<TechniqueFile>('techniques/prefilter.technique'));
 	promises.push(loadFile<TechniqueFile>('techniques/skybox.technique'));
 	promises.push(loadFile<TechniqueFile>('techniques/visualizecubemapdepth.technique'));
+	promises.push(loadFile<TechniqueFile>('techniques/overlay.technique'));
+	promises.push(loadFile<TechniqueFile>('techniques/shadowmap.technique'));
 
 
 
@@ -177,8 +179,9 @@ export function LoadShaders(gl: WebGL2RenderingContext) {
 	LoadShader(gl, 'fillScreenVS', 'sharpEdgeFS', ShaderType.SHARP_EDGES);
 	LoadShader(gl, 'fillScreenVS', 'gaussianBlurFS', ShaderType.GAUSSIAN_BLUR);
 	LoadShader(gl, 'fillScreenVS', 'visualizeDepthFS', ShaderType.VISUALIZE_DEPTH);
-	LoadShader(gl, 'shadowMapVS', 'shadowMapFS', ShaderType.SHADOW_MAP);
+
+//	LoadShader(gl, 'shadowMapVS', 'shadowMapFS', ShaderType.SHADOW_MAP);
 	LoadShader(gl, 'particleUpdateVS', 'particleUpdateFS', ShaderType.PARTICLE_UPDATE);
 	LoadShader(gl, 'billboardParticleVS', 'billboardParticleFS', ShaderType.BILLBOARD_PARTICLE);
-	LoadShader(gl, 'overlayVS', 'overlayFS', ShaderType.OVERLAY);
+//	LoadShader(gl, 'overlayVS', 'overlayFS', ShaderType.OVERLAY);
 }

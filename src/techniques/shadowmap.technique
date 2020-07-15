@@ -1,0 +1,46 @@
+{
+    "shaderId": 13,
+    "shaders":  
+    [
+        {
+            "type": "vertexShader",
+            "uniforms": [
+                {
+                    "name": "MatricesPerFrame",
+                    "type": "buffer",
+                    "bindIndex": 0
+                },
+                {
+                    "name": "PerObject",
+                    "type": "buffer",
+                    "bindIndex": 1
+                },
+                {
+                    "name": "Data",
+                    "type": "buffer",
+                    "bindIndex": 3
+                }
+            ],
+            "source": "shadowMapVS"
+        },
+        {
+            "type": "fragmentShader",
+            "uniforms": [
+            ],
+            "source": "shadowMapFS"
+        }
+    ],
+    "technique": {
+        "name": "default",
+        "permutationVariables": [
+
+        ],
+        "passes": [
+            {
+                "name": "pass0",
+                "vertexShader": "shadowMapVS",
+                "fragmentShader": "shadowMapFS"
+            }
+        ]
+    }
+}

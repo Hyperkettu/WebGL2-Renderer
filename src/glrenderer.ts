@@ -337,7 +337,7 @@ export class Renderer {
 		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.PER_FRAME, ShaderType.MORPHED_PBR);
 
 		// ADD THIS BACK TO SEE BLENDMAPPED TERRAIN
-			this.currentScene.terrain.render(this.gl);
+		//	this.currentScene.terrain.render(this.gl);
 
 		this.cloth.update(this.gl, dt);
 
