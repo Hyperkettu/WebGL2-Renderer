@@ -1,0 +1,46 @@
+{
+    "shaderId": 16,
+    "shaders":  
+    [
+        {
+            "type": "vertexShader",
+            "uniforms": [
+                {
+                    "name": "MatricesPerFrame",
+                    "type": "buffer",
+                    "bindIndex": 0
+                }, 
+                {
+                    "name": "PerObject",
+                    "type": "buffer",
+                    "bindIndex": 1
+                }, 
+                {
+                    "name": "Data",
+                    "type": "buffer",
+                    "bindIndex": 3
+                }
+            ],
+            "source": "terrainVS"
+        },
+        {
+            "type": "fragmentShader",
+            "uniforms": [
+            ],
+            "source": "visualizeTerrainNormalMapsFS"
+        }
+    ],
+    "technique": {
+        "name": "VisN",
+        "permutationVariables": [
+            ""
+        ],
+        "passes": [
+            {
+                "name": "pass0",
+                "vertexShader": "terrainVS",
+                "fragmentShader": "visualizeTerrainNormalMapsFS"
+            }
+        ]
+    }
+}

@@ -2,6 +2,21 @@
 	"data": {
 		"skybox": "images/space-blue/",
 		"objects": [
+			{
+				"name": "joku",
+				"position": {
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"rotation":  {
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"children": [],
+					"meshPath": "meshes/terrain.morphedmesh"
+			}
 		]
 	}
 }

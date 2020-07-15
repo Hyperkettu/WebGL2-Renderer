@@ -3,6 +3,8 @@ import { Vertex, PositionVertexType } from './vertex';
 import { Triangle } from './triangle';
 import { VertexDataType } from './vertexbuffer';
 import { VertexData } from './meshmanager';
+import { ShaderMode } from './glrenderer';
+import { ShaderType } from './shader';
 
 export class Submesh<VertexType> {
 
@@ -10,6 +12,12 @@ export class Submesh<VertexType> {
 		this.vertices = vertices;
 		this.indices = indices;
 		this.createMesh(gl, vertices, indices, type);
+
+		this.shaderModes = [];
+		this.shaderModes[ShaderMode.DEFAULT] = { shader: null, tech: 'default' };
+		this.shaderModes[ShaderMode.NORMAL] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'Vis' };
+		this.shaderModes[ShaderMode.NORMAL_MAP] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'VisN' };
+	
 
 		this.wireFrame = false;
 
@@ -48,6 +56,8 @@ export class Submesh<VertexType> {
 	vertices: VertexType[];
 	indices: number[];
 	materialID: string;
+
+	shaderModes: { shader: ShaderType, tech: string }[];
 
 	wireFrame: boolean;
 

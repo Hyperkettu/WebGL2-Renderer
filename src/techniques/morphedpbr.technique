@@ -1,0 +1,56 @@
+{
+    "shaderId": 1,
+    "shaders":  
+    [
+        {
+            "type": "vertexShader",
+            "uniforms": [
+                {
+                    "name": "MatricesPerFrame",
+                    "type": "buffer",
+                    "bindIndex": 0
+                }, 
+                {
+                    "name": "PerObject",
+                    "type": "buffer",
+                    "bindIndex": 1
+                },
+                {
+                    "name": "Data",
+                    "type": "buffer",
+                    "bindIndex": 3
+                }
+            ],
+            "source": "pbrMorphedVS"
+        },
+        {
+            "type": "fragmentShader",
+            "uniforms": [
+                {
+                    "name": "Lights",
+                    "type": "buffer",
+                    "bindIndex": 2
+                }
+            ],
+            "source": "pbrMorphedFS"
+        }
+    ],
+    "technique": {
+        "name": "A",
+        "permutationVariables": [
+            "N",
+            "R",
+            "M",
+            "A",
+            "D",
+            "E"
+        ],
+        "passes": [
+            {
+                "name": "pass0",
+                "vertexShader": "pbrMorphedVS",
+                "fragmentShader": "pbrMorphedFS"
+            }
+        ]
+    }
+}

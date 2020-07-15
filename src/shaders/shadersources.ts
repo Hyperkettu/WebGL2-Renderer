@@ -68,12 +68,12 @@ export function init() {
 	prefixToShaderSource[particleUpdateFS.prefix] = particleUpdateFS.particleUpdateFsSrc;
 
 	// visualization
-	prefixToShaderSource[visualizeTerrainNormalMaps.prefix] = visualizeTerrainNormalMaps.visualizeNormalMapsTerrainFsSrc;
+	prefixToShaderSource[`${visualizeTerrainNormalMaps.prefix}/VisN`] = visualizeTerrainNormalMaps.visualizeNormalMapsTerrainFsSrc;
 	
 	const visNormals = visualizeNormals.getVisualizeNormalsShaderSource(false);
 	const visNormalMap = visualizeNormals.getVisualizeNormalsShaderSource(true);
-	prefixToShaderSource[`${visualizeNormals.prefix}/normals`] = visNormals;	
-	prefixToShaderSource[`${visualizeNormals.prefix}/normalMap`] = visNormalMap;
+	prefixToShaderSource[`${visualizeNormals.prefix}/Vis`] = visNormals;	
+	prefixToShaderSource[`${visualizeNormals.prefix}/VisN`] = visNormalMap;
 
 	prefixToShaderSource[visuzalizeDepthCubemapFS.prefix] = visuzalizeDepthCubemapFS.cubemapDepthFsSrc;
 	prefixToShaderSource[visualizeDepthFS.prefix] = visualizeDepthFS.visualizeDepthFsSrc;
@@ -108,35 +108,47 @@ export function init() {
 	// pbr
 	const techs = iteratePBR(terrain.getTerrainSrc);
 
-	for(let technique in techs) {
-		const sources = techs[technique];
-		prefixToShaderSource[`${terrain.prefixVS}/${technique}`] = sources.vsSrc;
+	for(let technique in techs.fragmentTechSources) {
+		const sources = techs.fragmentTechSources[technique];
 		prefixToShaderSource[`${terrain.prefixFS}/${technique}`] = sources.fsSrc;
-
 	}
+
+	for(let vertexTechnique in techs.vertexTechSources) {
+		const sources = techs.vertexTechSources[vertexTechnique];
+		prefixToShaderSource[`${terrain.prefixVS}/${vertexTechnique}`] = sources.vsSrc;
+	}
+
 
 	const staticPbrTechs = iteratePBR(pbrStatic.getPbrSrc);
 
-	for(let technique in staticPbrTechs) {
-		const sources = staticPbrTechs[technique];
-		prefixToShaderSource[`${pbrStatic.prefixVS}/${technique}`] = sources.vsSrc;
+	for(let technique in staticPbrTechs.fragmentTechSources) {
+		const sources = staticPbrTechs.fragmentTechSources[technique];
 		prefixToShaderSource[`${pbrStatic.prefixFS}/${technique}`] = sources.fsSrc;
-
 	}
+
+	for(let vertexTechnique in staticPbrTechs.vertexTechSources) {
+		const sources = staticPbrTechs.vertexTechSources[vertexTechnique];
+		prefixToShaderSource[`${pbrStatic.prefixVS}/${vertexTechnique}`] = sources.vsSrc;
+	}
+
 
 	const morphedPbrTechs = iteratePBR(pbrMorphed.getPbrSrc);
 
-	for(let tech in morphedPbrTechs) {
-		const sources = morphedPbrTechs[tech];
-		prefixToShaderSource[`${pbrMorphed.prefixVS}/${tech}`] = sources.vsSrc;
+	for(let tech in morphedPbrTechs.fragmentTechSources) {
+		const sources = morphedPbrTechs.fragmentTechSources[tech];
 		prefixToShaderSource[`${pbrMorphed.prefixFS}/${tech}`] = sources.fsSrc;
-
 	}	
+
+	for(let vertexTechnique in staticPbrTechs.vertexTechSources) {
+		const sources = morphedPbrTechs.vertexTechSources[vertexTechnique];
+		prefixToShaderSource[`${pbrMorphed.prefixVS}/${vertexTechnique}`] = sources.vsSrc;
+	}
 }
 
 function iteratePBR(func: (normal: boolean, roughness: boolean, metallic: boolean, ao: boolean, displacement: boolean, emission: boolean) => {vsSrc: string, fsSrc: string } ) {
 
-		const techSources: { [name: string]: { vsSrc: string, fsSrc: string } } = {};
+		const fragmentTechSources: { [name: string]: { fsSrc: string } } = {};
+		const vertexTechSources: { [name: string]: { vsSrc: string } } = {};
 
 		for (let emission = 0; emission < 2; emission++) {
 			for (let displacement = 0; displacement < 2; displacement++) {
@@ -165,7 +177,7 @@ function iteratePBR(func: (normal: boolean, roughness: boolean, metallic: boolea
 									techName += 'E';
 								}
 
-								techSources[techName] = func(normal === 1,
+								fragmentTechSources[techName] = func(normal === 1,
 									roughness === 1, metallic === 1, ao === 1, displacement === 1, emission === 1);
 							}
 						}
@@ -174,6 +186,12 @@ function iteratePBR(func: (normal: boolean, roughness: boolean, metallic: boolea
 			}
 		}
 
-	return techSources;
+		vertexTechSources['VND'] = func(true, false, false, false, true, false);
+		vertexTechSources['VN'] = func(true, false, false, false, false, false);
+		vertexTechSources['VD'] = func(false, false, false, false, true, false);
+		vertexTechSources['V'] = func(false, false, false, false, false, false);
+
+
+	return { vertexTechSources, fragmentTechSources };
 }
 

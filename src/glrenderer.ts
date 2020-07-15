@@ -30,6 +30,7 @@ import { Color } from './util/color';
 import { UILayout } from './overlay/ui/layout';
 import * as layout from './overlay/ui/layout';
 import { Cloth } from './cloth';
+import { Submesh } from './submesh';
 
 export enum ShaderMode {
 	DEFAULT = 0,
@@ -98,8 +99,8 @@ export class Renderer {
 		shader.LoadShaders(this.gl);
 		this.shaderModes = [];
 		this.shaderModes[ShaderMode.DEFAULT] = { shader: null, tech: 'default' };
-		this.shaderModes[ShaderMode.NORMAL] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'normals' };
-		this.shaderModes[ShaderMode.NORMAL_MAP] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'normalMap' };
+		this.shaderModes[ShaderMode.NORMAL] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'Vis' };
+		this.shaderModes[ShaderMode.NORMAL_MAP] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'VisN' };
 		this.setShaderMode(ShaderMode.DEFAULT);
 
 		loadMaterial('materials/default.mat.json', true, this.gl);
@@ -336,7 +337,7 @@ export class Renderer {
 		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.PER_FRAME, ShaderType.MORPHED_PBR);
 
 		// ADD THIS BACK TO SEE BLENDMAPPED TERRAIN
-		//	this.currentScene.terrain.render(this.gl);
+			this.currentScene.terrain.render(this.gl);
 
 		this.cloth.update(this.gl, dt);
 
@@ -422,16 +423,16 @@ export class Renderer {
 
 	}
 
-	materialBegin(materialID: string, shadowPass: boolean = false) {
+	materialBegin(submesh: Submesh<VertexBase>, shadowPass: boolean = false) {
 
-		this.materialID = materialID;
-		const mat = material.GetMaterial(materialID);
+		this.materialID = submesh.materialID;
+		const mat = material.GetMaterial(submesh.materialID);
 
 		if (!shadowPass) {
-			this.shaderModes[ShaderMode.DEFAULT].shader = mat.shader;
-			this.shaderModes[ShaderMode.DEFAULT].tech = mat.tech;
-			this.shader = this.shaderModes[this.shaderMode].shader;
-			this.shaderTech = shader.GetShader(this.shaderModes[this.shaderMode].shader, this.shaderModes[this.shaderMode].tech);
+			submesh.shaderModes[ShaderMode.DEFAULT].shader = mat.shader;
+			submesh.shaderModes[ShaderMode.DEFAULT].tech = mat.tech;
+			this.shader = submesh.shaderModes[this.shaderMode].shader;
+			this.shaderTech = shader.GetShader(submesh.shaderModes[this.shaderMode].shader, submesh.shaderModes[this.shaderMode].tech);
 			this.shaderTech.use(this.gl);
 		} else {
 			return; // skip material textures for depth passes

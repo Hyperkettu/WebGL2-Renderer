@@ -46,9 +46,9 @@ export class Terrain {
 		this.tileScale = 1.0;
 
 		this.shaderModes = [];
-		this.shaderModes[ShaderMode.DEFAULT] = { shader: ShaderType.TERRAIN, tech: 'default'};
-		this.shaderModes[ShaderMode.NORMAL] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'normals'};
-		this.shaderModes[ShaderMode.NORMAL_MAP] = { shader: ShaderType.VISUALIZE_NORMALS_TERRAIN, tech: 'default'};
+		this.shaderModes[ShaderMode.DEFAULT] = { shader: ShaderType.TERRAIN, tech: 'ANRMAD'};
+		this.shaderModes[ShaderMode.NORMAL] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'Vis'};
+		this.shaderModes[ShaderMode.NORMAL_MAP] = { shader: ShaderType.VISUALIZE_NORMALS_TERRAIN, tech: 'VisN'};
 
 
 	}

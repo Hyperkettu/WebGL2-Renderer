@@ -1,0 +1,41 @@
+{
+    "shaderId": 15,
+    "shaders":  
+    [
+        {
+            "type": "vertexShader",
+            "uniforms": [
+                {
+                    "name": "MatricesPerFrame",
+                    "type": "buffer",
+                    "bindIndex": 0
+                }, 
+                {
+                    "name": "PerObject",
+                    "type": "buffer",
+                    "bindIndex": 1
+                }
+            ],
+            "source": "pbrStaticVS"
+        },
+        {
+            "type": "fragmentShader",
+            "uniforms": [
+            ],
+            "source": "visualizeNormalsFS"
+        }
+    ],
+    "technique": {
+        "name": "Vis",
+        "permutationVariables": [
+            "N"
+        ],
+        "passes": [
+            {
+                "name": "pass0",
+                "vertexShader": "pbrStaticVS",
+                "fragmentShader": "visualizeNormalsFS"
+            }
+        ]
+    }
+}

@@ -48,7 +48,7 @@ export class BatchRenderer {
 			const batch = this.layers[layer][i];
 			if (renderer.materialID !== batch.submesh.materialID) {
 				renderer.materialEnd(shadowPass);
-				renderer.materialBegin(batch.submesh.materialID, shadowPass);
+				renderer.materialBegin(batch.submesh, shadowPass);
 			}
 
 			context.setVertexAndIndexBuffers(batch.submesh);
@@ -57,7 +57,7 @@ export class BatchRenderer {
 			ConstantBuffers.pointLightIndex = batch.submesh.pointLightIndex;
 			ConstantBuffers.UpdateBuffer(BufferDirtyFlag.PER_OBJECT, renderer.shader);
 
-			if(renderer.shader === ShaderType.MORPHED_PBR) {
+			if(renderer.shader === ShaderType.MORPHED_PBR || renderer.shader === ShaderType.VISUALIZE_NORMALS_MOPRHED) {
 				ConstantBuffers.generalData.update(renderer.gl, 'dataVec1', vec4.fromValues((batch.submesh as MorphedSubmesh).weights[0], 0, 0, 0));
 				ConstantBuffers.generalData.sendToGPU(renderer.gl);
 			}
