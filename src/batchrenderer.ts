@@ -1,15 +1,10 @@
 import { Submesh } from './submesh';
 import { Renderer } from './glrenderer';
-import { Camera } from './camera';
-import * as camera from './cameramanager';
-import { ConstantBuffers, BufferDirtyFlag } from './constantbuffers';
-import { mat4, vec4 } from 'gl-matrix';
+import { mat4 } from 'gl-matrix';
 import { VertexBase } from './vertex';
-import { MorphedSubmesh } from './mesh';
-import { Material } from './material';
-import { ShaderType } from './shader';
 
-interface Batch {
+
+export interface Batch {
 	submesh: Submesh<VertexBase>;
 	world: mat4;
 }
@@ -52,15 +47,7 @@ export class BatchRenderer {
 			}
 
 			context.setVertexAndIndexBuffers(batch.submesh);
-			ConstantBuffers.world = batch.world;
-			ConstantBuffers.displacementFactor = batch.submesh.displacementFactor;
-			ConstantBuffers.pointLightIndex = batch.submesh.pointLightIndex;
-			ConstantBuffers.UpdateBuffer(BufferDirtyFlag.PER_OBJECT, renderer.shader);
-
-			if(renderer.shader === ShaderType.MORPHED_PBR || renderer.shader === ShaderType.VISUALIZE_NORMALS_MOPRHED) {
-				ConstantBuffers.generalData.update(renderer.gl, 'dataVec1', vec4.fromValues((batch.submesh as MorphedSubmesh).weights[0], 0, 0, 0));
-				ConstantBuffers.generalData.sendToGPU(renderer.gl);
-			}
+			batch.submesh.updateConstantBuffers(renderer, batch);
 
 			if (batch.submesh.wireFrame) {
 				context.drawIndexed(renderer.gl.LINE_STRIP, renderer.shader, renderer.shaderTech);

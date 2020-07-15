@@ -1,4 +1,4 @@
-import { Mesh, StaticMesh, MorphedMesh, MorphedSubmesh } from './mesh';
+import { Mesh, StaticMesh, MorphedMesh } from './mesh';
 import { vec3, vec2 } from 'gl-matrix';
 import { Vertex, ScreenVertex, VertexBase, MorphVertex } from './vertex';
 import * as texture from './texturemanager';

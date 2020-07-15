@@ -1,9 +1,7 @@
 import { Submesh } from './submesh';
 import { Vertex, MorphVertex } from './vertex';
 import { VertexDataType } from './vertexbuffer';
-import * as math from './util/math';
-import { ShaderMode } from './glrenderer';
-import { ShaderType } from './shader';
+import { MorphedSubmesh } from './morphedsubmesh';
 
 export abstract class Mesh<VertexType> {
 
@@ -60,31 +58,4 @@ export class MorphedMesh extends Mesh<MorphVertex> {
         this.submeshes[submeshName] = submesh;
 
     }
-}
-
-export class MorphedSubmesh extends Submesh<MorphVertex> {
-    constructor(gl: WebGL2RenderingContext, vertices: MorphVertex[], indices: number[], numMorphTargets: number, 
-        type?: VertexDataType) {
-        super(gl, vertices, indices, VertexDataType.MORPHED_VERTEX);
-        this.weights = [];
-        this.numMorphTargets = numMorphTargets;
-        this.weights.push(0);
-        
-        for(let index = 1; index < numMorphTargets; index++) {
-            this.weights.push(0);
-        }
-
-        this.shaderModes = [];
-		this.shaderModes[ShaderMode.DEFAULT] = { shader: null, tech: 'default' };
-		this.shaderModes[ShaderMode.NORMAL] = { shader: ShaderType.VISUALIZE_NORMALS_MOPRHED, tech: 'Vis' };
-		this.shaderModes[ShaderMode.NORMAL_MAP] = { shader: ShaderType.VISUALIZE_NORMALS_MOPRHED, tech: 'VisN' };
-    }
-
-    update(gl: WebGL2RenderingContext, dt: number) {
-     //   this.weights[0] -= 0.05 * dt;
-      //  this.weights[0] = math.clamp(this.weights[0], 0, 1);
-    }
-
-    weights: number[];
-    numMorphTargets: number;
 }
