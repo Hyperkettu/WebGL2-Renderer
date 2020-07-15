@@ -12,14 +12,14 @@ function LoadShader(gl: WebGL2RenderingContext, vertexPrefix: string, fragmentPr
 
 	if (type === ShaderType.PARTICLE_UPDATE) {
 
-			shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix), [
+		shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix), [
 				'positionW',
 				'velocityW',
 				'currentAge',
 				'currentLife'
-			]);
+		]);
 
-			shader.techniques['default'].bindTo(gl, 'Particle', 4);
+		shader.techniques['default'].bindTo(gl, 'Particle', 4);
 
 		} else if (type === ShaderType.BILLBOARD_PARTICLE) {
 			shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix));
@@ -27,11 +27,6 @@ function LoadShader(gl: WebGL2RenderingContext, vertexPrefix: string, fragmentPr
 			shader.techniques['default'].bindTo(gl, 'Lights', 2);
 		} else {
 			shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix));
-		}
-
-	if (type === ShaderType.GAUSSIAN_BLUR ||
-		type === ShaderType.VISUALIZE_DEPTH || type === ShaderType.TONEMAPPING) {
-		shader.techniques['default'].bindTo(gl, 'Data', 3);
 	}
 
 	shaders[type as number] = shader;
