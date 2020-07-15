@@ -28,27 +28,10 @@ function LoadShader(gl: WebGL2RenderingContext, vertexPrefix: string, fragmentPr
 		} else {
 			shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix));
 		}
-	
 
-	if (type === ShaderType.SHADOW_MAP) {
-		shader.techniques['default'].bindTo(gl, 'MatricesPerFrame', 0);
-		shader.techniques['default'].bindTo(gl, 'PerObject', 1);
-	}
-
-	if (type === ShaderType.SKYBOX || type === ShaderType.VISUALIZE_CUBEMAP_DEPTH ||
-		type === ShaderType.IRRADIANCE || type === ShaderType.PREFILTER_ENV_MAP) {
-		shader.techniques['default'].bindTo(gl, 'MatricesPerFrame', 0);
-	}
-
-	if (type === ShaderType.PREFILTER_ENV_MAP || type === ShaderType.IRRADIANCE || type === ShaderType.GAUSSIAN_BLUR ||
-		type === ShaderType.SHADOW_MAP || type === ShaderType.VISUALIZE_CUBEMAP_DEPTH ||
-		type === ShaderType.VISUALIZE_DEPTH || type === ShaderType.TONEMAPPING || type === ShaderType.SKYBOX) {
+	if (type === ShaderType.GAUSSIAN_BLUR ||
+		type === ShaderType.VISUALIZE_DEPTH || type === ShaderType.TONEMAPPING) {
 		shader.techniques['default'].bindTo(gl, 'Data', 3);
-	}
-
-	if(type === ShaderType.OVERLAY) {
-		shader.addTechnique(gl, 'default', getShaderSource(vertexPrefix), getShaderSource(fragmentPrefix));
-		shader.techniques['default'].bindTo(gl, 'OverlayMatrices', 5);
 	}
 
 	shaders[type as number] = shader;
@@ -76,6 +59,12 @@ export async function LoadTechniques() {
 	promises.push(loadFile<TechniqueFile>('techniques/visualizecubemapdepth.technique'));
 	promises.push(loadFile<TechniqueFile>('techniques/overlay.technique'));
 	promises.push(loadFile<TechniqueFile>('techniques/shadowmap.technique'));
+	promises.push(loadFile<TechniqueFile>('techniques/tonemapping.technique'));
+	promises.push(loadFile<TechniqueFile>('techniques/grayscale.technique'));
+	promises.push(loadFile<TechniqueFile>('techniques/bloom.technique'));
+	promises.push(loadFile<TechniqueFile>('techniques/sharpedge.technique'));
+	promises.push(loadFile<TechniqueFile>('techniques/gaussianblur.technique'));
+	promises.push(loadFile<TechniqueFile>('techniques/visualizedepth.technique'));
 
 
 
@@ -173,15 +162,7 @@ export function LoadShaders(gl: WebGL2RenderingContext) {
 	LoadShader(gl, 'fillScreenVS', 'fillScreenFS', ShaderType.FILL_SCREEN);
 	LoadShader(gl, 'fillScreenVS', 'brdfIntegrationFS', ShaderType.BRDF_INTEGRATION);
 
-	LoadShader(gl, 'fillScreenVS', 'toneMappingFS', ShaderType.TONEMAPPING);
-	LoadShader(gl, 'fillScreenVS', 'grayScaleFS', ShaderType.GRAY_SCALE);
-	LoadShader(gl, 'fillScreenVS', 'bloomFS', ShaderType.BLOOM);
-	LoadShader(gl, 'fillScreenVS', 'sharpEdgeFS', ShaderType.SHARP_EDGES);
-	LoadShader(gl, 'fillScreenVS', 'gaussianBlurFS', ShaderType.GAUSSIAN_BLUR);
-	LoadShader(gl, 'fillScreenVS', 'visualizeDepthFS', ShaderType.VISUALIZE_DEPTH);
 
-//	LoadShader(gl, 'shadowMapVS', 'shadowMapFS', ShaderType.SHADOW_MAP);
 	LoadShader(gl, 'particleUpdateVS', 'particleUpdateFS', ShaderType.PARTICLE_UPDATE);
 	LoadShader(gl, 'billboardParticleVS', 'billboardParticleFS', ShaderType.BILLBOARD_PARTICLE);
-//	LoadShader(gl, 'overlayVS', 'overlayFS', ShaderType.OVERLAY);
 }

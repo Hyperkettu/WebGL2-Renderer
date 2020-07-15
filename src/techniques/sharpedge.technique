@@ -1,0 +1,31 @@
+{
+    "shaderId": 10,
+    "shaders":  
+    [
+        {
+            "type": "vertexShader",
+            "uniforms": [
+            ],
+            "source": "fillScreenVS"
+        },
+        {
+            "type": "fragmentShader",
+            "uniforms": [
+            ],
+            "source": "sharpEdgeFS"
+        }
+    ],
+    "technique": {
+        "name": "default",
+        "permutationVariables": [
+
+        ],
+        "passes": [
+            {
+                "name": "pass0",
+                "vertexShader": "fillScreenVS",
+                "fragmentShader": "sharpEdgeFS"
+            }
+        ]
+    }
+}

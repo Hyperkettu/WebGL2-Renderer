@@ -1,0 +1,36 @@
+{
+    "shaderId": 7,
+    "shaders":  
+    [
+        {
+            "type": "vertexShader",
+            "uniforms": [
+                {
+                    "name": "Data",
+                    "type": "buffer",
+                    "bindIndex": 3
+                }
+            ],
+            "source": "fillScreenVS"
+        },
+        {
+            "type": "fragmentShader",
+            "uniforms": [
+            ],
+            "source": "toneMappingFS"
+        }
+    ],
+    "technique": {
+        "name": "default",
+        "permutationVariables": [
+
+        ],
+        "passes": [
+            {
+                "name": "pass0",
+                "vertexShader": "fillScreenVS",
+                "fragmentShader": "toneMappingFS"
+            }
+        ]
+    }
+}

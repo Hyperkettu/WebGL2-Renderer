@@ -1,0 +1,31 @@
+{
+    "shaderId": 9,
+    "shaders":  
+    [
+        {
+            "type": "vertexShader",
+            "uniforms": [
+            ],
+            "source": "fillScreenVS"
+        },
+        {
+            "type": "fragmentShader",
+            "uniforms": [
+            ],
+            "source": "bloomFS"
+        }
+    ],
+    "technique": {
+        "name": "default",
+        "permutationVariables": [
+
+        ],
+        "passes": [
+            {
+                "name": "pass0",
+                "vertexShader": "fillScreenVS",
+                "fragmentShader": "bloomFS"
+            }
+        ]
+    }
+}
