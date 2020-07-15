@@ -52,7 +52,7 @@ export class MorphedMesh extends Mesh<MorphVertex> {
 
     createSubmesh(gl: WebGL2RenderingContext, submeshName: string, vertices: MorphVertex[], indices: number[], materialId: string) {
         const submesh = new MorphedSubmesh(gl, vertices, indices, this.type);
-        submesh.materialID = 'morphed-stone-with-displacement';
+        submesh.materialID = materialId;
         submesh.submeshName = submeshName;
         submesh.meshName = this.name;
         this.submeshes[submeshName] = submesh;

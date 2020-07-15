@@ -23,7 +23,7 @@ export interface MaterialFile {
 
 export interface MaterialData {
 	name: string;
-	shader: 'pbr' | 'morphed-pbr';
+	shader: 'pbr' | 'morphed-pbr' | 'pbr-morphed-texture-transform';
 	tech: string;
 	textures: texture.TextureData[];
 	customTextures?: { name: string, path: string }[];
@@ -37,6 +37,11 @@ export async function loadMaterial(path: string, load: boolean = false, gl: WebG
 	const material: Material = {};
 	material.name = file.material.name;
 	material.shader = file.material.shader === 'pbr' ? ShaderType.PBR : ShaderType.MORPHED_PBR;
+
+	if(file.material.shader === 'pbr-morphed-texture-transform') {
+		material.shader = ShaderType.MORPHED_PBR_TEXTURE_TRANSFORM;
+	}
+
 	material.tech = file.material.tech;
 
 	material.textures = [];
@@ -52,10 +57,17 @@ export async function loadMaterial(path: string, load: boolean = false, gl: WebG
 		for(let customTexture of file.material.customTextures) {
 			if(load) {
 				await texture.LoadTexture(gl, customTexture.path);
+				const tex = texture.GetTexture(customTexture.path);
+				tex.name = customTexture.name;
+				material.customTextures.push(tex);
+			} else {
+				const tex = texture.GetTexture(customTexture.path);
+				if(tex) {
+					tex.name = customTexture.name;
+					material.customTextures.push(tex);
+				}
 			}
-			const tex = texture.GetTexture(customTexture.path);
-			tex.name = customTexture.name;
-			material.customTextures.push(tex);
+
 		}
 	}
 

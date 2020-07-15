@@ -335,6 +335,7 @@ export class Renderer {
 
 		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.PER_FRAME, ShaderType.PBR);
 		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.PER_FRAME, ShaderType.MORPHED_PBR);
+		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.PER_FRAME, ShaderType.MORPHED_PBR_TEXTURE_TRANSFORM);
 
 		// ADD THIS BACK TO SEE BLENDMAPPED TERRAIN
 		//	this.currentScene.terrain.render(this.gl);
@@ -443,11 +444,10 @@ export class Renderer {
 				this.shaderTech.setSamplerTexture(this.gl, Shader.uniformSamplers[index], mat.textures[index], index);
 			}
 		}
-
 		if(mat.customTextures) {
-			for(let index = 15; index < 15 + mat.customTextures.length; index++) {
+			for(let index = 0; index < mat.customTextures.length; index++) {
 				if(mat.customTextures[index]) {
-					this.shaderTech.setSamplerTexture(this.gl, mat.customTextures[index].name, mat.customTextures[index], index);
+					this.shaderTech.setSamplerTexture(this.gl, mat.customTextures[index].name, mat.customTextures[index], index + 15);
 				}
 			}
 		}

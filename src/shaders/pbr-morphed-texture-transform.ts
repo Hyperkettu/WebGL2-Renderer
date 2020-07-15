@@ -160,7 +160,7 @@ const fsSrc =
 
 		void main() {
 
-            float weight = dataVec1.r;
+            float weight = clamp(1.0f - dataVec1.r, 0.0f, 1.0f);
 
 			vec4 albedoWithAlpha = texture(albedoMap, uvs.st).rgba;
             vec3 albedo = albedoWithAlpha.rgb;

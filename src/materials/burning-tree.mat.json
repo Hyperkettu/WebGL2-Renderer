@@ -1,3 +1,4 @@
+
 {
 	"material" : {
 		"name" : "burning-tree",
@@ -29,14 +30,14 @@
 				"type" : "displacement"
             }],
         "customTextures": [
-            {
-                "path": "images/coal/albedo.png",
-                "name": "targetAlbedo"
-            },
-            {
-                "path": "images/coal/normal.png",
-                "name": "targetNormal"
-            }
-        ]
+                {
+                    "path": "images/coal/albedo.png",
+                    "name": "targetAlbedo"
+                },
+                {
+                    "path": "images/coal/normal.png",
+                    "name": "targetNormal"
+                }
+            ]
 	}
 }

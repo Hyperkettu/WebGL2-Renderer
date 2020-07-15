@@ -12,6 +12,7 @@ import { Layer } from './batchrenderer';
 import { vec3 } from "gl-matrix";
 //import { Pendulum } from "./util/pendulum";
 import * as math from './util/math';
+import { loadFile } from "./resource";
 
 export class Cloth {
 
@@ -25,7 +26,13 @@ export class Cloth {
         //GeometryGenerator.GenerateSphere(gl, "sphere", 0.1, 32, 32);
         //this.sphere = mesh.GetMesh("sphere") as StaticMesh;
 
-        GeometryGenerator.GenerateCylinder(gl, 'cylinder', 1.0, 24, 24, 3);
+      //  await loadMaterial('materials/burning-tree.mat.json', true, gl);
+
+      //  await loadFile<mesh.MeshFile>('meshes/burning-tree.morphedmesh');
+      //  const parent = scene.sceneGraph.root;
+      //  const mes2h = mesh.loadMesh(gl, 'meshes/burning-tree.morphedmesh', parent);
+
+    /*    GeometryGenerator.GenerateCylinder(gl, 'cylinder', 1.0, 24, 24, 3);
         const cylinder = mesh.GetMesh<StaticMesh>('cylinder');
         const sb = cylinder.getSubmesh('cylinder');
 
@@ -36,6 +43,30 @@ export class Cloth {
         node.transform.setRotation(0,0,0);
         node.addMesh(sb, Layer.OPAQUE);
         scene.addObject(node);
+
+        const vertices = sb.vertices;
+        let offset = 0;
+
+        for(let vertex of vertices) {
+            offset = math.randomFloat(0.6, 0.85);
+            vec3.scaleAndAdd(vertex.position, vertex.position, vertex.normal, -offset);
+        }
+
+        for(let i = 0; i < 25; i++) {
+            offset = math.randomFloat(0.6, 0.85);
+            let vertex = vertices[i];
+            vec3.scaleAndAdd(vertex.position, vertex.position, vertex.normal, -offset);
+
+            let vertex2 = vertices[vertices.length - 25 + i];
+            vec3.scaleAndAdd(vertex2.position, vertex2.position, vertex2.normal, -offset);
+        }
+
+        GeometryGenerator.ComputeNormals(vertices, sb.indices);
+
+        sb.updateVertices(gl, vertices);
+
+        mesh.toMeshDataFile(cylinder);*/
+
 
         /*const submesh = this.sphere.getSubmesh('sphere');
 			submesh.wireFrame = false;

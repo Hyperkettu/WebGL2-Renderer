@@ -111,15 +111,34 @@ export abstract class Scene {
 
 		await Promise.all(materialPromises);
 
+		const materialFiles: MaterialFile[] = [];
+
 		const textureDatas: TextureData[] = [];
 		for (let materialPath of materials) {
 			const materialFile: MaterialFile = resource.get<MaterialFile>(materialPath);
+			materialFiles.push(materialFile);
 			for (let texture of materialFile.material.textures) {
 				textureDatas.push(texture);
 			}
+
+			if(materialFile.material.customTextures) {
+				for(let texture of materialFile.material.customTextures) {
+					textureDatas.push({ path: texture.path, type: 'custom' })
+				}
+			}
+
 		}
 
 		await texture.LoadTextures(renderer.gl, textureDatas);
+
+		for(let materialFile of materialFiles) {
+			if(materialFile.material.customTextures) {
+				for(let customTexture of materialFile.material.customTextures) {
+					const tex = texture.GetTexture(customTexture.path);
+					tex.name = customTexture.name;
+				}
+			}
+		}
 
 		for (let materialPath of materials) {
 			loadMaterial(materialPath);

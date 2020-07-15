@@ -3,7 +3,7 @@ import { DepthTexture } from './depthtexture';
 
 export interface TextureData {
 	path: string;
-	type: 'albedo' | 'normal' | 'metallic' | 'roughness' | 'ambient-occlusion' | 'displacement' | 'emission';
+	type: 'albedo' | 'normal' | 'metallic' | 'roughness' | 'ambient-occlusion' | 'displacement' | 'emission' | 'custom';
 }
 
 const textures: { [id: string]: Texture } = {};
@@ -31,6 +31,7 @@ export function getType(textureData: TextureData) {
 		case 'ambient-occlusion': return TextureType.Ambient_Occlusion;
 		case 'displacement': return TextureType.Displacement;
 		case 'emission': return TextureType.Emission;
+		case 'custom': return -1;
 	}
 }
 

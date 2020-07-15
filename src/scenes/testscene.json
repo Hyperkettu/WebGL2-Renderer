@@ -1,6 +1,6 @@
 {
 	"data": {
-		"skybox": "images/skybox/",
+		"skybox": "images/space-blue/",
 		"objects": [
 			{
 				"name": "joku",
@@ -16,6 +16,21 @@
 				},
 				"children": [],
 					"meshPath": "meshes/terrain.morphedmesh"
+			},
+			{
+				"name": "burning-tree",
+				"position": {
+					"x": 10,
+					"y": 0,
+					"z": 0
+				},
+				"rotation":  {
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"children": [],
+					"meshPath": "meshes/burning-tree.morphedmesh"
 			}
 		]
 	}

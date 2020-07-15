@@ -209,14 +209,14 @@ export function toMeshDataFile(mesh: Mesh<VertexBase>) {
 		indices: []
 	};
 
-	const submesh = mesh.getSubmesh('terrain');
+	const submesh = mesh.getSubmesh('cylinder');
 	vertexData.material = submesh.materialID;
 	vertexData.vertices = submesh.vertices;
 	vertexData.indices = submesh.indices;
 
 	const sceneNodeData: SceneNodeData = {
 		children: [],
-		name: 'terrain',
+		name: 'tree',
 		position: {
 			x: 0,
 			y: 0,
@@ -238,16 +238,16 @@ export function toMeshDataFile(mesh: Mesh<VertexBase>) {
 
 	const data: MeshFile = {
 		mesh: {
-			name: 'testi',
+			name: 'tree',
 			materials: [
 				'materials/bark1.mat.json'
 			],
-			type: 'static',
+			type: 'morphed',
 			data: meshData
 			
 		}
 	};
-	JSON.stringify(data);
+//	JSON.stringify(data);
 	console.log(JSON.stringify(data));
 }
 
