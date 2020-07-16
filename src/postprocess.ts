@@ -23,13 +23,14 @@ export class PostProcess {
 		const width = renderer.context.screenViewPort.width;
 		const height = renderer.context.screenViewPort.height;
 		this.finalScreenTexture = Texture.createRenderTarget(gl, gl.RGBA, gl.RGBA,
-			width, height, gl.UNSIGNED_BYTE, gl.LINEAR);
+			width, height, gl.UNSIGNED_BYTE, gl.LINEAR, false, gl.LINEAR);
 
-		this.hdrBuffer = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height);
+		this.hdrBuffer = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR);
 		this.screenDepthTexture = DepthTexture.create(gl, width, height);
-		this.bloomTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height);
-		this.bloomLumaTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height);
-		this.grayScaledTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height);
+		this.bloomTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR);
+		this.bloomLumaTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR);
+		this.grayScaledTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR);
+		
 
 	}
 
@@ -59,13 +60,13 @@ export class PostProcess {
 			this.finalScreenTexture.destroy(gl);
 		}
 
-		this.hdrBuffer = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height);
+		this.hdrBuffer = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR);;
 		this.screenDepthTexture = DepthTexture.create(gl, width, height);
-		this.bloomTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height);
-		this.bloomLumaTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height);
-		this.grayScaledTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height);
+		this.bloomTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR);;
+		this.bloomLumaTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR);;
+		this.grayScaledTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR);;
 		this.finalScreenTexture = Texture.createRenderTarget(gl, gl.RGBA, gl.RGBA,
-			width, height, gl.UNSIGNED_BYTE, gl.LINEAR);
+			width, height, gl.UNSIGNED_BYTE, gl.LINEAR, false, gl.LINEAR);
 
 	}
 

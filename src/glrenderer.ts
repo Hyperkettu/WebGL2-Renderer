@@ -74,6 +74,12 @@ export class Renderer {
 			console.log('No color buffer extension available');
 		}
 
+		const linearFloatingPointFiltering = this.gl.getExtension('OES_texture_float_linear');
+
+		if(!linearFloatingPointFiltering) {
+			console.log('Linear floating point filtering disabled');
+		}
+
 		const cubemapArrayExtension = this.gl.getExtension('EXT_texture_cube_map_array');
 		if (!cubemapArrayExtension) {
 			console.log('No cubemap array extension');
