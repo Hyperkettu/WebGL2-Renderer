@@ -74,6 +74,27 @@ export class Renderer {
 			console.log('No color buffer extension available');
 		}
 
+		const floatintPointBlend = this.gl.getExtension('EXT_float_blend');
+		if(!floatintPointBlend) {
+			console.log('No floating point blend');
+		}
+
+		const floatingPointTextures = this.gl.getExtension('OES_texture_float');
+
+		if(!floatingPointTextures) {
+			console.log('No floating point texture support');	
+		}
+
+		const halfFloatTextures = this.gl.getExtension('OES_texture_half_float');
+		if(!halfFloatTextures) {
+			console.log('No half float support for textures');
+		}
+
+		const halfFloatLinearFilter = this.gl.getExtension('OES_texture_half_float_linear');
+		if(!halfFloatLinearFilter) {
+			console.log('No half float linear filtering');
+		}
+
 		const linearFloatingPointFiltering = this.gl.getExtension('OES_texture_float_linear');
 
 		if(!linearFloatingPointFiltering) {

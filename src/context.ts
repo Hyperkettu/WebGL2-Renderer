@@ -162,6 +162,11 @@ export class Context {
 
 	}
 
+	renderToTexture2DMip(colorTargetIndex: number, mipLevel: number, targetTexture: Texture) {
+		this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0 + colorTargetIndex, 
+			this.gl.TEXTURE_2D, targetTexture.textureId, mipLevel);
+	}
+
 	renderToCubeMapFace(colorTargetIndex: number, faceIndex: number, mipLevel: number, targetCubeMapTexture: Texture, render: () => void) {
 		this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0 + colorTargetIndex,
 			this.gl.TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex, targetCubeMapTexture.textureId, mipLevel);

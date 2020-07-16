@@ -54,7 +54,7 @@ export class CubeMapRenderer {
 
 		// generate 64x64 cubemap render target for irradiance (low frequency)
 		const irradianceCubemapSize = 64;
-		this.irradianceMap = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA,
+		this.irradianceMap = Texture.createRenderTarget(gl, gl.RGBA32F, gl.RGBA,
 			irradianceCubemapSize, irradianceCubemapSize, gl.FLOAT, gl.LINEAR, true);
 
 		const rts = new RenderTargetState(gl, { x: 0, y: 0, width: irradianceCubemapSize, height: irradianceCubemapSize });
@@ -97,7 +97,7 @@ export class CubeMapRenderer {
 		const gl = renderer.gl;
 
 		const prefilterCubeMapSize = 512;
-		this.prefilterMap = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA,
+		this.prefilterMap = Texture.createRenderTarget(gl, gl.RGBA32F, gl.RGBA,
 			prefilterCubeMapSize, prefilterCubeMapSize, gl.FLOAT, gl.LINEAR_MIPMAP_LINEAR, true);
 
 		const rts = new RenderTargetState(gl, { x: 0, y: 0, width: prefilterCubeMapSize, height: prefilterCubeMapSize });

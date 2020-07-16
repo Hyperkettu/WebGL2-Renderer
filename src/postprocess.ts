@@ -63,7 +63,7 @@ export class PostProcess {
 		this.hdrBuffer = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR);;
 		this.screenDepthTexture = DepthTexture.create(gl, width, height);
 		this.bloomTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR);;
-		this.bloomLumaTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR);;
+		this.bloomLumaTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR, true);;
 		this.grayScaledTexture = Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR);;
 		this.finalScreenTexture = Texture.createRenderTarget(gl, gl.RGBA, gl.RGBA,
 			width, height, gl.UNSIGNED_BYTE, gl.LINEAR, false, gl.LINEAR);
@@ -189,7 +189,7 @@ export class PostProcess {
 
 		const gl = renderer.gl;
 		let horizontal = true, first = true;
-		const amount = 10;
+		const amount = 2;
 		const gaussianBlurShader = shader.GetShader(ShaderType.GAUSSIAN_BLUR);
 		gaussianBlurShader.use(gl);
 
@@ -197,8 +197,8 @@ export class PostProcess {
 		const height = renderer.context.screenViewPort.height;
 
 		const pingpongBuffers: Texture[] = [
-			Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height),
-			Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height)
+			Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR, true),
+			Texture.createRenderTarget(gl, gl.RGBA16F, gl.RGBA, width, height, gl.FLOAT, gl.LINEAR, false, gl.LINEAR, true)
 		];
 
 		for (let i = 0; i < amount; i++) {
@@ -206,10 +206,28 @@ export class PostProcess {
 			const index = horizontal ? 1 : 0;
 			pingpongRTS.addColorTarget(gl, 0, pingpongBuffers[index]);
 			renderer.context.renderTargetBegin(pingpongRTS);
+
 			ConstantBuffers.generalData.update(gl, 'value', horizontal);
-			ConstantBuffers.generalData.sendToGPU(gl);
-			gaussianBlurShader.setSamplerTexture(gl, 'screenHdrBuffer', first ? source : pingpongBuffers[!horizontal ? 1 : 0], 0);
-			this.renderQuad(gl);
+
+			for(let mipLevel = 0; mipLevel <= 6; mipLevel++) {
+
+				const pingpongRTSMip = new RenderTargetState(gl, renderer.context.screenViewPort);
+				const index2 = mipLevel % 2 === 0 ? 1 : 0;
+				pingpongRTSMip.addColorTarget(gl, 0, pingpongBuffers[index2]);
+				renderer.context.renderTargetBegin(pingpongRTSMip);
+				gaussianBlurShader.setSamplerTexture(gl, 'screenHdrBuffer', first ? source : pingpongBuffers[ mipLevel % 2 === 1 ? 1 : 0], 0);
+	
+				if(first) {
+					first = false;
+				}
+
+				ConstantBuffers.generalData.update(gl, 'dataVec1', vec4.fromValues(mipLevel, 0, 0, 0));
+				ConstantBuffers.generalData.sendToGPU(gl);
+				this.renderQuad(gl);
+
+				renderer.context.renderTargetEnd();
+
+			}
 			horizontal = !horizontal;
 			if (first) {
 				first = false;

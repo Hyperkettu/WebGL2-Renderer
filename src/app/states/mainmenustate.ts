@@ -129,6 +129,7 @@ export class MainMenuState extends MenuState {
 	}
 
 	private toggleMenu(settings: { instant: boolean }) {
+		this.settings.mouseMoveCamera = this.showMenuButton;
 		this.showMenuButton = !this.showMenuButton;
 		if(this.showMenuButton) {
 			this.menuSettings.layout.runAnimation('MenuButton', 'show-menu-button', settings);

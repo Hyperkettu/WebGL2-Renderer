@@ -113,7 +113,7 @@ export class Texture {
 	}
 
 
-	static createRenderTarget(gl: WebGL2RenderingContext, internalFormat: number, format: number, width: number, height: number, type?: number, minificationFilter?: number, cubeMap: boolean = false, magnificationFilter?: number) {
+	static createRenderTarget(gl: WebGL2RenderingContext, internalFormat: number, format: number, width: number, height: number, type?: number, minificationFilter?: number, cubeMap: boolean = false, magnificationFilter?: number, mipmap: boolean = false) {
 
 		const texture = new Texture();
 
@@ -134,6 +134,10 @@ export class Texture {
 		} else {
 			gl.bindTexture(gl.TEXTURE_2D, texId);
 			gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, width, height, 0, format, type ? type : gl.FLOAT, null);
+			gl.texImage2D(gl.TEXTURE_2D, 1, internalFormat, width >> 1, height >> 1, 0, format, type ? type : gl.FLOAT, null);
+			gl.texImage2D(gl.TEXTURE_2D, 2, internalFormat, width >> 2, height >> 2, 0, format, type ? type : gl.FLOAT, null);
+			gl.texImage2D(gl.TEXTURE_2D, 2, internalFormat, width >> 3, height >> 3, 0, format, type ? type : gl.FLOAT, null);
+
 		}
 		gl.texParameteri(cubeMap ? gl.TEXTURE_CUBE_MAP : gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
 		gl.texParameteri(cubeMap ? gl.TEXTURE_CUBE_MAP : gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -152,7 +156,11 @@ export class Texture {
 		} else {
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, minificationFilter);
 			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, magnificationFilter ? magnificationFilter: gl.LINEAR);
+			if(mipmap) {
+				gl.generateMipmap(gl.TEXTURE_2D);
+			}
 		}
+
 
 		gl.bindTexture(cubeMap ? gl.TEXTURE_CUBE_MAP : gl.TEXTURE_2D, null);
 
