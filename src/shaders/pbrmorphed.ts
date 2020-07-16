@@ -1,3 +1,4 @@
+import { commonPbrSource } from './pbr-common';
 import { PointLight } from '../pointlight';
 
 export const prefixVS = 'pbrMorphedVS';
@@ -77,7 +78,7 @@ const fsSrc =
 
 		precision highp float;
 
-		${PointLight.NUM_LIGHTS > 0 ? `#define NUM_LIGHTS ${ PointLight.NUM_LIGHTS}`: ''}
+		${PointLight.NUM_LIGHTS > 0 ? `#define NUM_LIGHTS ${ PointLight.NUM_LIGHTS} `: ''}
 
 		struct PointLight {
 			vec3 color;
@@ -115,7 +116,7 @@ const fsSrc =
 		${ 5 <= PointLight.NUM_LIGHTS ? `uniform samplerCube pointLightShadowMap${5};` : ''}
 
 		layout(std140) uniform Lights {
-			${PointLight.NUM_LIGHTS > 0 ? 'PointLight pointLights[NUM_LIGHTS]' : ''}
+			${PointLight.NUM_LIGHTS > 0 ? 'PointLight pointLights[NUM_LIGHTS];' : ''}
 			DirLight dirLight;
 
 			vec3 eyePositionW;
@@ -138,7 +139,8 @@ const fsSrc =
 
 		const float PI = 3.14159265359f;
 
-		float CalcPointLightShadowFactor(PointLight light, vec3 positionWorld, samplerCube pointLightShadowMap);
+		${commonPbrSource}
+
 		float DistributionGGX(vec3 N, vec3 H, float roughness);
 		float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
 		float GeometrySchlickGGX(float NdotV, float roughness);
@@ -193,39 +195,6 @@ const fsSrc =
 float LinearizeDepth(float depth) {
 	float z = depth * 2.0 - 1.0; // transform to normalized device coordinates
 	return (2.0 * 1.0 * 30.0) / (30.0 + 1.0 - z * (30.0 - 1.0));
-}
-
-float CalcPointLightShadowFactor(PointLight light, vec3 positionWorld, samplerCube pointLightShadowMap) {
-
-	vec3 offsets[20] = vec3[](
-		vec3(1, 1, 1), vec3(1, -1, 1), vec3(-1, -1, 1), vec3(-1, 1, 1),
-		vec3(1, 1, -1), vec3(1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
-		vec3(1, 1, 0), vec3(1, -1, 0), vec3(-1, -1, 0), vec3(-1, 1, 0),
-		vec3(1, 0, 1), vec3(-1, 0, 1), vec3(1, 0, -1), vec3(-1, 0, -1),
-		vec3(0, 1, 1), vec3(0, -1, 1), vec3(0, -1, -1), vec3(0, 1, -1)
-	);
-
-	float shadow = 0.0;
-	float bias = 0.05f;
-	int samples = 20;
-
-	vec3 dirToLight = light.position - positionWorld;
-	float normalBias = (1.0f - (dot(dirToLight, normalW) / length(dirToLight))) * 0.1f;
-	vec3 normalBiasPosition = positionWorld + normalW * normalBias;
-	vec3 dirFromLight = normalBiasPosition - light.position;
-	float distanceToLight = length(dirFromLight);
-	float currentDistanceToLight = (distanceToLight - light.near) / (light.radius - light.near);
-
-	float diskRadius = 0.05f;
-	for (int i = 0; i < samples; ++i) {
-		float closestDepth = texture(pointLightShadowMap, dirFromLight + offsets[i] * diskRadius).r;
-
-		if (currentDistanceToLight - bias > closestDepth) {
-			shadow += 1.0f;
-		}
-	}
-	shadow /= float(samples);
-	return 1.0f - shadow;
 }
 
 vec3 mon2lin(vec3 x) {

@@ -125,7 +125,7 @@ export function getTerrainSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, h
 		${ 5 <= PointLight.NUM_LIGHTS ? `uniform samplerCube pointLightShadowMap${5};` : ''}
 
 		layout(std140) uniform Lights {
-			${PointLight.NUM_LIGHTS > 0 ? 'PointLight pointLights[NUM_LIGHTS]' : ''}
+			${PointLight.NUM_LIGHTS > 0 ? 'PointLight pointLights[NUM_LIGHTS];' : ''}
 			DirLight dirLight;
 
 			vec3 eyePositionW;

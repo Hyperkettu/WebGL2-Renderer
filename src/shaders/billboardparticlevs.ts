@@ -42,7 +42,7 @@ layout (std140) uniform MatricesPerFrame {
 };
 
 layout(std140) uniform Lights {
-    ${PointLight.NUM_LIGHTS > 0 ? 'PointLight pointLights[NUM_LIGHTS]' : ''}
+    ${PointLight.NUM_LIGHTS > 0 ? 'PointLight pointLights[NUM_LIGHTS];' : ''}
     DirLight dirLight;
 
     vec3 eyePositionW;

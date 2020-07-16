@@ -26,6 +26,7 @@ export class TestScene extends Scene {
 
 		for (let pointLight of this.pointLights) {
 			pointLight.shadowMap.excludeNodesFromShadowMap(renderer, [
+				'light'
 			]);
 		}
 

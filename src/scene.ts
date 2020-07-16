@@ -188,7 +188,22 @@ export abstract class Scene {
 
 	private createMesh(gl: WebGL2RenderingContext, object: SceneNodeData, parent: SceneNode) {
 		if(parent) {
-			loadMesh(gl, object.meshPath, parent);
+			const mesh = loadMesh(gl, object.meshPath, parent);
+			if(object.pointLight) {
+
+				parent.pointLight = new PointLight(gl, vec3.fromValues(object.pointLight.localPosition.x,
+					object.pointLight.localPosition.y, object.pointLight.localPosition.z),
+					vec3.fromValues(object.pointLight.color.r, object.pointLight.color.g, object.pointLight.color.b)
+					, object.pointLight.intensity, object.pointLight.radius);
+	
+				const pointLightIndex = this.pointLights.length;
+
+				for(let submesh of mesh.getSubmeshes()) {
+					(parent.getComponent('meshComponent') as MeshComponent<VertexBase>).mesh.pointLightIndex = pointLightIndex;
+					this.pointLights.push(parent.pointLight);
+					submesh.pointLightIndex = pointLightIndex;
+				}
+			}
 		}
 	}
 
@@ -202,7 +217,7 @@ export abstract class Scene {
 			parent.addChild(node);
 		}
 
-		if (object.pointLight) {
+		if (object.pointLight && (node.getComponent('meshComponent') as MeshComponent<VertexBase>).mesh) {
 			node.pointLight = new PointLight(gl, vec3.fromValues(object.pointLight.localPosition.x,
 				object.pointLight.localPosition.y, object.pointLight.localPosition.z),
 				vec3.fromValues(object.pointLight.color.r, object.pointLight.color.g, object.pointLight.color.b)

@@ -39,17 +39,20 @@ export interface SphereData extends Data {
 	radius: number;
 	numStacks: number;
 	numSectors: number;
+	material: string;
 }
 
 export interface PlaneData extends Data {
 	width: number;
 	height: number;
+	material: string;
 }
 
 export interface CubeData extends Data {
 	width: number;
 	height: number;
 	depth: number;
+	material: string;
 }
 
 export interface MeshFileData extends Data {
@@ -88,8 +91,14 @@ export interface VertexData {
 function getMeshData(gl: WebGL2RenderingContext, meshData: MeshData, parent: SceneNode) {
 	switch (meshData.type) {
 		case 'sphere':
-			const sphereData = meshData.data as SphereData;
+			const sphereData = meshData.data as SphereData; 
 			GeometryGenerator.GenerateSphere(gl, meshData.name, sphereData.radius, sphereData.numStacks, sphereData.numSectors);
+	//		const sceneNode = new SceneNode(meshData.name, parent.scene, parent);
+	//		sceneNode.transform.setPosition(0, 0, 0);
+	//		sceneNode.transform.setRotation(0, 0, 0);
+			meshes[meshData.name].getSubmesh('sphere').materialID = (meshData.data as SphereData).material;
+			parent.addMesh(Object.create(meshes[meshData.name].getSubmesh('sphere')), Layer.OPAQUE); // take a copy of submesh
+		//	parent.addChild(sceneNode);
 			break;
 		case 'plane':
 			const planeData = meshData.data as PlaneData;

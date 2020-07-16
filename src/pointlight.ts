@@ -4,7 +4,7 @@ import { PointLightShadowMap } from './pointlightshadowmap';
 
 export class PointLight extends Light {
 
-	static NUM_LIGHTS = 0;
+	static NUM_LIGHTS = 1;
 
 	constructor(gl: WebGL2RenderingContext, position: vec3, color: vec3, intensity: number, radius: number) {
 		super(color, intensity);

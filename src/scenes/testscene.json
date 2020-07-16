@@ -3,7 +3,7 @@
 		"skybox": "images/space-blue/",
 		"objects": [
 			{
-				"name": "joku",
+				"name": "terrain",
 				"position": {
 					"x": 0,
 					"y": 0,
@@ -20,7 +20,7 @@
 			{
 				"name": "burning-tree",
 				"position": {
-					"x": 10,
+					"x": 4,
 					"y": 0,
 					"z": 0
 				},
@@ -31,7 +31,53 @@
 				},
 				"children": [],
 					"meshPath": "meshes/burning-tree.morphedmesh"
+			},
+			{
+				"name": "plane",
+				"position": {
+					"x": 0,
+					"y": 0,
+					"z": -5
+				},
+				"rotation":  {
+					"x": 45,
+					"y": 0,
+					"z": 0
+				},
+				"children": [],
+					"meshPath": "meshes/plane.staticmesh"
+			},
+			{
+				"name": "light",
+				"position": {
+					"x": 0,
+					"y": 3.5,
+					"z": 0
+				},
+				"rotation":  {
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"pointLight": {
+					"localPosition": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"color": {
+						"r": 0,
+						"g": 1.0,
+						"b": 1.0
+					},
+					"near": 0.01,
+					"intensity": 50.0,
+					"radius": 35.0
+				},
+				"children": [],
+					"meshPath": "meshes/light-sphere.mesh.json"
 			}
+			
 		]
 	}
 }
