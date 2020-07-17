@@ -1,6 +1,6 @@
 {
 	"data": {
-		"skybox": "images/space-blue/",
+		"skybox": "images/skybox/",
 		"objects": [
 			{
 				"name": "terrain",
@@ -48,6 +48,21 @@
 					"meshPath": "meshes/plane.staticmesh"
 			},
 			{
+				"name": "plane",
+				"position": {
+					"x": -5.1,
+					"y": 0,
+					"z": -5
+				},
+				"rotation":  {
+					"x": 45,
+					"y": 0,
+					"z": 0
+				},
+				"children": [],
+					"meshPath": "meshes/plane-no-normals.staticmesh"
+			},
+			{
 				"name": "light",
 				"position": {
 					"x": 0,
@@ -71,7 +86,7 @@
 						"b": 1.0
 					},
 					"near": 0.01,
-					"intensity": 50.0,
+					"intensity": 0.0,
 					"radius": 35.0
 				},
 				"children": [],

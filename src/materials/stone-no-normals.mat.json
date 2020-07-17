@@ -1,0 +1,28 @@
+{
+	"material" : {
+		"name" : "stone-no-normals",
+		"shader": "pbr",
+		"tech": "ARMAD",
+		"textures": [
+			{
+				"path" : "images/stone/stone-albedo.png",
+				"type" : "albedo"
+			},			
+			{
+				"path" : "images/stone/stone-metallic.png",
+				"type" : "metallic"
+			},
+			{
+				"path" : "images/stone/stone-roughness.png",
+				"type" : "roughness"
+			},	
+			{
+				"path" : "images/stone/stone-ao.png",
+				"type" : "ambient-occlusion"
+			},
+			{
+				"path" : "images/stone/stone-displacement.png",
+				"type" : "displacement"
+			}]
+	}
+}
