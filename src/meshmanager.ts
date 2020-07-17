@@ -93,20 +93,20 @@ function getMeshData(gl: WebGL2RenderingContext, meshData: MeshData, parent: Sce
 		case 'sphere':
 			const sphereData = meshData.data as SphereData; 
 			GeometryGenerator.GenerateSphere(gl, meshData.name, sphereData.radius, sphereData.numStacks, sphereData.numSectors);
-	//		const sceneNode = new SceneNode(meshData.name, parent.scene, parent);
-	//		sceneNode.transform.setPosition(0, 0, 0);
-	//		sceneNode.transform.setRotation(0, 0, 0);
 			meshes[meshData.name].getSubmesh('sphere').materialID = (meshData.data as SphereData).material;
 			parent.addMesh(Object.create(meshes[meshData.name].getSubmesh('sphere')), Layer.OPAQUE); // take a copy of submesh
-		//	parent.addChild(sceneNode);
 			break;
 		case 'plane':
 			const planeData = meshData.data as PlaneData;
 			GeometryGenerator.GeneratePlane(gl, meshData.name, planeData.width, planeData.height);
+			meshes[meshData.name].getSubmesh('plane').materialID = planeData.material;
+			parent.addMesh(Object.create(meshes[meshData.name].getSubmesh('plane')), Layer.OPAQUE);
 			break;
 		case 'cube':
 			const cubeData = meshData.data as CubeData;
 			GeometryGenerator.GenerateCube(gl, meshData.name, cubeData.width, cubeData.height, cubeData.depth);
+			meshes[meshData.name].getSubmesh('cube').materialID = cubeData.material;
+			parent.addMesh(Object.create(meshes[meshData.name].getSubmesh('cube')), Layer.OPAQUE);
 			break;
 		case 'static': 
 		case 'morphed':
