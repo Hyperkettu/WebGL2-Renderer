@@ -49,7 +49,10 @@ export class MainMenuState extends MenuState {
 			const value = Math.round(settings.scene.dirLight.intensity * 100) / 100;
 		//	this.layout.getElement(ui.Text, 'dirlight_text').setText(`Dirlight Intensity:\n${value}`);
 		} else if (keys['l']) {
-            settings.scene.dirLight.intensity -= 1.0 * dt;
+			settings.scene.dirLight.intensity -= 1.0 * dt;
+			if(settings.scene.dirLight.intensity < 0.0) {
+				settings.scene.dirLight.intensity = 0;
+			}
         }
 
         const camera = this.settings.renderer.getCurrentCamera();
