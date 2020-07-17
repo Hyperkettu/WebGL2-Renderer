@@ -21,7 +21,8 @@ export function getTerrainSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, h
 
 		layout (std140) uniform MatricesPerFrame {
    			mat4 projection;
-    		mat4 view;
+			mat4 view;
+			mat4 lightSpaceMatrix;
 		};
 
 		layout (std140) uniform PerObject {
@@ -40,6 +41,7 @@ export function getTerrainSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, h
 		${hasDisplacementMap ? 'uniform sampler2D blendMap;' : ''}
 
 		out vec2 uvs;
+		out vec4 dirLightSpacePositionW;
 		out vec3 positionW;
 		out vec3 normalW;
 		out mat3 TBN;
@@ -73,6 +75,8 @@ export function getTerrainSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, h
 			'float displacement = displacementFactor * disp;' +
 			'positionW = positionW + displacement * normalW;' : ''
 		}
+
+			dirLightSpacePositionW = lightSpaceMatrix * vec4(positionW, 1.0f);
 
 			gl_Position = projection * view * vec4(positionW, 1.0f);
 
@@ -115,6 +119,8 @@ export function getTerrainSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, h
 		${hasRoughnessMap ? 'uniform sampler2DArray roughnesses;' : ''}
 		${hasMetallicMap ? 'uniform sampler2DArray metallics;' : ''}
 
+		uniform sampler2D dirLightShadowMap;
+
 		uniform sampler2D brdfLUT;
 		uniform samplerCube irradianceMap;
 		uniform samplerCube prefilterMap;
@@ -145,6 +151,7 @@ export function getTerrainSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, h
 		};
 
 		in vec2 uvs;
+		in vec4 dirLightSpacePositionW;
 		in vec3 positionW;
 		in vec3 normalW;
 		in mat3 TBN;

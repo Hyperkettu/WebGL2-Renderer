@@ -61,6 +61,7 @@ export async function LoadTechniques() {
 	promises.push(loadFile<TechniqueFile>('techniques/gaussianblur.technique'));
 	promises.push(loadFile<TechniqueFile>('techniques/visualizedepth.technique'));
 	promises.push(loadFile<TechniqueFile>('techniques/morphedpbrtexturetransform.technique'));
+	promises.push(loadFile<TechniqueFile>('techniques/dirlightshadowmap.technique'));
 
 
 

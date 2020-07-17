@@ -1,0 +1,41 @@
+{
+    "shaderId": 23,
+    "shaders":  
+    [
+        {
+            "type": "vertexShader",
+            "uniforms": [
+                {
+                    "name": "MatricesPerFrame",
+                    "type": "buffer",
+                    "bindIndex": 0
+                },
+                {
+                    "name": "PerObject",
+                    "type": "buffer",
+                    "bindIndex": 1
+                }
+            ],
+            "source": "dirLightShadowMapVS"
+        },
+        {
+            "type": "fragmentShader",
+            "uniforms": [
+            ],
+            "source": "dirLightShadowMapFS"
+        }
+    ],
+    "technique": {
+        "name": "default",
+        "permutationVariables": [
+
+        ],
+        "passes": [
+            {
+                "name": "pass0",
+                "vertexShader": "dirLightShadowMapVS",
+                "fragmentShader": "dirLightShadowMapFS"
+            }
+        ]
+    }
+}

@@ -1,5 +1,5 @@
 
-export const prefix = 'shadowMapVS';
+export const prefix = 'dirLightShadowMapVS';
 
 export const shadowMapVsSrc =
 `#version 300 es
@@ -10,7 +10,6 @@ layout(std140) uniform MatricesPerFrame {
 mat4 projection;
 mat4 view;
 mat4 lightSpaceMatrix;
-
 };
 
 layout(std140) uniform PerObject {
@@ -19,10 +18,8 @@ float displacementFactor;
 float pointLightIndex;
 };
 
-out vec4 positionW;
-
 void main() {
-    positionW = world * vec4(position, 1.0f);
+    vec4 positionW = world * vec4(position, 1.0f);
     gl_Position = projection * view * positionW;
 }
 `;

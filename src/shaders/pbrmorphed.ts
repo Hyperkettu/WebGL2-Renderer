@@ -22,7 +22,8 @@ layout(location = 6) in vec3 tangent2;
 
 layout (std140) uniform MatricesPerFrame {
     mat4 projection;
-    mat4 view;
+	mat4 view;
+	mat4 lightSpaceMatrix;
 };
 
 layout (std140) uniform PerObject {
@@ -40,6 +41,7 @@ layout (std140) uniform Data {
 ${hasDisplacementMap ? 'uniform sampler2D displacementMap;' : ''}
 
 out vec2 uvs;
+out vec4 dirLightSpacePositionW;
 out vec3 positionW;
 out vec3 normalW;
 out mat3 TBN;
@@ -67,6 +69,8 @@ void main() {
     ${hasDisplacementMap ?
     'float displacement = displacementFactor * texture(displacementMap, uvs).r;' +
     'positionW = positionW + displacement * normalW;' : ''}
+
+	dirLightSpacePositionW = lightSpaceMatrix * vec4(positionW, 1.0f);
 
     gl_Position = projection * view * vec4(positionW, 1.0f);
 }
@@ -105,6 +109,8 @@ const fsSrc =
 		${ hasRoughnessMap ? 'uniform sampler2D roughnessMap;' : ''}
 		${ hasEmissionMap ? 'uniform sampler2D emissionMap;' : ''}
 
+		uniform sampler2D dirLightShadowMap;
+
 		uniform sampler2D brdfLUT;
 		uniform samplerCube irradianceMap;
 		uniform samplerCube prefilterMap;
@@ -129,6 +135,8 @@ const fsSrc =
 		};
 
 		in vec2 uvs;
+		in vec4 dirLightSpacePositionW;
+
 		in vec3 positionW;
 		in vec3 normalW;
 		in mat3 TBN;

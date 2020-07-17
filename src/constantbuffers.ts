@@ -45,6 +45,8 @@ export class ConstantBuffers {
 			for (let index = 1; index <= PointLight.NUM_LIGHTS; index++) {
 				tech.setSamplerTexture(gl, `pointLightShadowMap${index}`, texture.GetDepthTexture(`pointLightShadowMap${index}`), 10 + (index - 1));
 			}
+
+			tech.setSamplerTexture(gl, 'dirLightShadowMap', texture.GetDepthTexture('dirLightShadowMap'), 11);
 		}
 		tech.dirtyFlags = BufferDirtyFlag.NONE;
 	}
@@ -61,6 +63,7 @@ export class ConstantBuffers {
 
 		ConstantBuffers.matricesPerFrame.update(gl, 'projection', ConstantBuffers.projection);
 		ConstantBuffers.matricesPerFrame.update(gl, 'view', ConstantBuffers.view);
+		ConstantBuffers.matricesPerFrame.update(gl, 'lightSpaceMatrix', ConstantBuffers.lightSpaceMatrix);
 		ConstantBuffers.matricesPerFrame.sendToGPU(gl);
 
 		for (let index = 0; index < PointLight.NUM_LIGHTS; index++) {
@@ -97,6 +100,7 @@ export class ConstantBuffers {
 		ConstantBuffers.matricesPerFrame = new UniformBufferObject();
 		ConstantBuffers.matricesPerFrame.addUniform('mat4', 'projection');
 		ConstantBuffers.matricesPerFrame.addUniform('mat4', 'view');
+		ConstantBuffers.matricesPerFrame.addUniform('mat4', 'lightSpaceMatrix');
 		ConstantBuffers.matricesPerFrame.create(gl);
 		ConstantBuffers.matricesPerFrame.bindTo(gl, 0);
 
@@ -162,6 +166,7 @@ export class ConstantBuffers {
 
 	static projection: mat4;
 	static view: mat4;
+	static lightSpaceMatrix: mat4;
 	static world: mat4;
 	static dirLightDirection: vec3;
 	static dirLightColor: vec3;

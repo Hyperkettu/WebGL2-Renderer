@@ -39,6 +39,7 @@ layout(location = 6) in vec2 size;
 layout (std140) uniform MatricesPerFrame {
     mat4 projection;
     mat4 view;
+    mat4 lightSpaceMatrix;
 };
 
 layout(std140) uniform Lights {

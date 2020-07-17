@@ -10,6 +10,7 @@ out vec3 uvs;
 layout(std140) uniform MatricesPerFrame {
 	mat4 projection;
 	mat4 view;
+	mat4 lightSpaceMatrix;
 };
 
 void main() {

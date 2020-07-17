@@ -20,6 +20,8 @@ import * as visualizeDepthFS from './visualizedepthfs';
 // shadow map
 import * as shadowMapVS from './shadowmapvs';
 import * as shadowMapFS from './shadowmapfs';
+import * as dirLightShadowMapVS from './dirlightshadowmapvs';
+import * as dirLightShadowMapFS from './dirlightshadowmapfs';
 
 // post process
 import * as sharpEdgeFS from './sharpedgefs';
@@ -84,6 +86,8 @@ export function init() {
 	// shadow map
 	prefixToShaderSource[shadowMapVS.prefix] = shadowMapVS.shadowMapVsSrc;
 	prefixToShaderSource[shadowMapFS.prefix] = shadowMapFS.shadowMapFsSrc;
+	prefixToShaderSource[dirLightShadowMapVS.prefix] = dirLightShadowMapVS.shadowMapVsSrc;
+	prefixToShaderSource[dirLightShadowMapFS.prefix] = dirLightShadowMapFS.shadowMapFsSrc;
 
 	// post process
 	prefixToShaderSource[sharpEdgeFS.prefix] = sharpEdgeFS.sharpEdgesFsSrc;

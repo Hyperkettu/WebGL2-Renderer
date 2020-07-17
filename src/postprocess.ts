@@ -90,7 +90,7 @@ export class PostProcess {
 
 		if (texture instanceof DepthTexture && camera) {
 			ConstantBuffers.generalData.update(gl, 'dataVec1', vec4.fromValues(camera.nearZ, camera.farZ, 0, 0));
-			ConstantBuffers.generalData.update(gl, 'value', camera.isPerspective);
+			ConstantBuffers.generalData.update(gl, 'value', false); //camera.isPerspective);
 			ConstantBuffers.generalData.sendToGPU(gl);
 		}
 

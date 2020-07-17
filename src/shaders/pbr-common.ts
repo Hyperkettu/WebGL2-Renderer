@@ -85,6 +85,23 @@ float CalcPointLightShadowFactor(PointLight light, vec3 positionWorld, samplerCu
 	return 1.0f - shadow;
 }
 
+float CalcDirLightShadowFactor(vec4 lightSpacePosition, sampler2D shadowMap) {
+	vec3 projectedCoords = lightSpacePosition.xyz / lightSpacePosition.w;
+	projectedCoords = 0.5f * projectedCoords + 0.5f;
+
+	float closestDepth = texture(shadowMap, projectedCoords.xy).r;
+	float bias = 0.01f;
+
+	float shadow = 0.0f;
+	float currentDepth = projectedCoords.z;
+
+	if(currentDepth - bias > closestDepth) {
+		shadow = 1.0f;
+	}
+
+	return 1.0f - shadow;
+}
+
 vec3 CalcPointLight(PointLight light, vec3 N, vec3 V, vec3 F0, vec3 albedo, float roughness, float metallic, samplerCube pointLightShadowMap) {
 	// calculate per-light radiance
 	vec3 L = light.position - positionW;
@@ -124,7 +141,7 @@ vec3 CalcPointLight(PointLight light, vec3 N, vec3 V, vec3 F0, vec3 albedo, floa
 }
 
 // Calculates the color when using a directional light.
-vec3 CalcDirLight(DirLight dirLight, vec3 N, vec3 V, vec3 F0, vec3 albedo, float roughness, float metallic) {
+vec3 CalcDirLight(DirLight dirLight, vec3 N, vec3 V, vec3 F0, vec3 albedo, float roughness, float metallic, sampler2D shadowMap, vec4 lightSpacePosition) {
 	// calculate per-light radiance
 	vec3 L = normalize(-dirLight.direction);
 	vec3 H = normalize(V + L);
@@ -153,8 +170,10 @@ vec3 CalcDirLight(DirLight dirLight, vec3 N, vec3 V, vec3 F0, vec3 albedo, float
 	// scale light by NdotL
 	float NdotL = max(dot(N, L), 0.0f);
 
+	float shadowFactor = CalcDirLightShadowFactor(lightSpacePosition, shadowMap);
+
 	// add to outgoing radiance Lo
-	return (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+	return shadowFactor * (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 }
 
 vec4 ogl_pbr(vec3 N, vec3 albedo, float roughness, float metallic, float ao) {
@@ -170,7 +189,7 @@ vec4 ogl_pbr(vec3 N, vec3 albedo, float roughness, float metallic, float ao) {
 	F0 = mix(F0, albedo, metallic);
 
 	// calculate sun
-	vec3 Lo = CalcDirLight(dirLight, N, V, F0, albedo, roughness, metallic);
+	vec3 Lo = CalcDirLight(dirLight, N, V, F0, albedo, roughness, metallic, dirLightShadowMap, dirLightSpacePositionW);
 
 	${
 		1 <= PointLight.NUM_LIGHTS ?

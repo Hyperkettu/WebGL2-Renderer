@@ -331,6 +331,10 @@ export class Renderer {
 			scene.pointLights[index].shadowMap.render(this, index + 1);
 		}
 
+		if(scene.dirLight) {
+			scene.dirLight.shadowMap.render(this);
+		}
+
 		const gl = this.gl;
 		const rts = new RenderTargetState(gl, this.context.screenViewPort);
 		rts.addColorTarget(gl, 0, this.postProcess.hdrBuffer);
@@ -347,6 +351,7 @@ export class Renderer {
 
 		ConstantBuffers.projection = currentCamera.projection;
 		ConstantBuffers.view = currentCamera.view;
+		ConstantBuffers.lightSpaceMatrix = scene.dirLight?.shadowMap.lightSpaceMatrix;
 		ConstantBuffers.eyePosition = currentCamera.position;
 		ConstantBuffers.dirLightColor = scene.dirLight.color;
 		ConstantBuffers.dirLightDirection = scene.dirLight.direction;
@@ -426,7 +431,7 @@ export class Renderer {
 				const bottomRightCorner = { x: viewport.width / 2, y: 0, width: viewport.width / 2, height: viewport.height / 2 };
 				this.gl.depthFunc(gl.LEQUAL);
 				const defaultCamera = camera.GetCamera('default');
-				this.postProcess.renderToViewport(this, this.postProcess.screenDepthTexture, bottomRightCorner, ShaderType.VISUALIZE_DEPTH, defaultCamera);
+				this.postProcess.renderToViewport(this, this.currentScene.dirLight.shadowMap.shadowMap[0], bottomRightCorner, ShaderType.VISUALIZE_DEPTH, defaultCamera);
 				this.gl.depthFunc(gl.LESS);
 				this.context.setViewport(viewport);
 			}

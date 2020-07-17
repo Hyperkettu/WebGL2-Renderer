@@ -20,9 +20,9 @@ export class TestScene extends Scene {
 		await super.initScene(renderer, path);
 
 		const dirLightColor = vec3.fromValues(1, 1, 1);
-		const dirLightDirection = vec3.fromValues(0.0, -1.0, -1.0);
+		const dirLightDirection = vec3.fromValues(0.0, -1.0, 0.01);
 		const dirLightIntensity = 0.0;
-		this.dirLight = new DirectionalLight(dirLightColor, dirLightDirection, dirLightIntensity);
+		this.dirLight = new DirectionalLight(renderer.gl, dirLightColor, dirLightDirection, dirLightIntensity);
 
 		for (let pointLight of this.pointLights) {
 			pointLight.shadowMap.excludeNodesFromShadowMap(renderer, [
