@@ -391,15 +391,6 @@ export class Renderer {
 
 		this.context.renderTargetEnd();
 
-		let rtsOverlay = new RenderTargetState(gl, this.context.screenViewPort);
-		rtsOverlay.addColorTarget(gl, 0, this.postProcess.hdrBuffer);
-		this.context.renderTargetBegin(rtsOverlay);
-		this.overlay.overlayBegin(gl);
-		this.context.viewport();
-		this.overlay.render(gl, dt);
-		this.overlay.overlayEnd(gl);
-		this.context.renderTargetEnd();
-
 		this.postProcess.Begin(this);
 
 		let bloomTexture: Texture = null;
@@ -422,6 +413,15 @@ export class Renderer {
 		}
 		this.postProcess.ToneMapping(this, toneMapSource);
 		this.postProcess.End(this);
+
+		let rtsOverlay = new RenderTargetState(gl, this.context.screenViewPort);
+		rtsOverlay.addColorTarget(gl, 0, this.postProcess.finalScreenTexture);
+		this.context.renderTargetBegin(rtsOverlay);
+		this.overlay.overlayBegin(gl);
+		this.context.viewport();
+		this.overlay.render(gl, dt);
+		this.overlay.overlayEnd(gl);
+		this.context.renderTargetEnd();
 
 		this.postProcess.renderToScreen(this, this.postProcess.finalScreenTexture);
 
