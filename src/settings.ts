@@ -116,9 +116,9 @@ export class SettingsManager {
 			option: NormalDebugSettings.NONE
 		};	
 
-		this.changeValue('Brightness', 0);
-		this.changeValue('Saturation', 1.4);
-		this.changeValue('Contrast', 1.2);
+		this.changeValue('Brightness', 0.0);
+		this.changeValue('Saturation', 1.0);
+		this.changeValue('Contrast', 1.0);
 
 	}
 
