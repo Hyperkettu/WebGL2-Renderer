@@ -20,6 +20,7 @@ export class Submesh<VertexType> {
 		this.shaderModes[ShaderMode.NORMAL] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'Vis' };
 		this.shaderModes[ShaderMode.NORMAL_MAP] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'VisN' };
 	
+		this.shadowMapShader = ShaderType.DIR_LIGHT_SHADOW_MAP;
 
 		this.wireFrame = false;
 
@@ -72,5 +73,7 @@ export class Submesh<VertexType> {
 
 	displacementFactor: number;
 	pointLightIndex: number;
+
+	shadowMapShader: ShaderType;
 
 }

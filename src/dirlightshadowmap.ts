@@ -40,11 +40,6 @@ export class DirLightShadowMap {
 
         gl.colorMask(false, false, false, false);
 
-        const shadowMapShader = shader.GetShader(ShaderType.DIR_LIGHT_SHADOW_MAP);
-        shadowMapShader.use(gl);
-        renderer.shader = ShaderType.SHADOW_MAP;
-        renderer.shaderTech = shadowMapShader;
-
         const rts = new RenderTargetState(gl, { x: 0, y: 0, width: this.width, height: this.height });
         rts.addColorTarget(gl, 0, this.colorBuffer);
         rts.addDepthStencilTarget(gl, this.shadowMap[0]);

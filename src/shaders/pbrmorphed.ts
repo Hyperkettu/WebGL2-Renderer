@@ -4,6 +4,56 @@ import { PointLight } from '../pointlight';
 export const prefixVS = 'pbrMorphedVS';
 export const prefixFS = 'pbrMorphedFS';
 
+export const shadowMapPrefixVS = 'pbrMorphedDirLightShadowMapVS';
+
+export function getShadowSrc(hasDisplacementMap: boolean) {
+
+	const vsSrc = 
+	
+`#version 300 es
+
+precision highp float;
+
+layout(location = 0) in vec3 position1;
+layout(location = 1) in vec3 position2;
+
+layout(std140) uniform MatricesPerFrame {
+	mat4 projection;
+	mat4 view;	
+	mat4 lightSpaceMatrix;
+};
+
+layout(std140) uniform PerObject {
+	mat4 world;
+	float displacementFactor;
+	float pointLightIndex;
+};
+
+layout (std140) uniform Data {
+    vec4 dataVec1;
+    vec4 dataVec2;
+    bool value;
+};
+
+${hasDisplacementMap ? 'uniform sampler2D displacementMap;' : ''}
+
+void main() {
+    float weight = clamp(dataVec1.x, 0.0f, 1.0f);
+	vec3 position = weight * position1 + (1.0f - weight) * position2;
+	vec4 positionW = world * vec4(position, 1.0f);
+
+	${hasDisplacementMap ?
+	'float displacement = displacementFactor * texture(displacementMap, uvs).r;' +
+	'positionW = positionW + displacement * normalW;' : ''}
+	
+
+    gl_Position = projection * view * positionW;
+}
+	`;
+
+	return vsSrc;
+}
+
 export function getPbrSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, hasMetallicMap: boolean, hasAoMap: boolean, hasDisplacementMap: boolean, hasEmissionMap: boolean) {
 	
 let vsSrc = 

@@ -21,6 +21,8 @@ export class MorphedSubmesh extends Submesh<MorphVertex> {
             this.weights.push(0);
         }
 
+        this.shadowMapShader = ShaderType.DIR_LIGHT_SHADOW_MAP_MORPHED;
+
         this.shaderModes = [];
 		this.shaderModes[ShaderMode.DEFAULT] = { shader: null, tech: 'default' };
 		this.shaderModes[ShaderMode.NORMAL] = { shader: ShaderType.VISUALIZE_NORMALS_MOPRHED, tech: 'Vis' };

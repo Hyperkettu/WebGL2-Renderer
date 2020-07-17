@@ -88,6 +88,8 @@ export function init() {
 	prefixToShaderSource[shadowMapFS.prefix] = shadowMapFS.shadowMapFsSrc;
 	prefixToShaderSource[dirLightShadowMapVS.prefix] = dirLightShadowMapVS.shadowMapVsSrc;
 	prefixToShaderSource[dirLightShadowMapFS.prefix] = dirLightShadowMapFS.shadowMapFsSrc;
+	
+	prefixToShaderSource[pbrMorphed.shadowMapPrefixVS] = pbrMorphed.getShadowSrc(false);
 
 	// post process
 	prefixToShaderSource[sharpEdgeFS.prefix] = sharpEdgeFS.sharpEdgesFsSrc;

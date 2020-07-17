@@ -468,6 +468,9 @@ export class Renderer {
 			this.shaderTech = shader.GetShader(submesh.shaderModes[this.shaderMode].shader, submesh.shaderModes[this.shaderMode].tech);
 			this.shaderTech.use(this.gl);
 		} else {
+			this.shader = submesh.shadowMapShader;
+			this.shaderTech = shader.GetShader(this.shader);
+			this.shaderTech.use(this.gl);
 			return; // skip material textures for depth passes
 		}
 
