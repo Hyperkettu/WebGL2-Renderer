@@ -42,7 +42,7 @@ export class Application {
         this.stateMachine.addState(new SettingsState('Settings', {
             renderer: this.renderer,
             layout: this.renderer.getLayout('layouts/settings.json'),
-            mouseMoveCamera: true
+            mouseMoveCamera: false
         }));
 
         this.currentState = this.stateMachine.getState('MainMenu');
