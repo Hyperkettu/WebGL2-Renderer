@@ -89,17 +89,30 @@ float CalcDirLightShadowFactor(vec4 lightSpacePosition, sampler2D shadowMap) {
 	vec3 projectedCoords = lightSpacePosition.xyz / lightSpacePosition.w;
 	projectedCoords = 0.5f * projectedCoords + 0.5f;
 
-	float closestDepth = texture(shadowMap, projectedCoords.xy).r;
 	float bias = 0.01f;
 
 	float shadow = 0.0f;
 	float currentDepth = projectedCoords.z;
+	ivec2 size = textureSize(shadowMap, 0);
 
-	if(currentDepth - bias > closestDepth) {
-		shadow = 1.0f;
+	int numSamples = 9;
+
+	vec2 offsets[9] = vec2[](
+		vec2(-1, 1), vec2(0, 1), vec2(1, 1), 
+		vec2(-1, 0), vec2(0, 0), vec2(1, 0),
+		vec2(-1, -1), vec2(0, -1), vec2(1, -0)
+	);
+
+	for(int i = 0; i < numSamples; i++) {
+
+		float closestDepth = texture(shadowMap, projectedCoords.xy + vec2(offsets[i] / vec2((float(size.x)), (float(size.y))))).r;
+		if(currentDepth - bias > closestDepth) {
+			shadow += 1.0f;
+		}
+
 	}
 
-	return 1.0f - shadow;
+	return 1.0f - (shadow / (float(numSamples)));
 }
 
 vec3 CalcPointLight(PointLight light, vec3 N, vec3 V, vec3 F0, vec3 albedo, float roughness, float metallic, samplerCube pointLightShadowMap) {
