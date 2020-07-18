@@ -13,6 +13,7 @@ import { UISprite } from "./sprite";
 import { AnimationData, Animation } from "../animationsystem";
 import { Grid } from "./grid";
 import * as ui from './container';
+import { Slider } from "./slider";
 
 const layouts: { [name: string]: UILayout } = {};
 
@@ -20,9 +21,10 @@ export function get(name: string) {
     return layouts[name];
 }
 
-export type ElementDataType = 'button' | 'text' | 'sprite' | 'grid' | 'container';
-export type ElementType = Element | Button | Text | ui.Container;
+export type ElementDataType = 'button' | 'text' | 'sprite' | 'grid' | 'container' | 'slider';
+export type ElementType = Element | Button | Text | ui.Container | Slider;
 export type ClickHandler = (x: number, y: number) => boolean;
+export type DragHandler = (x: number, y: number) => number;
 
 export interface LayoutFile {
     logicalSize: vec2;
@@ -46,6 +48,11 @@ export interface ElementData {
 export interface ButtonData extends ElementData {
     textData: TextData;
     spriteData: SpriteData;
+}
+
+export interface SliderData extends ElementData {
+    backgroundData: SpriteData;
+    holdData: SpriteData;
 }
 
 export interface TextData extends ElementData {
@@ -86,6 +93,7 @@ export class UILayout {
 
         this.clickHandlers = [];
         this.releaseClickHandlers = [];
+        this.dragHandlers = [];
 
         this.size = vec2.create();
         const size = vec2.fromValues(window.innerWidth, window.innerHeight);
@@ -206,6 +214,11 @@ export class UILayout {
            case 'container': 
                  element = this.createContainer(elementData as ContainerData);
                  break;
+            case 'slider':
+                const sliderData = elementData as SliderData;
+                const background = this.createSprite(sliderData.backgroundData);
+                const hold = this.createSprite(sliderData.holdData);
+                element = this.createSlider(sliderData, background, hold);
             default: 
                 break;
         }
@@ -256,6 +269,17 @@ export class UILayout {
         button.setScale(data.scale);
         button.setRotation(data.rotation);
         return button;
+    }
+
+    createSlider(data: SliderData, background: Sprite, hold: Sprite) {
+        const slider = new Slider(data.name, this.overlay, background, hold, this);
+        slider.setPosition(data.position);
+        slider.setScale(data.scale);
+        slider.setRotation(data.rotation);
+        if(data.anchor) {
+            slider.setAnchor(data.anchor);
+        }
+        return slider;
     }
 
     createSprite(data: SpriteData) {
@@ -376,6 +400,7 @@ export class UILayout {
 
     clickHandlers: ClickHandler[];
     releaseClickHandlers: ClickHandler[];
+    dragHandlers: DragHandler[];
 
     size: vec2;
 

@@ -8,6 +8,7 @@ import { Sprite } from "../../overlay/sprite";
 import * as settings from '../../settings';
 import { vec2 } from "gl-matrix";
 import { Container } from '../../overlay/ui/container';
+import { Slider } from "../../overlay/ui/slider";
 
 export interface MainMenuSettings extends MenuSettings {
     scene: Scene;
@@ -33,6 +34,11 @@ export class MainMenuState extends MenuState {
         const button = settings.layout.find('MenuButton') as Button;
         button.onClick((x, y) => {
             fsm.set(fsm.getState('Settings'));
+		});
+
+		const slider = settings.layout.find('MenuSlider') as Slider;
+		slider.onDrag(value => {
+			this.settings.renderer.settings.changeValue('Brightness', value);
 		});
     }
 	public disableInput(fsm: StateMachine) {

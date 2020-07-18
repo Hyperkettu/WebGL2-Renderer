@@ -132,6 +132,11 @@ export class Application {
 
         document.addEventListener('mousemove', event => {
 
+            const settings = this.currentState.settings as MenuSettings;
+            for(let onDrag of settings.layout.dragHandlers) {
+                onDrag(event.x, event.y);
+            }
+
 			if (this.currentState.settings.mouseMoveCamera) {
 				const sensitivy = 0.5;
 				const deltaX = event.movementX * sensitivy;
