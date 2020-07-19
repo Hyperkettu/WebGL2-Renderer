@@ -1,0 +1,32 @@
+{
+	"material" : {
+		"name" : "default-with-emission",
+		"shader": "pbr",
+		"tech": "ANRMAE",
+		"textures": [
+			{
+				"path" : "images/materials/default-albedo.png",
+				"type" : "albedo"
+			},
+			{
+				"path" : "images/rock/rock-normal.png",
+				"type" : "normal"
+			},			
+			{
+				"path" : "images/rock/rock-metallic.png",
+				"type" : "metallic"
+			},
+			{
+				"path" : "images/rock/rock-roughness.png",
+				"type" : "roughness"
+			},	
+			{
+				"path" : "images/rock/rock-ao.png",
+				"type" : "ambient-occlusion"
+			},
+			{
+				"path" : "images/sphere-emission.png",
+				"type" : "emission"
+			}]
+	}
+}

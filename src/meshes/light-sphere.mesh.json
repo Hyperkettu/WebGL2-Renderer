@@ -6,10 +6,10 @@
 			"radius": 0.3,
 			"numStacks": 128,
 			"numSectors": 128,
-			"material": "rock-with-emission"
+			"material": "default-with-emission"
 		},
 		"materials": [
-			"materials/rock-with-emission.mat.json"
+			"materials/default-with-emission.mat.json"
 		]
 	}
 }
