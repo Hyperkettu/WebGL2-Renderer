@@ -116,55 +116,7 @@
                     "1": 0.5
                 }
             }
-        },
-        {
-            "type": "slider",
-            "name": "MenuSlider",
-            "position": {
-                "0": 400,
-                "1": 320
-            },
-            "rotation": 0,
-            "scale": {
-                "0": 1,
-                "1": 1
-            },
-            "backgroundData": {
-                "name": "slider-bg",
-                "path": "images/slider_bg.png",
-                "position": {
-                    "0": 0,
-                    "1": 0
-                },
-                "rotation": 0,
-                "scale": {
-                    "0": 1,
-                    "1": 1
-                },
-                "type": "sprite",
-                "anchor": {
-                    "0": 0.5,
-                    "1": 0.5
-                }
-            },
-            "holdData": {
-                "name": "hold-sprite",
-                "path": "images/slider_hold.png",
-                "position": {
-                    "0": 0,
-                    "1": 0
-                },
-                "rotation": 0,
-                "scale": {
-                    "0": 1,
-                    "1": 1
-                },
-                "type": "sprite",
-                "anchor": {
-                    "0": 0.5,
-                    "1": 0.5
-                }
-            }
         }
+        
     ]
 }

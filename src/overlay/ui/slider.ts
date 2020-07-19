@@ -26,7 +26,18 @@ export class Slider extends Element {
         this.isDragged = false;
         this.value = 0;
         this.minValue = -1; 
-        this.maxValue = 1;
+        this.maxValue = 2;
+    }
+
+    setValues(min: number, value: number, max: number) {
+        this.value = value;
+        this.minValue = min;
+        this.maxValue = max;
+
+        const range = this.maxValue - this.minValue;
+        const val = (this.value - this.minValue) / range;
+
+        this.updateHoldPosition(val);
     }
 
 
@@ -46,6 +57,12 @@ export class Slider extends Element {
         return { x: this.background.size[0] * this.container.scale[0], y: this.background.size[1] * this.container.scale[1] };
     }
 
+    updateHoldPosition(value: number) {
+        const contentSize = this.getContentSize();
+                const xPos = lerpNumber(-contentSize[0] * 0.5, contentSize[0] * 0.5, value);
+                this.hold.setPosition(vec2.fromValues(xPos, 0));
+    }
+
     onDrag(callback: (value: number) => void) {
 
         this.layout.clickHandlers.push((x: number, y: number ) => {
@@ -54,9 +71,10 @@ export class Slider extends Element {
             vec2.transformMat3(this.point, this.point, this.invWorld);
             if(!this.isDragged && this.rect.containsPoint(this.point)) {
                 this.isDragged = true;
+                return true;
             }
 
-            return true;
+            return false;
 
         });
 
@@ -74,11 +92,8 @@ export class Slider extends Element {
 
                 const value = clamp(this.point[0], 0, 1);
                 this.value = lerpNumber(this.minValue, this.maxValue, value);
-                console.log(value);
 
-                const contentSize = this.getContentSize();
-                const xPos = lerpNumber(-contentSize[0] * 0.5, contentSize[0] * 0.5, value);
-                this.hold.setPosition(vec2.fromValues(xPos, 0));
+                this.updateHoldPosition(value);
 
                 callback(this.value);
             }

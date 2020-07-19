@@ -57,6 +57,7 @@ export class SettingsManager {
 		this.settingsCategories[SettingCategory.DEBUG] = this.debugOptions;
 
 		this.settingValues = {};
+		this.valueLimits = {};
 
 		this.renderer = renderer;
 	}
@@ -116,9 +117,12 @@ export class SettingsManager {
 			option: NormalDebugSettings.NONE
 		};	
 
-		this.changeValue('Brightness', 0.0);
-		this.changeValue('Saturation', 1.0);
-		this.changeValue('Contrast', 1.0);
+		this.changeValue('Brightness', -0.09);
+		this.setValueLimits('Brightness', -1, 4);
+		this.changeValue('Saturation', 1.1);
+		this.setValueLimits('Saturation', 0, 5);
+		this.changeValue('Contrast', 1.15);
+		this.setValueLimits('Contrast', 0, 5);
 
 	}
 
@@ -174,8 +178,30 @@ export class SettingsManager {
 		this.settingValues[key] = value;
 	}
 
+	public getValueSettings() {
+		return this.settingValues;
+	}
+
 	public getSettingValue(key: SettingValueType) {
 		return this.settingValues[key];
+	}
+
+	public getValueLimits(key: SettingValueType) {
+		return this.valueLimits[key];
+	}
+
+	public setValueLimits(key: SettingValueType, min: number, max: number) {
+		const limits = this.valueLimits[key];
+
+		if(limits) {
+			limits.max = max;
+			limits.min = min;
+		} else {
+			this.valueLimits[key] = {
+				min,
+				max
+			};
+		}
 	}
 
 	public getToneMapping(option: ToneMapping) {
@@ -197,6 +223,7 @@ export class SettingsManager {
 	private settingOptions: {[name: string]: Settings };
 	private debugOptions: {[name: string]: Settings };
 	private settingValues: {[name: string]: number };
+	private valueLimits: {[name: string]: { max: number, min: number }};
 	public renderer: Renderer;
 
 }

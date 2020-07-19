@@ -36,10 +36,6 @@ export class MainMenuState extends MenuState {
             fsm.set(fsm.getState('Settings'));
 		});
 
-		const slider = settings.layout.find('MenuSlider') as Slider;
-		slider.onDrag(value => {
-			this.settings.renderer.settings.changeValue('Brightness', value);
-		});
     }
 	public disableInput(fsm: StateMachine) {
         const settings = this.settings as MainMenuSettings;

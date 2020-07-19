@@ -5,6 +5,8 @@ import { Grid } from "../../overlay/ui/grid";
 import * as setting from '../../settings';
 import { vec2 } from "gl-matrix";
 import { Container } from "../../overlay/ui/container";
+import { Slider } from "../../overlay/ui/slider";
+import { Sprite } from "../../overlay/sprite";
 
 export interface Settings extends MenuSettings {
 
@@ -28,6 +30,9 @@ export class SettingsState extends MenuState {
     private fillGrids() {
         const grid = this.menuSettings.layout.find('MenuGrid') as Grid<Container>;
         const debugGrid = this.menuSettings.layout.find('DebugMenu') as Grid<Container>;
+        const sliderGrid = this.menuSettings.layout.find('SliderGrid') as Grid<Container>;
+
+        sliderGrid.clear();
 
         const grids: Grid<Container>[] = [];
         grids.push(grid);
@@ -138,28 +143,110 @@ export class SettingsState extends MenuState {
             category++;
         }
 
-	//	console.log(grid);
+        const valueSettings = this.settings.renderer.settings.getValueSettings();
+        const valueKeys = Object.keys(valueSettings);
+
+        sliderGrid.setGrid(1, valueKeys.length, (x, y) => {
+
+            const container = sliderGrid.layout.createContainer({
+                name: `container-${y}`,
+                rotation: 0,
+                position: [0, 0],
+                scale: [1, 1],
+                type: 'container',
+                anchor: [0, 0]
+            });
+            const textElement = grid.layout.createText({
+                name: `menu-${y}`,
+                rotation: 0,
+                position: [0,0],
+                scale: [0.7, 0.7],
+                text: valueKeys[y],
+                type: 'text',
+                atlasText: {
+                    letterHeight: 60, 
+                    letterStyle: 'tilted',
+                    letterWidth: 45,
+                    lineWidth: 1000,
+                    textAppearAnimation: 'none'
+                }
+            });
+
+            const positionX = textElement.getContentSize()[0] * 0.5 + 150;
+            textElement.setPosition([-positionX, 0]);
+            textElement.setAnchor(vec2.fromValues(0, 0.5));
+            container.addChild(textElement);
+
+            const background = sliderGrid.layout.createSprite({
+                name: `sliderBg-${y}`,
+                path: 'images/slider_bg.png',
+                position: [0, 0],
+                rotation: 0,
+                scale: [1 , 1],
+                type: 'sprite',
+                anchor: [0.5, 0.5]
+            }); 
+
+            const hold = sliderGrid.layout.createSprite({
+                name: `sliderHold-${y}`,
+                path: 'images/slider_hold.png',
+                position: [0, 0],
+                rotation: 0,
+                scale: [1 , 1],
+                type: 'sprite',
+                anchor: [0.5, 0.5]
+            }); 
+            const slider = new Slider(`slider-${y}`, sliderGrid.overlay, background, hold, sliderGrid.layout);
+
+            slider.setPosition([250, 0]);
+
+            const valueToChange = valueKeys[y];
+
+            slider.onDrag(value => {
+                console.log(value);
+                this.settings.renderer.settings.changeValue(valueToChange as setting.SettingValueType, value);
+            });
+
+            const valueLimits = this.settings.renderer.settings.getValueLimits(valueKeys[y] as setting.SettingValueType);
+            const value = this.settings.renderer.settings.getSettingValue(valueKeys[y] as setting.SettingValueType);
+            slider.setValues(valueLimits.min, value, valueLimits.max);
+
+            container.addChild(slider);
+
+            return container;
+        });
+
     }
 
     public enableInput(fsm: StateMachine) {
         const button = this.menuSettings.layout.find('myButton') as Button;
         button.onClick((x, y) => {
+            this.menuSettings.layout.runAnimation('MenuGrid', 'exit-1', { instant: true });
+            this.menuSettings.layout.runAnimation('SliderGrid', 'exit-1', { instant: true });
+            this.menuSettings.layout.runAnimation('DebugGrid', 'exit-1', { instant: true });
+
             fsm.set(fsm.getState('MainMenu'));
         });
 
         const selectCategory = this.menuSettings.layout.find('categoryButton') as Button;
         selectCategory.onClick( async (x, y) => {
-            this.category = (this.category + 1) % setting.SettingCategory.MAX_CATEGORIES;
+            this.category = (this.category + 1) % (setting.SettingCategory.MAX_CATEGORIES + 1);
 
             if(this.category === setting.SettingCategory.DEBUG) {
                 await this.menuSettings.layout.runAnimation('MenuGrid', 'exit-1', { instant: false });
                 this.menuSettings.layout.runAnimation('DebugMenu', 'show', { instant: false });
 
+            } else if(this.category === setting.SettingCategory.DEFAULT) {
+                await this.menuSettings.layout.runAnimation('SliderGrid', 'exit-1', { instant: false });
+
+                this.menuSettings.layout.runAnimation('MenuGrid', 'enter-1', { instant: false });
+ 
             } else {
                 await this.menuSettings.layout.runAnimation('DebugMenu', 'exit-1', { instant: false });
-                this.menuSettings.layout.runAnimation('MenuGrid', 'enter-1', { instant: false });
-
+                this.menuSettings.layout.runAnimation('SliderGrid', 'show', { instant: false });
             }
+
+            
         });
     }
 

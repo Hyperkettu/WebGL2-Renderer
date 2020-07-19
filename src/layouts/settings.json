@@ -42,6 +42,17 @@
             "to": [400, 360]       
         },
         {
+            "animationName": "show",
+            "elementName": "SliderGrid",
+            "target": "position", 
+            "easing": "easeInOutCubic", 
+            "duration": 1.5, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [ 400, -1000],
+            "to": [400, 360]       
+        },
+        {
             "animationName": "enter-1",
             "elementName": "MenuGrid",
             "target": "position", 
@@ -66,6 +77,17 @@
         {
             "animationName": "exit-1",
             "elementName": "MenuGrid",
+            "target": "position", 
+            "easing": "easeInOutCubic", 
+            "duration": 1.5, 
+            "type": "animate", 
+            "delay": 0,
+            "from": [400, 360],
+            "to": [400, -1000]       
+        },
+        {
+            "animationName": "exit-1",
+            "elementName": "SliderGrid",
             "target": "position", 
             "easing": "easeInOutCubic", 
             "duration": 1.5, 
@@ -215,6 +237,27 @@
         {
             "type": "grid",
             "name": "DebugMenu",
+            "position": {
+                "0": 400,
+                "1": 360
+            },
+            "rotation": 0,
+            "scale": {
+                "0": 1,
+                "1": 1
+            },
+            "contentSize": {
+                "0": 1000,
+                "1": 720
+            },
+            "anchor": {
+                "0": 0.5,
+                "1": 0.5
+            }
+        },
+        {
+            "type": "grid",
+            "name": "SliderGrid",
             "position": {
                 "0": 400,
                 "1": 360
