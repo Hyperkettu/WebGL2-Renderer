@@ -20,7 +20,7 @@ export class TestScene extends Scene {
 		await super.initScene(renderer, path);
 
 		const dirLightColor = vec3.fromValues(1, 1, 1);
-		const dirLightDirection = vec3.fromValues(0.0, 0.0, -1.0);
+		const dirLightDirection = vec3.fromValues(0.0, -0.1, -1.0);
 		const dirLightIntensity = 0.0;
 		this.dirLight = new DirectionalLight(renderer.gl, dirLightColor, dirLightDirection, dirLightIntensity);
 
