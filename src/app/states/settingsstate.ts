@@ -231,7 +231,6 @@ export class SettingsState extends MenuState {
             const valueToChange = valueKeys[y];
 
             slider.onDrag(value => {
-                console.log(value);
                 this.settings.renderer.settings.changeValue(valueToChange as setting.SettingValueType, value);
                 const valueRounded = Math.round(value * 100) / 100;
                 valueText.setText(valueRounded.toFixed(2), this.settings.renderer.gl);

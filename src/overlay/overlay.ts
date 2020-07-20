@@ -135,7 +135,6 @@ export class Overlay {
         gl.bindVertexArray(null);
 
         for(let sprite of this.separateSprites) {
-            console.log(sprite);
             this.renderSingleSprite(gl, sprite, false);
         }
     }
