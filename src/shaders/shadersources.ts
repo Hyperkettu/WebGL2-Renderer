@@ -51,6 +51,8 @@ import * as pbrStatic from './pbrstatic';
 import * as pbrMorphed from './pbrmorphed';
 import * as billboard from './billboardvs';
 
+import * as billboardFS from './billboardfs';
+
 // custom
 import * as pbrMorphedTextureTransform from './pbr-morphed-texture-transform';
 
@@ -168,6 +170,12 @@ export function init() {
 
 	prefixToShaderSource[`${billboard.prefix}/VN`] = billboard.billboardVsSrc;
 	prefixToShaderSource[`${billboard.prefix}/V`] = billboard.billboardVsSrc;
+	prefixToShaderSource[`${billboard.prefix}`] = billboard.billboardVsSrc;
+	prefixToShaderSource[`${billboardFS.prefix}`] = billboardFS.billboardFsSrc;
+	prefixToShaderSource[`${billboardFS.prefix}/A`] = billboardFS.billboardFsSrc;
+
+	
+
 
 }
 

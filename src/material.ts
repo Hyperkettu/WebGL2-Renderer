@@ -9,6 +9,10 @@ export function GetMaterial(name: string) {
 	return materials[name];
 }
 
+export function setMaterial(name: string, material: Material) {
+	materials[name] = material;
+}
+
 export interface Material {
 	textures?: Texture[];
 	customTextures?: Texture[];
@@ -23,7 +27,7 @@ export interface MaterialFile {
 
 export interface MaterialData {
 	name: string;
-	shader: 'pbr' | 'morphed-pbr' | 'pbr-morphed-texture-transform' | 'billboard';
+	shader: 'pbr' | 'morphed-pbr' | 'pbr-morphed-texture-transform' | 'billboard' | 'billboard-plain';
 	tech: string;
 	textures: texture.TextureData[];
 	customTextures?: { name: string, path: string }[];
@@ -50,6 +54,9 @@ export async function loadMaterial(path: string, load: boolean = false, gl: WebG
 		case 'billboard':
 			material.shader = ShaderType.BILLBOARD;
 			break;
+		case 'billboard-plain':
+				material.shader = ShaderType.BILLBOARD_PLAIN;
+				break;
 	}
 
 	material.tech = file.material.tech;

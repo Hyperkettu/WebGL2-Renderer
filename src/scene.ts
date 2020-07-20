@@ -155,6 +155,8 @@ export abstract class Scene {
 		
 	}
 
+	loadAssets(renderer: Renderer) {}
+
 	addObject(node: SceneNode) {
 		this.sceneGraph.root.addChild(node);
 	}

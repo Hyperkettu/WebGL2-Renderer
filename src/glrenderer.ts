@@ -32,6 +32,7 @@ import * as layout from './overlay/ui/layout';
 import { Cloth } from './cloth';
 import { Submesh } from './submesh';
 import { Subtexture } from './subtexture';
+import { BillboardText } from './billboardtext';
 
 export enum ShaderMode {
 	DEFAULT = 0,
@@ -148,21 +149,11 @@ export class Renderer {
 
 		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.SELDOM, ShaderType.PBR);
 
-		const texture2 = new TextTexture();
-		texture2.generateFromCanvas(this.gl, 'Testi', {
-			family: 'Verdana',
-			fontSize: 100,
-			fillStyle: 'rgba(255, 0, 0, 1)',
-			gradient: [ new Color(0, 1, 1, 1), new Color(1, 1, 0, 1) ],
-			textAlign: 'center',
-			textBaseLine: 'middle',
-			strokeColor: '#ff00ffff',
-			strokeThickness: 3.5
-		});
-
 		await UILayout.loadLayouts(this, resources.layouts);
+		this.currentScene.loadAssets(this);
 
 		this.cloth = new Cloth(this.gl, this.currentScene);
+
 	}
 
 	getLayout(layoutPath: string) {
@@ -331,6 +322,13 @@ export class Renderer {
 		this.context.viewport();
 		this.overlay.render(gl, dt);
 		this.overlayRender(gl);
+		/*const subtex = new Subtexture('df', this.billboardText.renderTexture, 0, 0, 
+		this.billboardText.renderTexture.width, this.billboardText.renderTexture.height);
+		const sp = new Sprite('name', subtex);
+		sp.setPosition([400, 360]);
+		sp.setScale([0.5, 0.5]);
+		sp.setAnchor(0.5, 0.5);
+		this.overlay.renderSingleSprite(gl, sp, true);*/
 		this.overlay.overlayEnd(gl);
 		this.context.renderTargetEnd();
 

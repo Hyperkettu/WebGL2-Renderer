@@ -1,0 +1,41 @@
+{
+    "shaderId": 26,
+    "shaders":  
+    [
+        {
+            "type": "vertexShader",
+            "uniforms": [
+                {
+                    "name": "MatricesPerFrame",
+                    "type": "buffer",
+                    "bindIndex": 0
+                }, 
+                {
+                    "name": "PerObject",
+                    "type": "buffer",
+                    "bindIndex": 1
+                }
+            ],
+            "source": "billboardVS"
+        },
+        {
+            "type": "fragmentShader",
+            "uniforms": [
+                
+            ],
+            "source": "billboardFS"
+        }
+    ],
+    "technique": {
+        "name": "A",
+        "permutationVariables": [
+        ],
+        "passes": [
+            {
+                "name": "pass0",
+                "vertexShader": "billboardVS",
+                "fragmentShader": "billboardFS"
+            }
+        ]
+    }
+}

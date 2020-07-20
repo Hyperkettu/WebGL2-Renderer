@@ -165,6 +165,10 @@ export function getPbrSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, hasMe
 
 			outColor.a = albedoWithAlpha.a;
 
+			if(outColor.a == 0.0f) {
+				discard;
+			}
+
 			float luma = dot(outColor.rgb, vec3(0.2126f, 0.7152f, 0.0722f));
 			if (luma > 1.0f) {
 				bloomColor = vec4(outColor.rgb, 1.0);

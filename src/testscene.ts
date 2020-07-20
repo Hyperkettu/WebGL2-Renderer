@@ -10,6 +10,7 @@ import * as material from './material';
 import * as texture from './texturemanager';
 import { GeometryGenerator } from './geometrygenerator';
 import { StaticMesh } from './mesh';
+import { BillboardText } from './billboardtext';
 
 export class TestScene extends Scene {
 	constructor(name: string, renderer: Renderer) {
@@ -31,6 +32,7 @@ export class TestScene extends Scene {
 		}
 
 		await material.loadMaterial('materials/rock.mat.json', true, renderer.gl);
+
 
 		//this.sceneGraph.find('sphere').addComponent(new CubeScript());
 
@@ -57,6 +59,17 @@ export class TestScene extends Scene {
 			this.plane = node; 
 
 			mesh.toMeshDataFile(terrain); */
+
+	}
+
+	loadAssets(renderer: Renderer) {
+	
+		const billboardText = new BillboardText(renderer, renderer.overlay);
+		billboardText.setText('Nightwish', 0.25);
+		const sn = new SceneNode('bb', this);
+		sn.addMesh(billboardText.billboardMesh.getSubmesh('plane'), Layer.OPAQUE);
+		sn.transform.setPosition(0, 7, 0);
+		this.addObject(sn);
 
 	}
 
