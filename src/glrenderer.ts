@@ -31,6 +31,7 @@ import { UILayout } from './overlay/ui/layout';
 import * as layout from './overlay/ui/layout';
 import { Cloth } from './cloth';
 import { Submesh } from './submesh';
+import { Subtexture } from './subtexture';
 
 export enum ShaderMode {
 	DEFAULT = 0,
@@ -162,98 +163,6 @@ export class Renderer {
 		await UILayout.loadLayouts(this, resources.layouts);
 
 		this.cloth = new Cloth(this.gl, this.currentScene);
-
-		//await UILayout.loadFromFile(this, 'layouts/testi2.json');
-		//await UILayout.loadFromFile(this, 'layouts/testi.json');
-		/*const layoutInstance = layout.get('layouts/testi.json');
-		this.overlay.setAsCurrent(layoutInstance);
-		const button = layoutInstance.find('myButton') as Button;
-		button.onClick((x,y) => {
-			const spr = layoutInstance.createUISprite({
-				name: 'spraitti',
-				path: 'images/O.png',
-				position: vec2.fromValues(100, 620),
-				scale: vec2.fromValues(100 / 75, 100/ 75),
-				rotation: DEG_TO_RAD * 45,
-				type: 'sprite',
-				anchor: vec2.fromValues(0.5, 0.5),
-				children: []
-			});
-			this.overlay.setAsCurrent(layout.get('layouts/testi2.json'), true)
-		});*/
-
-		/*this.overlay.currentLayout = new UILayout(this, this.overlay, vec2.fromValues(800, 720));
-		
-		const text = new Text('nightwish', this.overlay, 
-			{ atlas: this.overlay.textureAtlas,
-			 gapInPixels: 45,
-			style: 'tilted',
-			lineWidth: 1200,
-			lineHeight: 60,
-		textAppearAnimation: 'one-by-one',
-		animationSpeed: 100,
-		delay: 0.25 });
-		text.setText('I was born amidst the purple waterfalls I was weak yet not unblessed dead for the ' +
-		'world alive for the journey one night I dreamt a white rose whithering A newborn drowning a lifetime loneliness I dreamt all my future relived my past and witnessed the beauty of the beast where have all the feelings gone why has all the laughter ceased')
-		text.setScale(vec2.fromValues(0.22, 0.22));
-		text.setPosition(vec2.fromValues(75, 50));
-		this.overlay.currentLayout.addElement(text);
-		text.hide();
-		text.show();
-
-		const buttonSprite = new Sprite('buttonSprite', this.overlay.textureAtlas.subtextures['images/button_bg.png']);
-		const buttonText = new Text('mytext', this.overlay, { 
-			atlas: this.overlay.textureAtlas,
-			gapInPixels: 45, 
-			style: 'normal',
-			lineHeight: 60,
-			lineWidth: 300,
-			textAppearAnimation: 'none'
-		 });
-
-		 buttonSprite.setAnchor(0.5, 0.5);
-
-		 buttonText.setText('button');
-		 buttonText.setScale(vec2.fromValues(0.35, 0.35));
-		
-		 const button = new Button('myButton', this.overlay, buttonSprite, buttonText);
-		 button.setPosition(vec2.fromValues(0.5 * 800, 0.5 * 720));
-		 button.onClick((x,y) => {
-			 text.hide();
-			 text.show();
-			 console.log(this.overlay.currentLayout.toJson());
-		 });
-
-		 button.setScale(vec2.fromValues(1, 1));
-
-		 this.overlay.currentLayout.addElement(button);*/
-
-		/*const x = 0;
-		const y = 0;
-		const width = 75;
-		const height = 75;
-		const subtexture = new Subtexture(atlas, x, y, width, height);*/
-		 //const subtexture = this.overlay.textureAtlas.subtextures['images/E.png'];
-		//subtexture.textureCoordinates[TextureCoordinate.BOTTOM_LEFT] = vec2.fromValues(0,0);
-		//subtexture.textureCoordinates[TextureCoordinate.BOTTOM_RIGHT] = vec2.fromValues(1,0);
-		//subtexture.textureCoordinates[TextureCoordinate.TOP_LEFT] = vec2.fromValues(0,1);
-		//subtexture.textureCoordinates[TextureCoordinate.TOP_RIGHT] = vec2.fromValues(1,1);
-
-		//const subtexture = new Subtexture(this.overlay.textureAtlas.texture, 0, 0, 1024, 1024);
-		/*const subtexture = this.overlay.textureAtlas.subtextures['images/button_bg.png'];
-		//console.log('atlas', subtexture);
-        const sprite = new Sprite('sprite', subtexture);
-        this.overlay.stage.root.addChild(sprite);
-        sprite.setPosition(vec2.fromValues(window.innerWidth / 2, window.innerHeight / 2));
-		sprite.setAnchor(0.5, 0.5);
-		sprite.setAlpha(1.0);
-		//sprite.setAngle(45 * DEG_TO_RAD);
-		sprite.setSize(175, 51);
-
-		console.log(sprite);
-
-		this.sprite = sprite;*/		
-	
 	}
 
 	getLayout(layoutPath: string) {
@@ -420,6 +329,7 @@ export class Renderer {
 		this.overlay.overlayBegin(gl);
 		this.context.viewport();
 		this.overlay.render(gl, dt);
+		this.overlayRender(gl);
 		this.overlay.overlayEnd(gl);
 		this.context.renderTargetEnd();
 
@@ -438,6 +348,8 @@ export class Renderer {
 		}
 
 	}
+
+	overlayRender(gl: WebGL2RenderingContext) {}
 
 	resolveVisibility(scene: Scene) {
 
@@ -523,7 +435,7 @@ export class Renderer {
 	materialID: string;
 	shaderTech: ShaderTech;
 	shader: ShaderType;
-
+	
 	shaderModes: { shader: ShaderType, tech: string }[];
 	shaderMode: ShaderMode;
 	
