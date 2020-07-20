@@ -277,6 +277,7 @@ export class Renderer {
 		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.PER_FRAME, ShaderType.PBR);
 		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.PER_FRAME, ShaderType.MORPHED_PBR);
 		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.PER_FRAME, ShaderType.MORPHED_PBR_TEXTURE_TRANSFORM);
+		ConstantBuffers.UpdateBuffer(BufferDirtyFlag.PER_FRAME, ShaderType.BILLBOARD);
 
 		// ADD THIS BACK TO SEE BLENDMAPPED TERRAIN
 		//	this.currentScene.terrain.render(this.gl);

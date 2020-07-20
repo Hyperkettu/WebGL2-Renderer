@@ -1,0 +1,124 @@
+{
+    "mesh": {
+        "name": "billboard1",
+        "materials": [
+            "materials/billboard.mat.json"
+        ],
+        "type": "static",
+        "data": {
+            "children": [
+                {
+                    "children": [],
+                    "name": "plane",
+                    "position": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "rotation": {
+                        "x": 0,
+                        "y": 0,
+                        "z": 0
+                    },
+                    "vertexData": {
+                        "material": "billboard",
+                        "vertices": [
+                            {
+                                "position": {
+                                    "0": -0.5,
+                                    "1": -0.5,
+                                    "2": 0
+                                },
+                                "normal": {
+                                    "0": 0,
+                                    "1": 0,
+                                    "2": 1
+                                },
+                                "tangent": {
+                                    "0": 1,
+                                    "1": 0,
+                                    "2": 0
+                                },
+                                "textureCoords": {
+                                    "0": 0,
+                                    "1": 1
+                                }
+                            },
+                            {
+                                "position": {
+                                    "0": 0.5,
+                                    "1": -0.5,
+                                    "2": 0
+                                },
+                                "normal": {
+                                    "0": 0,
+                                    "1": 0,
+                                    "2": 1
+                                },
+                                "tangent": {
+                                    "0": 1,
+                                    "1": 0,
+                                    "2": 0
+                                },
+                                "textureCoords": {
+                                    "0": 1,
+                                    "1": 1
+                                }
+                            },
+                            {
+                                "position": {
+                                    "0": 0.5,
+                                    "1": 0.5,
+                                    "2": 0
+                                },
+                                "normal": {
+                                    "0": 0,
+                                    "1": 0,
+                                    "2": 1
+                                },
+                                "tangent": {
+                                    "0": 1,
+                                    "1": 0,
+                                    "2": 0
+                                },
+                                "textureCoords": {
+                                    "0": 1,
+                                    "1": 0
+                                }
+                            },
+                            {
+                                "position": {
+                                    "0": -0.5,
+                                    "1": 0.5,
+                                    "2": 0
+                                },
+                                "normal": {
+                                    "0": 0,
+                                    "1": 0,
+                                    "2": 1
+                                },
+                                "tangent": {
+                                    "0": 1,
+                                    "1": 0,
+                                    "2": 0
+                                },
+                                "textureCoords": {
+                                    "0": 0,
+                                    "1": 0
+                                }
+                            }
+                        ],
+                        "indices": [
+                            0,
+                            1,
+                            2,
+                            0,
+                            2,
+                            3
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

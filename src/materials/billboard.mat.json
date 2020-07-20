@@ -1,0 +1,17 @@
+{
+	"material" : {
+		"name" : "billboard",
+		"shader": "billboard",
+		"tech": "AN",
+		"textures": [
+			{
+				"path" : "images/bark1/bark1-albedo.png",
+				"type" : "albedo"
+            },
+            {
+				"path" : "images/bark1/bark1-normal.png",
+				"type" : "normal"
+            }
+        ]
+	}
+}

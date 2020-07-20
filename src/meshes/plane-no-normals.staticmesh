@@ -2,7 +2,7 @@
     "mesh": {
         "name": "terra",
         "materials": [
-            "/materials/stone-no-normals.mat.json"
+            "/materials/billboard.mat.json"
         ],
         "type": "static",
         "data": {
@@ -21,7 +21,7 @@
                         "z": 0
                     },
                     "vertexData": {
-                        "material": "stone-no-normals",
+                        "material": "billboard",
                         "vertices": [
                             {
                                 "position": {

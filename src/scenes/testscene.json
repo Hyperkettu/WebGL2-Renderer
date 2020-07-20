@@ -60,7 +60,7 @@
 					"z": 0
 				},
 				"children": [],
-					"meshPath": "meshes/plane-no-normals.staticmesh"
+					"meshPath": "meshes/billboard.staticmesh"
 			},
 			{
 				"name": "light",

@@ -49,6 +49,7 @@ import * as brdfFS from './brdffs';
 // PBR
 import * as pbrStatic from './pbrstatic';
 import * as pbrMorphed from './pbrmorphed';
+import * as billboard from './billboardvs';
 
 // custom
 import * as pbrMorphedTextureTransform from './pbr-morphed-texture-transform';
@@ -164,6 +165,10 @@ export function init() {
 		const source = morphedTextureTransformTechs.vertexTechSources[vertexTechnique];
 		prefixToShaderSource[`${pbrMorphedTextureTransform.prefixVS}/${vertexTechnique}`] =  source.vsSrc;
 	}
+
+	prefixToShaderSource[`${billboard.prefix}/VN`] = billboard.billboardVsSrc;
+	prefixToShaderSource[`${billboard.prefix}/V`] = billboard.billboardVsSrc;
+
 }
 
 function iteratePBR(func: (normal: boolean, roughness: boolean, metallic: boolean, ao: boolean, displacement: boolean, emission: boolean) => {vsSrc: string, fsSrc: string } ) {

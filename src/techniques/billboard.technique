@@ -1,0 +1,50 @@
+{
+    "shaderId": 25,
+    "shaders":  
+    [
+        {
+            "type": "vertexShader",
+            "uniforms": [
+                {
+                    "name": "MatricesPerFrame",
+                    "type": "buffer",
+                    "bindIndex": 0
+                }, 
+                {
+                    "name": "PerObject",
+                    "type": "buffer",
+                    "bindIndex": 1
+                }
+            ],
+            "source": "billboardVS"
+        },
+        {
+            "type": "fragmentShader",
+            "uniforms": [
+                {
+                    "name": "Lights",
+                    "type": "buffer",
+                    "bindIndex": 2
+                }
+            ],
+            "source": "pbrStaticFS"
+        }
+    ],
+    "technique": {
+        "name": "A",
+        "permutationVariables": [
+            "N",
+            "R",
+            "M",
+            "A",
+            "E"
+        ],
+        "passes": [
+            {
+                "name": "pass0",
+                "vertexShader": "billboardVS",
+                "fragmentShader": "pbrStaticFS"
+            }
+        ]
+    }
+}

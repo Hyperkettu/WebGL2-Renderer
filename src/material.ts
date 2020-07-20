@@ -23,7 +23,7 @@ export interface MaterialFile {
 
 export interface MaterialData {
 	name: string;
-	shader: 'pbr' | 'morphed-pbr' | 'pbr-morphed-texture-transform';
+	shader: 'pbr' | 'morphed-pbr' | 'pbr-morphed-texture-transform' | 'billboard';
 	tech: string;
 	textures: texture.TextureData[];
 	customTextures?: { name: string, path: string }[];
@@ -36,10 +36,20 @@ export async function loadMaterial(path: string, load: boolean = false, gl: WebG
 	const file: MaterialFile = resource.get<MaterialFile>(path);
 	const material: Material = {};
 	material.name = file.material.name;
-	material.shader = file.material.shader === 'pbr' ? ShaderType.PBR : ShaderType.MORPHED_PBR;
 
-	if(file.material.shader === 'pbr-morphed-texture-transform') {
-		material.shader = ShaderType.MORPHED_PBR_TEXTURE_TRANSFORM;
+	switch(file.material.shader) {
+		case 'pbr': 
+			material.shader = ShaderType.PBR;
+			break;
+		case 'morphed-pbr':
+			material.shader = ShaderType.MORPHED_PBR;
+			break;
+		case 'pbr-morphed-texture-transform':
+			material.shader = ShaderType.MORPHED_PBR_TEXTURE_TRANSFORM;
+			break;
+		case 'billboard':
+			material.shader = ShaderType.BILLBOARD;
+			break;
 	}
 
 	material.tech = file.material.tech;
