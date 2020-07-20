@@ -18,7 +18,7 @@ export interface FontDef {
 
 export class TextTexture extends Texture {
 
-    static MAX_WIDTH = 128;
+    static MAX_WIDTH = 256;
 
     constructor() {
         super();
@@ -36,7 +36,7 @@ export class TextTexture extends Texture {
         context.font = textSize + "px " + fontDef.family.toLowerCase();
         
         const textWidth = context.measureText(text).width;
-        const width = math.getPowerOfTwo(textWidth);
+        const width = math.getPowerOfTwo(textWidth * 2);
         const height = math.getPowerOfTwo(2 * textSize);
         canvas.width = width;
         canvas.height = height;
@@ -67,13 +67,15 @@ export class TextTexture extends Texture {
     }
     
     private generateWebGLTexture(gl: WebGL2RenderingContext, canvas: HTMLCanvasElement) {
-      //  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
         gl.bindTexture(gl.TEXTURE_2D, this.textureId);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas); 
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
         gl.generateMipmap(gl.TEXTURE_2D);
         gl.bindTexture(gl.TEXTURE_2D, null);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+
     }
 
     private getGradient(context: CanvasRenderingContext2D , colors: Color[], width: number) {

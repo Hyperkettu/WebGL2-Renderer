@@ -8,6 +8,7 @@ export class Sprite extends Container {
         this.texture = texture;
         this.size = vec2.fromValues(this.texture.width, this.texture.height);
         this.tintColor = vec3.fromValues(1, 1, 1);
+        this.renderSeparately = false;
     }
 
     // affects anchor
@@ -62,4 +63,6 @@ export class Sprite extends Container {
     tintColor: vec3;
     
     texture: Subtexture;
+
+    renderSeparately: boolean;
 }

@@ -7,6 +7,8 @@ import * as math from '../../util/math';
 import { Animation } from "../animationsystem";
 import { Element } from "./element";
 import { TextData, UILayout } from "./layout";
+import { TextTexture, FontDef } from '../../texttexture';
+import { Subtexture } from "../../subtexture";
 
 export type TextAnimation = 'none' | 'bounce' | 'one-by-one';
 
@@ -22,7 +24,7 @@ export interface AtlasTextSettings {
 }
 
 export class Text extends Element {
-    constructor(name: string, overlay: Overlay, layout: UILayout, settings?: AtlasTextSettings) {
+    constructor(name: string, overlay: Overlay, layout: UILayout, settings?: AtlasTextSettings, textDefinition?: FontDef) {
         super(name, overlay, layout);
         this.atlas = settings ? settings.atlas : null;
         this.style = settings ? settings.style : 'normal';
@@ -33,6 +35,8 @@ export class Text extends Element {
         this.textAppearAnimation = settings?.textAppearAnimation;
         this.animationSpeed = settings?.animationSpeed;
         this.delay = settings?.delay;
+
+        this.fontDef = textDefinition;
     }
 
     show() {
@@ -96,6 +100,9 @@ export class Text extends Element {
     }
 
     getContentSize() {
+        if(this.fontDef?.family) {
+            return vec2.fromValues(this.textTexture.width, this.textTexture.height);
+        }
         this.contentSize = vec2.fromValues(this.maxLineWidth, this.numLines * this.lineHeight);
         return this.contentSize;
     }
@@ -112,7 +119,9 @@ export class Text extends Element {
         this.container.setPivot(this.anchor[0] * contentSize[0], this.anchor[1] * contentSize[1]);
     }
 
-    setText(text: string) {
+    setText(text: string, gl?: WebGL2RenderingContext) {
+
+        if(!this.fontDef?.family) {
 
         this.container.children = [];
 
@@ -168,7 +177,33 @@ export class Text extends Element {
         this.maxLineWidth = Math.max(this.maxLineWidth, offsetX);
         this.numLines = Math.max(this.numLines, 1);
 
-       
+        } else {
+
+            if(this.text) {
+                this.textTexture.destroy(gl);
+                this.textTexture = null;
+
+                this.textTexture = new TextTexture();
+                this.textTexture.generateFromCanvas(gl, text, this.fontDef);
+                const subtexture = new Subtexture('text-texture', this.textTexture, 0, 0, this.textTexture.width, this.textTexture.height);
+                this.sprites[0].texture = subtexture;
+
+            } else {
+                this.textTexture = new TextTexture();
+                this.textTexture.generateFromCanvas(gl, text, this.fontDef);
+                const subtexture = new Subtexture('text-texture', this.textTexture, 0, 0, this.textTexture.width, this.textTexture.height);
+                this.sprites[0] = new Sprite('text-sprite', subtexture);
+                this.container.addChild(this.sprites[0]);
+                this.sprites.push(this.sprites[0]);
+            }
+            this.sprites[0].setPosition([0, 0]);
+            this.sprites[0].setAnchor(0.5, 0.5);
+            this.sprites[0].setAngle(0);
+            this.sprites[0].setScale([1, 1]);
+            this.sprites[0].setAlpha(1);
+            this.sprites[0].renderSeparately = true;
+            this.text = text;
+        }
     }
 
     toJson() {
@@ -208,4 +243,7 @@ export class Text extends Element {
     maxLineWidth: number;
 
     textAppearAnimation: TextAnimation;
+
+    fontDef: FontDef;
+    textTexture: TextTexture;
 }

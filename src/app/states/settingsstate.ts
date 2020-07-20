@@ -6,7 +6,7 @@ import * as setting from '../../settings';
 import { vec2 } from "gl-matrix";
 import { Container } from "../../overlay/ui/container";
 import { Slider } from "../../overlay/ui/slider";
-import { Sprite } from "../../overlay/sprite";
+
 
 export interface Settings extends MenuSettings {
 
@@ -169,13 +169,41 @@ export class SettingsState extends MenuState {
                     letterWidth: 45,
                     lineWidth: 1000,
                     textAppearAnimation: 'none'
-                }
+                } 
             });
 
             const positionX = textElement.getContentSize()[0] * 0.5 + 150;
             textElement.setPosition([-positionX, 0]);
             textElement.setAnchor(vec2.fromValues(0, 0.5));
             container.addChild(textElement);
+
+            const valueText = grid.layout.createText({
+                name: `menu-${y}`,
+                rotation: 0,
+                position: [0,0],
+                scale: [0.7, 0.7],
+                text: '',
+                type: 'text',
+         /*       atlasText: {
+                    letterHeight: 60, 
+                    letterStyle: 'tilted',
+                    letterWidth: 45,
+                    lineWidth: 1000,
+                    textAppearAnimation: 'none'
+                } */
+                fontDef: {
+                    family: 'Verdana',
+                    fillStyle: 'rgba(255, 140, 0, 1)',
+                    fontSize: 32,
+                    textAlign: 'left',
+                    textBaseLine: 'middle'
+                }
+            });
+
+            const valuePositionX = 150;
+            valueText.setPosition([valuePositionX, 0]);
+            valueText.setAnchor(vec2.fromValues(0, 0.5));
+            container.addChild(valueText);
 
             const background = sliderGrid.layout.createSprite({
                 name: `sliderBg-${y}`,
@@ -205,11 +233,16 @@ export class SettingsState extends MenuState {
             slider.onDrag(value => {
                 console.log(value);
                 this.settings.renderer.settings.changeValue(valueToChange as setting.SettingValueType, value);
+                const valueRounded = Math.round(value * 100) / 100;
+                valueText.setText(valueRounded.toFixed(2), this.settings.renderer.gl);
             });
 
             const valueLimits = this.settings.renderer.settings.getValueLimits(valueKeys[y] as setting.SettingValueType);
             const value = this.settings.renderer.settings.getSettingValue(valueKeys[y] as setting.SettingValueType);
             slider.setValues(valueLimits.min, value, valueLimits.max);
+
+            const valueRounded = Math.round(value * 100) / 100;
+            valueText.setText(valueRounded.toFixed(2), this.settings.renderer.gl);
 
             container.addChild(slider);
 

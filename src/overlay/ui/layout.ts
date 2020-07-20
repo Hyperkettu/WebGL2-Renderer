@@ -58,6 +58,15 @@ export interface SliderData extends ElementData {
 export interface TextData extends ElementData {
     text: string;
     atlasText?: AtlasTextData;
+    fontDef?: FontDef;
+}
+
+export interface FontDef {
+    fontSize: number;
+    family: string;
+    fillStyle: string; 
+    textAlign: CanvasTextAlign;
+    textBaseLine: CanvasTextBaseline; 
 }
 
 export interface SpriteData extends ElementData {
@@ -310,14 +319,21 @@ export class UILayout {
         
         const text = new Text(data.name, this.overlay, this, { 
 			atlas: this.overlay.textureAtlas,
-			gapInPixels: data.atlasText.letterWidth, 
-			style: data.atlasText.letterStyle,
-			lineHeight: data.atlasText.letterHeight,
-			lineWidth: data.atlasText.lineWidth,
-			textAppearAnimation: data.atlasText.textAppearAnimation
+			gapInPixels: data.atlasText?.letterWidth, 
+			style: data.atlasText?.letterStyle,
+			lineHeight: data.atlasText?.letterHeight,
+			lineWidth: data.atlasText?.lineWidth,
+            textAppearAnimation: data.atlasText?.textAppearAnimation
+         },
+         {
+            family: data.fontDef?.family,
+            fillStyle: data.fontDef?.fillStyle,
+            fontSize: data.fontDef?.fontSize,
+            textAlign: data.fontDef?.textAlign,
+            textBaseLine: data.fontDef?.textBaseLine
          });
          
-         text.setText(data.text);
+         text.setText(data.text, this.renderer.gl);
          text.setPosition(data.position);
          text.setRotation(data.rotation);
 		 text.setScale(data.scale);

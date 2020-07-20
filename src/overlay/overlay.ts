@@ -80,10 +80,10 @@ export class Overlay {
         this.stage.root.removeChild(sprite);
     }
 
-    renderSingleSprite(gl: WebGL2RenderingContext, sprite: Sprite) {
+    renderSingleSprite(gl: WebGL2RenderingContext, sprite: Sprite, updateTransform: boolean = true) {
         const currentTexture = this.textureAtlas.texture;
         this.setAtlas(sprite.texture.texture);
-        sprite.updateWorldTransform(mat3.create(), true);
+        sprite.updateWorldTransform(mat3.create(), updateTransform);
 
         this.mesh.updateMesh(gl, [ sprite ]);
 
@@ -107,11 +107,16 @@ export class Overlay {
         this.animationSystem.updateAnimations(dt);
 
         this.sprites = [];
+        this.separateSprites = [];
         this.stage.forEach((node, worldTransform, transformUpdated) => {
             const updated = node.updateWorldTransform(worldTransform, transformUpdated);
             node.updateAlpha(node.parent ? node.parent?.totalAlpha : 1)
             if(node instanceof Sprite) {
-                this.sprites.push(node);
+                if(node.renderSeparately) {
+                    this.separateSprites.push(node);
+                } else {
+                    this.sprites.push(node);
+                }
             }
             return updated;
         });
@@ -128,6 +133,11 @@ export class Overlay {
         gl.bindVertexArray(this.mesh.vao.vao);
         gl.drawElements(gl.TRIANGLES, 6 * this.sprites.length, gl.UNSIGNED_SHORT, 0);
         gl.bindVertexArray(null);
+
+        for(let sprite of this.separateSprites) {
+            console.log(sprite);
+            this.renderSingleSprite(gl, sprite, false);
+        }
     }
 
    async setAsCurrent(layout: UILayout, animate: boolean = false) {
@@ -156,6 +166,7 @@ export class Overlay {
 
     textureAtlas: TextureAtlas;
     sprites: Sprite[];
+    separateSprites: Sprite[];
     stage: OverlaySceneGraph;
     mesh: OverlayMesh;
     depthFuncBeforeOverlay: number;
