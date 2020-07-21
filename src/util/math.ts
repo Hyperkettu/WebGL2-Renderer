@@ -179,7 +179,7 @@ export function rayIntersectsSphere(ray: Ray, sphere: Sphere, hitInfo: HitInfo) 
 	if (solution.x0 > solution.x1) {
 		const temp = solution.x0;
 		solution.x0 = solution.x1;
-		solution.x1 = solution.x0;
+		solution.x1 = temp;
 	}
 
 	if (solution.x0 < 0) {

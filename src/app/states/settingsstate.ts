@@ -288,6 +288,9 @@ export class SettingsState extends MenuState {
         settings.layout.releaseClickHandlers = [];
     }
 
+    public mouseDown(x: number, y: number) {
+    }
+
     public handleInput(dt: number, keys: { [id: string]: boolean; }) {
     }
 

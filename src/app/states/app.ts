@@ -121,6 +121,8 @@ export class Application {
                     return; 
                 }
             }
+
+            this.currentState.mouseDown(event.x, event.y);
         });
 
         document.addEventListener('mouseup', event => {

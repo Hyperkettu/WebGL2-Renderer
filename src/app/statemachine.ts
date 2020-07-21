@@ -26,6 +26,7 @@ export abstract class State {
 	public abstract disableInput(fsm: StateMachine);
 	public abstract handleInput(dt: number, keys: { [id: string]: boolean });
 	public abstract handleKeyPress(key: string);
+	public abstract mouseDown(x: number, y: number);
 	public abstract onResize(size: Size);
 
 	public getName() {

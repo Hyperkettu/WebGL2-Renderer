@@ -1,4 +1,4 @@
-import { vec3 } from 'gl-matrix';
+import { vec3, mat4, vec4 } from 'gl-matrix';
 import { Camera } from './camera';
 import { Viewport } from './context';
 import { Ray } from './ray';
@@ -26,6 +26,10 @@ export class Picker {
 			vec3.fromValues(5, 0, -5),
 			vec3.fromValues(5, 0, 5));
 
+		this.invTransform = mat4.create();
+		this.localRay = new Ray(vec3.fromValues(0,0,0), vec3.fromValues(1,0,0));
+		this.direction = vec4.create();
+
 		this.sphere = new Sphere(vec3.fromValues(5, 0, 5), 5);
 
 		this.aabb = new AABB(vec3.fromValues(-5, -5, -5), vec3.fromValues(5, 5, 5));
@@ -43,6 +47,45 @@ export class Picker {
 		vec3.normalize(rayDir, rayDir);
 
 		return new Ray(camera.position, rayDir);
+	}
+
+	select(camera: Camera, x: number, y: number, world: SceneGraph) {
+		const hitInfo = new HitInfo();
+		hitInfo.hit = false;
+		const ray = this.generateScreenRayFromCamera(camera, x, y);
+
+		const setAttributes = (node: SceneNode, info: HitInfo) => {
+			hitInfo.hitObject = node;
+			hitInfo.hit = true;
+			hitInfo.hitPoint = info.hitPoint;
+			hitInfo.normal = info.normal;
+		};
+
+		// add frustum and zone culling
+		world.forEach(node => {
+			const comp = node.getComponent('meshComponent') as MeshComponent<VertexBase>;
+			if(comp && comp.mesh) {
+				const info = new HitInfo();
+				mat4.invert(this.invTransform, node.transform.world);
+				vec3.transformMat4(this.localRay.origin, ray.origin, this.invTransform);
+				this.direction = vec4.fromValues(ray.direction[0], ray.direction[1], ray.direction[2], 0);
+				vec4.transformMat4(this.direction, this.direction, this.invTransform);
+				this.localRay.direction = vec3.fromValues(this.direction[0], this.direction[1], this.direction[2]);
+				if(comp.mesh.boundingVolume.intersects(this.localRay)) {
+					if(this.hitPolicy === 'any') {
+						setAttributes(node, info);
+						return info;
+					} else if(this.hitPolicy === 'closest') {
+						const distance = vec3.distance(info.hitPoint, camera.position);
+						if(distance < this.distance) {
+							this.distance = distance;
+							setAttributes(node, info);
+						}
+					}
+				}
+			}
+		});
+		return hitInfo;
 	}
 
 	castRay(camera: Camera, x: number, y: number, world: SceneGraph) {
@@ -83,6 +126,9 @@ export class Picker {
 		return hitInfo;
 	}
 
+	invTransform: mat4;
+	localRay: Ray;
+	direction: vec4;
 
 	pickerRadius: number;
 	hitPolicy: 'any' | 'closest';

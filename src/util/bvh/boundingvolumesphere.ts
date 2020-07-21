@@ -15,6 +15,7 @@ export class BBSphere extends BoundingVolume {
 
     constructor(gl: WebGL2RenderingContext, vertices: PositionVertexType[]) {
         super();
+        this.color = vec4.fromValues(1, 0, 0, 1);
         this.create(gl, vertices);
     }
 
@@ -84,7 +85,7 @@ export class BBSphere extends BoundingVolume {
         lineShader.use(gl);
         const submesh = this.lineMesh.getSubmesh('circle');
 
-        ConstantBuffers.generalData.update(gl, 'dataVec1', vec4.fromValues(1.0, 0.0, 0.0, 1.0));
+        ConstantBuffers.generalData.update(gl, 'dataVec1', this.color);
         ConstantBuffers.generalData.sendToGPU(gl);
         
         gl.bindVertexArray(submesh.vertexArrayObject.vao);
@@ -101,7 +102,7 @@ export class BBSphere extends BoundingVolume {
     lineMesh: LineMesh;
     lineMesh2: LineMesh;
 
-
+    color: vec4;
     sphere: Sphere;
     
 }

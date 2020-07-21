@@ -6,9 +6,14 @@ import { Grid } from "../../overlay/ui/grid";
 import { Text } from "../../overlay/ui/text";
 import { Sprite } from "../../overlay/sprite";
 import * as settings from '../../settings';
-import { vec2 } from "gl-matrix";
+import { vec2, vec3, vec4 } from "gl-matrix";
 import { Container } from '../../overlay/ui/container';
 import { Slider } from "../../overlay/ui/slider";
+import { Picker } from "../../raycast";
+import { MeshComponent } from "../../meshcomponent";
+import { VertexBase } from "../../vertex";
+import * as async from '../../util/math';
+import { SceneNode } from "../../scenenode";
 
 export interface MainMenuSettings extends MenuSettings {
     scene: Scene;
@@ -19,6 +24,7 @@ export class MainMenuState extends MenuState {
     constructor(name: string, settings: MainMenuSettings) {
 		super(name, settings);
 		this.showMenuButton = true;
+		this.picker = new Picker(this.settings.renderer.context.screenViewPort, 'any');
 	}
 	
 	public async enter(fsm: StateMachine, from?: State) {
@@ -41,7 +47,23 @@ export class MainMenuState extends MenuState {
         const settings = this.settings as MainMenuSettings;
         settings.layout.clickHandlers = [];
         settings.layout.releaseClickHandlers = [];
-    }
+	}
+	
+	public mouseDown(x: number, y: number) {
+		const hitInfo = this.picker.select(this.settings.renderer.getCurrentCamera(), 
+		x, window.innerHeight - y, this.settings.renderer.currentScene.sceneGraph);
+		console.log(hitInfo);
+		if(hitInfo.hit) {
+			(async () => {
+			const comp = (hitInfo.hitObject.getComponent('meshComponent') as MeshComponent<VertexBase>);
+			comp.mesh.boundingVolume.color = vec4.fromValues(0, 1, 0, 1);
+			this.selectedNode = hitInfo.hitObject;
+			console.log(this.selectedNode);
+			await async.wait(4000);
+			comp.mesh.boundingVolume.color = vec4.fromValues(1, 0, 0, 1);
+			})();
+		}
+	}
 
     public handleInput(dt: number, keys: { [id: string]: boolean }) {
         const settings = this.settings as MainMenuSettings;
@@ -116,6 +138,18 @@ export class MainMenuState extends MenuState {
 
 			camera.moveRight(speed * dt);
 		}
+
+		if(this.selectedNode) { 
+			if(keys['+']) {
+				(this.selectedNode.getComponent('meshComponent') as MeshComponent<VertexBase>).mesh.displacementFactor += 1 * dt;
+			} else if(keys['-']) {
+				const mesh = (this.selectedNode.getComponent('meshComponent') as MeshComponent<VertexBase>).mesh;
+				mesh.displacementFactor -= 1 * dt;
+				if(mesh.displacementFactor < 0) {
+					mesh.displacementFactor = 0;
+				}
+			}
+		}
 	}
 	
 	public handleKeyPress(key: string) {
@@ -128,6 +162,7 @@ export class MainMenuState extends MenuState {
 	}
 
 	public update(dt: number, time: number, inputDt: number) {
+
 	}
 
 	public onResize(size: Size) {
@@ -144,4 +179,7 @@ export class MainMenuState extends MenuState {
 	}
 	menuSettings: MainMenuSettings;
 	showMenuButton: boolean;
+
+	picker: Picker;
+	selectedNode: SceneNode;
 }
