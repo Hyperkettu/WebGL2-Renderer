@@ -1,0 +1,53 @@
+import { LineMesh } from "../mesh";
+import { Renderer } from "../glrenderer";
+import { vec3, vec4, mat4 } from "gl-matrix";
+import { ShaderType } from "../shader";
+import * as shader from '../shadermanager';
+import { ConstantBuffers } from "../constantbuffers";
+import { SceneNode } from "../scenenode";
+
+export class AxisMesh {
+
+    constructor(renderer: Renderer) {
+        this.axisMesh = new LineMesh('axisMesh');
+        const axisLength = 1.5;
+		this.axisMesh.createSubmesh(renderer.gl, 'x-axis', [ { position: vec3.fromValues(0,0,0) }, { position: vec3.fromValues(axisLength, 0, 0) }], [0, 1], '');
+		this.axisMesh.createSubmesh(renderer.gl, 'y-axis', [ { position: vec3.fromValues(0,0,0) }, { position: vec3.fromValues(0, axisLength, 0) }], [0, 1], '');
+		this.axisMesh.createSubmesh(renderer.gl, 'z-axis', [ { position: vec3.fromValues(0,0,0) }, { position: vec3.fromValues(0, 0, axisLength) }], [0, 1], '');
+    }
+
+    render(gl: WebGL2RenderingContext, node: SceneNode) {
+
+        const lineShader = shader.GetShader(ShaderType.LINES);
+        lineShader.use(gl);
+
+        gl.lineWidth(30);
+
+        gl.depthFunc(gl.ALWAYS);
+
+        ConstantBuffers.bufferPerObject.update(gl, 'world', node.transform.world);
+        ConstantBuffers.bufferPerObject.sendToGPU(gl);
+
+        let mesh = this.axisMesh.getSubmesh('x-axis');
+        gl.bindVertexArray(mesh.vertexArrayObject.vao);
+        ConstantBuffers.generalData.update(gl, 'dataVec1', vec4.fromValues(1, 0, 0, 1));
+        ConstantBuffers.generalData.sendToGPU(gl);
+        gl.drawElements(gl.LINE_STRIP, mesh.indices.length, gl.UNSIGNED_SHORT, 0);
+
+        mesh = this.axisMesh.getSubmesh('y-axis');
+        gl.bindVertexArray(mesh.vertexArrayObject.vao);
+        ConstantBuffers.generalData.update(gl, 'dataVec1', vec4.fromValues(0, 1, 0, 1));
+        ConstantBuffers.generalData.sendToGPU(gl);
+        gl.drawElements(gl.LINE_STRIP, mesh.indices.length, gl.UNSIGNED_SHORT, 0);
+    
+        mesh = this.axisMesh.getSubmesh('z-axis');
+        gl.bindVertexArray(mesh.vertexArrayObject.vao);
+        ConstantBuffers.generalData.update(gl, 'dataVec1', vec4.fromValues(0, 0, 1, 1));
+        ConstantBuffers.generalData.sendToGPU(gl);
+        gl.drawElements(gl.LINE_STRIP, mesh.indices.length, gl.UNSIGNED_SHORT, 0);
+    
+        gl.depthFunc(gl.LESS);
+    }
+
+    axisMesh: LineMesh;
+}

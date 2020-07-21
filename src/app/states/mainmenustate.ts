@@ -14,6 +14,8 @@ import { MeshComponent } from "../../meshcomponent";
 import { VertexBase } from "../../vertex";
 import * as async from '../../util/math';
 import { SceneNode } from "../../scenenode";
+import { LineMesh } from "../../mesh";
+import { AxisMesh } from "../axismesh";
 
 export interface MainMenuSettings extends MenuSettings {
     scene: Scene;
@@ -25,6 +27,7 @@ export class MainMenuState extends MenuState {
 		super(name, settings);
 		this.showMenuButton = true;
 		this.picker = new Picker(this.settings.renderer.context.screenViewPort, 'any');
+		this.axisMesh = new AxisMesh(settings.renderer);
 	}
 	
 	public async enter(fsm: StateMachine, from?: State) {
@@ -32,6 +35,8 @@ export class MainMenuState extends MenuState {
 		if(!from) {
 			this.toggleMenu({ instant: true });
 		}
+
+		this.settings.renderer.hdrBufferRenderCallback = this.render.bind(this);
 	}
 
     public enableInput(fsm: StateMachine) {
@@ -165,6 +170,12 @@ export class MainMenuState extends MenuState {
 
 	}
 
+	render(gl: WebGL2RenderingContext) {
+		if(this.selectedNode) {
+			this.axisMesh.render(gl, this.selectedNode);
+		}
+	}
+
 	public onResize(size: Size) {
 	}
 
@@ -182,4 +193,6 @@ export class MainMenuState extends MenuState {
 
 	picker: Picker;
 	selectedNode: SceneNode;
+
+	axisMesh: AxisMesh;
 }

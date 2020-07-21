@@ -283,6 +283,8 @@ export class Renderer {
 		this.batchRenderer.flushSortedArray(this, Layer.OPAQUE, false);
 		this.batchRenderer.flushSortedArray(this, Layer.TRANSPARENT, false);
 
+		this.hdrBufferRenderCallback(gl);
+
 		if (this.settings.getSetting('Skybox')) {
 			this.skybox.renderSkybox(this, this.gl);
 		}
@@ -347,6 +349,8 @@ export class Renderer {
 		}
 
 	}
+
+	public hdrBufferRenderCallback(gl: WebGL2RenderingContext) {}
 
 	overlayRender(gl: WebGL2RenderingContext) {}
 
