@@ -1,0 +1,45 @@
+{
+    "shaderId": 27,
+    "shaders":  
+    [
+        {
+            "type": "vertexShader",
+            "uniforms": [
+                {
+                    "name": "MatricesPerFrame",
+                    "type": "buffer",
+                    "bindIndex": 0
+                }, 
+                {
+                    "name": "PerObject",
+                    "type": "buffer",
+                    "bindIndex": 1
+                }
+            ],
+            "source": "lineVS"
+        },
+        {
+            "type": "fragmentShader",
+            "uniforms": [
+                {
+                    "name": "Data",
+                    "type": "buffer",
+                    "bindIndex": 3
+                }
+            ],
+            "source": "lineFS"
+        }
+    ],
+    "technique": {
+        "name": "default",
+        "permutationVariables": [
+        ],
+        "passes": [
+            {
+                "name": "pass0",
+                "vertexShader": "lineVS",
+                "fragmentShader": "lineFS"
+            }
+        ]
+    }
+}

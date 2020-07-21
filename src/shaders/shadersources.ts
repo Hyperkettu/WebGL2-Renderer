@@ -16,6 +16,9 @@ import * as visualizeTerrainNormalMaps from './visualizenormalmapsterrainfs';
 import * as visualizeNormals from './visualizenormalsfs';
 import * as visuzalizeDepthCubemapFS from './cubemapdepthfs';
 import * as visualizeDepthFS from './visualizedepthfs';
+import * as linesVS from './linesvs'
+import * as linesFS from './linesfs'
+
 
 // shadow map
 import * as shadowMapVS from './shadowmapvs';
@@ -85,6 +88,10 @@ export function init() {
 
 	prefixToShaderSource[visuzalizeDepthCubemapFS.prefix] = visuzalizeDepthCubemapFS.cubemapDepthFsSrc;
 	prefixToShaderSource[visualizeDepthFS.prefix] = visualizeDepthFS.visualizeDepthFsSrc;
+
+	prefixToShaderSource[linesVS.prefix] = linesVS.lineVsSrc;
+	prefixToShaderSource[linesFS.prefix] = linesFS.lineFsSrc;
+
 
 	// shadow map
 	prefixToShaderSource[shadowMapVS.prefix] = shadowMapVS.shadowMapVsSrc;
@@ -173,9 +180,6 @@ export function init() {
 	prefixToShaderSource[`${billboard.prefix}`] = billboard.billboardVsSrc;
 	prefixToShaderSource[`${billboardFS.prefix}`] = billboardFS.billboardFsSrc;
 	prefixToShaderSource[`${billboardFS.prefix}/A`] = billboardFS.billboardFsSrc;
-
-	
-
 
 }
 

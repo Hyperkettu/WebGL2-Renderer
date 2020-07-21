@@ -7,6 +7,8 @@ import { ShaderMode, Renderer } from './glrenderer';
 import { ShaderType } from './shader';
 import { Batch } from './batchrenderer';
 import { ConstantBuffers, BufferDirtyFlag } from './constantbuffers';
+import { BoundingVolume } from './util/bvh/boundingvolume';
+import { BBSphere } from './util/bvh/boundingvolumesphere';
 
 export class Submesh<VertexType> {
 
@@ -23,9 +25,14 @@ export class Submesh<VertexType> {
 		this.shadowMapShader = ShaderType.DIR_LIGHT_SHADOW_MAP;
 
 		this.wireFrame = false;
+		this.renderBoundingVolume = true;
 
 		this.displacementFactor = 0;
 		this.pointLightIndex = -1;
+	}
+
+	addBoundingVolume(gl: WebGL2RenderingContext) {
+		this.boundingVolume = new BBSphere(gl, this.vertices as unknown as PositionVertexType[]);
 	}
 
 	createMesh(gl: WebGL2RenderingContext, vertices: VertexType[], indices: number[], type: VertexDataType) {
@@ -66,6 +73,9 @@ export class Submesh<VertexType> {
 	vertices: VertexType[];
 	indices: number[];
 	materialID: string;
+
+	boundingVolume: BBSphere;
+	renderBoundingVolume: boolean;
 
 	shaderModes: { shader: ShaderType, tech: string }[];
 

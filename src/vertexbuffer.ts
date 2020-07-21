@@ -1,11 +1,12 @@
-import { Vertex, toFloat32Array, ParticleVertex, MorphVertex, morphVertexToFloat32Array, SpriteVertex } from './vertex';
+import { Vertex, toFloat32Array, ParticleVertex, MorphVertex, morphVertexToFloat32Array, SpriteVertex, positionVertexToFloat32Array, PositionVertex } from './vertex';
 import { Overlay } from './overlay/overlay';
 import { OverlayMesh } from './overlay/mesh';
 
 export enum VertexDataType {
 	VERTEX,
 	MORPHED_VERTEX,
-	SPRITE_VERTEX
+	SPRITE_VERTEX,
+	POSITION_VERTEX
 };
 
 export class VertexBuffer<VertexType> {
@@ -18,7 +19,27 @@ export class VertexBuffer<VertexType> {
 			this.createMorphedBuffer(gl, (vertices as unknown) as MorphVertex[]);
 		} else if(type === VertexDataType.SPRITE_VERTEX) {
 			this.createSpriteVertexBuffer(gl, Overlay.SPRITE_BATCH_SIZE);
+		} else if(type === VertexDataType.POSITION_VERTEX) {
+			this.createPositionVertexBuffer(gl, vertices);
 		}
+	}
+
+	private createPositionVertexBuffer(gl: WebGL2RenderingContext, vertices: VertexType[]) {
+		this.vertexBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, positionVertexToFloat32Array(vertices as unknown as PositionVertex[]), gl.DYNAMIC_DRAW);
+		
+		let layoutLocationIndex = 0;
+		let numVectorComponents = 3;
+		const type = gl.FLOAT;
+		const normalize = false;
+		const stride = 4 * 3;
+		let offset = 0;
+
+		// vertex position
+		gl.vertexAttribPointer(layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
+		gl.enableVertexAttribArray(layoutLocationIndex);
+
 	}
 
 	private createSpriteVertexBuffer(gl: WebGL2RenderingContext, batchSize: number) {

@@ -65,6 +65,7 @@ export async function LoadTechniques() {
 	promises.push(loadFile<TechniqueFile>('techniques/dirlightshadowmapmorphed.technique'));
 	promises.push(loadFile<TechniqueFile>('techniques/billboard.technique'));
 	promises.push(loadFile<TechniqueFile>('techniques/billboardplain.technique'));
+	promises.push(loadFile<TechniqueFile>('techniques/lines.technique'));
 
 
 	techniques = await Promise.all(promises);

@@ -54,7 +54,12 @@ export class BatchRenderer {
 			} else {
 				context.drawIndexed(renderer.gl.TRIANGLES, renderer.shader, renderer.shaderTech);
 			}
+
 			renderer.materialEnd(shadowPass);
+
+			if(batch.submesh.renderBoundingVolume) {
+				batch.submesh.boundingVolume.render(renderer.gl);
+			}
 		}
 	}
 
