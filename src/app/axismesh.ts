@@ -54,6 +54,8 @@ export class AxisMesh {
             new BoundingAABB(renderer.gl, yVertices),
             new BoundingAABB(renderer.gl, zVertices)
         ];
+        
+        this.showAABB = false;
     }
 
 
@@ -88,14 +90,19 @@ export class AxisMesh {
         ConstantBuffers.generalData.sendToGPU(gl);
         gl.drawElements(gl.LINE_STRIP, mesh.indices.length, gl.UNSIGNED_SHORT, 0);
     
-        for(let aabb of this.aabbs) {
-            aabb.render(gl);
+        if(this.showAABB) {
+            for(let aabb of this.aabbs) {
+                aabb.render(gl);
+            }
+
         }
 
         gl.depthFunc(gl.LESS);
     }
 
     axisMesh: LineMesh;
+
+    showAABB: boolean;
 
     aabbs: BoundingAABB[];
 

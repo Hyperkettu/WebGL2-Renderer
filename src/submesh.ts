@@ -25,7 +25,7 @@ export class Submesh<VertexType> {
 		this.shadowMapShader = ShaderType.DIR_LIGHT_SHADOW_MAP;
 
 		this.wireFrame = false;
-		this.renderBoundingVolume = true;
+		this.renderBoundingVolume = false;
 
 		this.displacementFactor = 0;
 		this.pointLightIndex = -1;
