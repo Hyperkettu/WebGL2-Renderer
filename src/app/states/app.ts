@@ -130,6 +130,8 @@ export class Application {
             for(let onRelease of settings.layout.releaseClickHandlers){
                 onRelease(event.x, event.y);
             }
+
+            this.currentState.mouseUp(event.x, event.y);
         });
 
         document.addEventListener('mousemove', event => {
@@ -147,7 +149,9 @@ export class Application {
 				const camera = this.renderer.getCurrentCamera();
 				camera.rotateY(-deltaX);
 				camera.rotateX(-deltaY);
-			}
+            }
+            
+            this.currentState.mouseMove(event.x, event.y);
 		});
     }
 

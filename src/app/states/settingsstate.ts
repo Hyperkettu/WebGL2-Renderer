@@ -291,6 +291,14 @@ export class SettingsState extends MenuState {
     public mouseDown(x: number, y: number) {
     }
 
+    public mouseUp(x: number, y: number) {
+
+    }
+    
+    public mouseMove(x: number, y: number) {
+
+    }
+
     public handleInput(dt: number, keys: { [id: string]: boolean; }) {
     }
 

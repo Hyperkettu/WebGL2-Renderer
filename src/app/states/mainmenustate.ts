@@ -18,6 +18,7 @@ import { LineMesh } from "../../mesh";
 import { AxisMesh } from "../axismesh";
 import * as math from '../../util/math';
 import { Ray } from "../../ray";
+import { Plane } from "../../plane";
 
 export interface MainMenuSettings extends MenuSettings {
     scene: Scene;
@@ -78,11 +79,12 @@ export class MainMenuState extends MenuState {
 				let index = 0;
 				for(let aabb of this.axisMesh.aabbs) {
 					const info = new HitInfo();
-					console.log(ray, aabb);
 					if(math.rayIntersectsAABB(localRay, aabb.aabb, info)) {
 						this.selectedAxis = index;
 						break;
 					}
+					
+					
 					index++;
 				}
 			}
@@ -97,10 +99,82 @@ export class MainMenuState extends MenuState {
 			const comp = (hitInfo.hitObject.getComponent('meshComponent') as MeshComponent<VertexBase>);
 			comp.mesh.boundingVolume.color = vec4.fromValues(0, 1, 0, 1);
 			this.selectedNode = hitInfo.hitObject;
-			console.log(this.selectedNode);
+			this.settings.mouseMoveCamera = false;
 			await async.wait(4000);
 			comp.mesh.boundingVolume.color = vec4.fromValues(1, 0, 0, 1);
 			})();
+		} else {
+			this.selectedNode = null;
+		}
+	}
+
+	public mouseUp(x: number, y: number) {
+		this.selectedAxis = -1;
+		this.settings.mouseMoveCamera = true;
+	}
+	public mouseMove(x: number, y: number) {
+		if(this.selectedAxis > -1  && this.selectedNode) {
+
+			if(this.selectedAxis === 0) {
+
+				const normal = math.getY(this.selectedNode.transform.world);
+
+				const plane = new Plane(this.selectedNode.transform.position, normal);
+				const ray = this.picker.generateScreenRayFromCamera(this.settings.renderer.getCurrentCamera(),
+				x, window.innerHeight - y);
+
+				console.log(normal);
+
+				const info = new HitInfo();
+				if(math.rayIntersectsPlane(ray, plane, info)) {	
+					const px = info.hitPoint[0];
+					console.log(px);
+					this.selectedNode.transform.setPosition(px, 
+						this.selectedNode.transform.position[1], this.selectedNode.transform.position[2]);
+	
+				}
+
+				
+			} else if(this.selectedAxis === 1) {
+
+				const normal = math.getZ(this.selectedNode.transform.world);
+
+				const plane = new Plane(this.selectedNode.transform.position, normal);
+				const ray = this.picker.generateScreenRayFromCamera(this.settings.renderer.getCurrentCamera(),
+				x, window.innerHeight - y);
+
+				console.log(normal);
+
+				const info = new HitInfo();
+				if(math.rayIntersectsPlane(ray, plane, info)) {	
+					const py = info.hitPoint[1];
+
+					this.selectedNode.transform.setPosition(this.selectedNode.transform.position[0], 
+						py, this.selectedNode.transform.position[2]);
+	
+				}
+
+				
+		
+			} else {
+
+				const normal = math.getX(this.selectedNode.transform.world);
+
+				const plane = new Plane(this.selectedNode.transform.position, normal);
+				const ray = this.picker.generateScreenRayFromCamera(this.settings.renderer.getCurrentCamera(),
+				x, window.innerHeight - y);
+
+				console.log(normal);
+
+				const info = new HitInfo();
+				if(math.rayIntersectsPlane(ray, plane, info)) {	
+					const pz = info.hitPoint[2];
+
+					this.selectedNode.transform.setPosition(this.selectedNode.transform.position[0], 
+						this.selectedNode.transform.position[1], pz);
+	
+				}
+			}
 		}
 	}
 
@@ -194,6 +268,10 @@ export class MainMenuState extends MenuState {
 	public handleKeyPress(key: string) {
 		if(key === 'm') {
 			this.toggleMenu({ instant: false });
+		}
+		if(key === 'c') {
+			this.selectedNode = null;
+			this.selectedAxis = -1;
 		}
 	}
 

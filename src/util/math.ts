@@ -1,4 +1,4 @@
-import { vec2, vec3, vec4 } from 'gl-matrix';
+import { vec2, vec3, vec4, mat4 } from 'gl-matrix';
 import { Ray } from '../ray';
 import { Triangle } from '../triangle';
 import { Plane } from '../plane';
@@ -269,4 +269,16 @@ export function getMeshVerticesWithinRadius(point: vec3, radius: number, mesh: S
 		}
 	}
 	return vertices;
+}
+
+export function getX(matrix: mat4) {
+	return vec3.fromValues(matrix[0], matrix[1], matrix[2]);
+}
+
+export function getY(matrix: mat4) {
+	return vec3.fromValues(matrix[4], matrix[5], matrix[6]);
+}
+
+export function getZ(matrix: mat4) {
+	return vec3.fromValues(matrix[8], matrix[9], matrix[10]);
 }

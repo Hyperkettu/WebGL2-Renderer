@@ -17,7 +17,7 @@ export class AxisMesh {
 		this.axisMesh.createSubmesh(renderer.gl, 'y-axis', [ { position: vec3.fromValues(0,0,0) }, { position: vec3.fromValues(0, axisLength, 0) }], [0, 1], '');
         this.axisMesh.createSubmesh(renderer.gl, 'z-axis', [ { position: vec3.fromValues(0,0,0) }, { position: vec3.fromValues(0, 0, axisLength) }], [0, 1], '');
         
-        const halfDimension = 0.1;
+        const halfDimension = 0.25;
 
         const xVertices: PositionVertexType[] = [];
 
