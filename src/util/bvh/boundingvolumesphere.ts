@@ -102,7 +102,6 @@ export class BBSphere extends BoundingVolume {
     lineMesh: LineMesh;
     lineMesh2: LineMesh;
 
-    color: vec4;
     sphere: Sphere;
     
 }

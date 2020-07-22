@@ -6,16 +6,18 @@ import { Grid } from "../../overlay/ui/grid";
 import { Text } from "../../overlay/ui/text";
 import { Sprite } from "../../overlay/sprite";
 import * as settings from '../../settings';
-import { vec2, vec3, vec4 } from "gl-matrix";
+import { vec2, vec3, vec4, mat4 } from "gl-matrix";
 import { Container } from '../../overlay/ui/container';
 import { Slider } from "../../overlay/ui/slider";
-import { Picker } from "../../raycast";
+import { Picker, HitInfo } from "../../raycast";
 import { MeshComponent } from "../../meshcomponent";
 import { VertexBase } from "../../vertex";
 import * as async from '../../util/math';
 import { SceneNode } from "../../scenenode";
 import { LineMesh } from "../../mesh";
 import { AxisMesh } from "../axismesh";
+import * as math from '../../util/math';
+import { Ray } from "../../ray";
 
 export interface MainMenuSettings extends MenuSettings {
     scene: Scene;
@@ -28,6 +30,8 @@ export class MainMenuState extends MenuState {
 		this.showMenuButton = true;
 		this.picker = new Picker(this.settings.renderer.context.screenViewPort, 'any');
 		this.axisMesh = new AxisMesh(settings.renderer);
+
+		this.selectedAxis = -1;
 	}
 	
 	public async enter(fsm: StateMachine, from?: State) {
@@ -55,9 +59,39 @@ export class MainMenuState extends MenuState {
 	}
 	
 	public mouseDown(x: number, y: number) {
+
+		if(this.selectedNode) {
+
+			if(this.selectedAxis === -1) {
+				const ray = this.picker.generateScreenRayFromCamera(this.settings.renderer.getCurrentCamera(),
+				x, window.innerHeight - y);
+
+				const invTransform = mat4.create();
+				let direction = vec4.create();
+				let localRay = new Ray([0, 0, 0], [1, 0, 0]);
+				mat4.invert(invTransform, this.selectedNode.transform.world);
+				vec3.transformMat4(localRay.origin, ray.origin, invTransform);
+				direction = vec4.fromValues(ray.direction[0], ray.direction[1], ray.direction[2], 0);
+				vec4.transformMat4(direction, direction, invTransform);
+				localRay.direction = vec3.fromValues(direction[0], direction[1], direction[2]);
+				localRay = new Ray(localRay.origin, localRay.direction);
+				let index = 0;
+				for(let aabb of this.axisMesh.aabbs) {
+					const info = new HitInfo();
+					console.log(ray, aabb);
+					if(math.rayIntersectsAABB(localRay, aabb.aabb, info)) {
+						this.selectedAxis = index;
+						break;
+					}
+					index++;
+				}
+			}
+
+			return;
+		}
+
 		const hitInfo = this.picker.select(this.settings.renderer.getCurrentCamera(), 
 		x, window.innerHeight - y, this.settings.renderer.currentScene.sceneGraph);
-		console.log(hitInfo);
 		if(hitInfo.hit) {
 			(async () => {
 			const comp = (hitInfo.hitObject.getComponent('meshComponent') as MeshComponent<VertexBase>);
@@ -193,6 +227,7 @@ export class MainMenuState extends MenuState {
 
 	picker: Picker;
 	selectedNode: SceneNode;
+	selectedAxis: number;
 
 	axisMesh: AxisMesh;
 }

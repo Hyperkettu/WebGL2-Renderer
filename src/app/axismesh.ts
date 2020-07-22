@@ -5,6 +5,8 @@ import { ShaderType } from "../shader";
 import * as shader from '../shadermanager';
 import { ConstantBuffers } from "../constantbuffers";
 import { SceneNode } from "../scenenode";
+import { BoundingAABB } from "../util/bvh/boundingvolumeaabb";
+import { PositionVertexType } from "../vertex";
 
 export class AxisMesh {
 
@@ -13,8 +15,48 @@ export class AxisMesh {
         const axisLength = 1.5;
 		this.axisMesh.createSubmesh(renderer.gl, 'x-axis', [ { position: vec3.fromValues(0,0,0) }, { position: vec3.fromValues(axisLength, 0, 0) }], [0, 1], '');
 		this.axisMesh.createSubmesh(renderer.gl, 'y-axis', [ { position: vec3.fromValues(0,0,0) }, { position: vec3.fromValues(0, axisLength, 0) }], [0, 1], '');
-		this.axisMesh.createSubmesh(renderer.gl, 'z-axis', [ { position: vec3.fromValues(0,0,0) }, { position: vec3.fromValues(0, 0, axisLength) }], [0, 1], '');
+        this.axisMesh.createSubmesh(renderer.gl, 'z-axis', [ { position: vec3.fromValues(0,0,0) }, { position: vec3.fromValues(0, 0, axisLength) }], [0, 1], '');
+        
+        const halfDimension = 0.1;
+
+        const xVertices: PositionVertexType[] = [];
+
+        xVertices.push({
+            position: vec3.fromValues(0, -halfDimension, -halfDimension)
+        });
+
+        xVertices.push({
+            position: vec3.fromValues(axisLength, halfDimension, halfDimension)
+        });
+
+        const yVertices: PositionVertexType[] = [];
+
+        yVertices.push({
+            position: vec3.fromValues(-halfDimension, 0, -halfDimension)
+        });
+
+        yVertices.push({
+            position: vec3.fromValues(halfDimension, axisLength, halfDimension)
+        });
+
+         const zVertices: PositionVertexType[] = [];
+
+         zVertices.push({
+            position: vec3.fromValues(-halfDimension, -halfDimension, 0)
+        });
+
+        zVertices.push({
+            position: vec3.fromValues(halfDimension, halfDimension, axisLength)
+        });
+
+        this.aabbs = [
+            new BoundingAABB(renderer.gl, xVertices),
+            new BoundingAABB(renderer.gl, yVertices),
+            new BoundingAABB(renderer.gl, zVertices)
+        ];
     }
+
+
 
     render(gl: WebGL2RenderingContext, node: SceneNode) {
 
@@ -46,8 +88,15 @@ export class AxisMesh {
         ConstantBuffers.generalData.sendToGPU(gl);
         gl.drawElements(gl.LINE_STRIP, mesh.indices.length, gl.UNSIGNED_SHORT, 0);
     
+        for(let aabb of this.aabbs) {
+            aabb.render(gl);
+        }
+
         gl.depthFunc(gl.LESS);
     }
 
     axisMesh: LineMesh;
+
+    aabbs: BoundingAABB[];
+
 }
