@@ -33,6 +33,7 @@ import { Cloth } from './cloth';
 import { Submesh } from './submesh';
 import { Subtexture } from './subtexture';
 import { BillboardText } from './billboardtext';
+import { Foliage } from './foliage';
 
 export enum ShaderMode {
 	DEFAULT = 0,
@@ -153,6 +154,8 @@ export class Renderer {
 		this.currentScene.loadAssets(this);
 
 		this.cloth = new Cloth(this.gl, this.currentScene);
+
+		this.foliage = new Foliage(this);
 
 	}
 
@@ -463,5 +466,7 @@ export class Renderer {
 
 
 	settings: settings.SettingsManager;
+
+	foliage: Foliage;
 
 }

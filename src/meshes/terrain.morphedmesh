@@ -2,7 +2,7 @@
     "mesh": {
         "name": "testi",
         "materials": [
-            "/materials/morphed-stone.mat.json"
+            "/materials/morphed-grass.mat.json"
         ],
         "type": "morphed",
         "data": {
@@ -21,7 +21,7 @@
                         "z": 0
                     },
                     "vertexData": {
-                        "material": "morphed-stone-with-displacement",
+                        "material": "morphed-grass-with-displacement",
                         "vertices": [
                             {
                                 "position": {

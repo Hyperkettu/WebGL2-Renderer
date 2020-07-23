@@ -112,7 +112,6 @@ export class MainMenuState extends MenuState {
 		this.settings.mouseMoveCamera = true;
 	}
 	public mouseMove(x: number, y: number) {
-		console.log(this.selectedAxises);
 		if(this.selectedAxises.length === 1  && this.selectedNode) {
 
 			if(this.selectedAxises[0] === 0) {

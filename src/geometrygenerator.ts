@@ -1,5 +1,5 @@
-import { Vertex, PositionVertex, NormalVertexType, PositionVertexType, GeneralVertexType } from './vertex';
-import { StaticMesh } from './mesh';
+import { Vertex, PositionVertex, NormalVertexType, PositionVertexType, GeneralVertexType, VertexBase } from './vertex';
+import { StaticMesh, Mesh } from './mesh';
 import { vec3, vec2 } from 'gl-matrix';
 import * as mesh from './meshmanager';
 import { Texture } from './texture';
@@ -574,15 +574,18 @@ export class GeometryGenerator {
 		//terrain.wireFrame = true;
 	}
 
-	static GenerateCylinder(gl: WebGL2RenderingContext, name: string, radius: number, numSegmentsAngle, numSegments: number, height: number) {
+	static GenerateCylinder(gl: WebGL2RenderingContext, name: string, submeshName: string, radius: number, endRadius: number, numSegmentsAngle, numSegments: number, height: number, pMesh?: Mesh<VertexBase>) {
 		
 		const vertices: Vertex[] = [];
 
 		for(let angle = 0; angle <= 2 * Math.PI; angle += (2 * Math.PI) / numSegmentsAngle) {
 			for(let i = 0; i <= numSegments; i++) {
 				const vertex = new Vertex();
-				vertex.position = vec3.fromValues(Math.cos(angle) * radius, (height / numSegments) * i, Math.sin(angle) * radius);
-				vertex.normal = vec3.fromValues(vertex.position[0], 0, vertex.position[2]);
+				const dRadius = radius - endRadius;
+				const tanTheta = dRadius / height;
+				const currentRadius = math.lerpNumber(radius, endRadius, i / numSegments);
+				vertex.position = vec3.fromValues(Math.cos(angle) * currentRadius, (height / numSegments) * i, Math.sin(angle) * currentRadius);
+				vertex.normal = vec3.fromValues(vertex.position[0], currentRadius * tanTheta, vertex.position[2]);
 				vec3.normalize(vertex.normal, vertex.normal);
 				vertex.tangent = vec3.fromValues(Math.sin(angle), 0, -Math.cos(angle));
 				vertex.textureCoords = vec2.fromValues(angle / (2.0 * Math.PI), vertex.position[1] / height);
@@ -609,9 +612,10 @@ export class GeometryGenerator {
 			x++;
 		}
 
-		const cylinder = new StaticMesh(name);
-		cylinder.createSubmesh(gl, 'cylinder', vertices, indices, 'default');
+		const cylinder = pMesh || new StaticMesh(name);
+		cylinder.createSubmesh(gl, submeshName, vertices, indices, 'default');
 		mesh.SetMesh(name, cylinder);
+		return cylinder;
 	}
 
 	static ComputeTangents(vertices: GeneralVertexType[], indices: number[]) {
