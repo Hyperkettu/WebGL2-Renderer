@@ -1,6 +1,7 @@
 // overlay
 import * as overlayVs from './overlayvs';
 import * as overlayFs from './overlayfs';
+import * as overlayMaskFS from './overlaywithmask';
 
 // particle systems
 import * as billboardParticleFS from './billboardparticlefs';
@@ -70,6 +71,7 @@ export function init() {
 	// overlay
 	prefixToShaderSource[overlayVs.prefix] = overlayVs.overlayVsSrc;
 	prefixToShaderSource[overlayFs.prefix] = overlayFs.overlayFsSrc;
+	prefixToShaderSource[overlayMaskFS.prefix] = overlayMaskFS.overlayFsSrc;
 
 	// particle effects
 	prefixToShaderSource[billboardParticleVS.prefix] = billboardParticleVS.billboardParticleVsSrc;
@@ -180,6 +182,7 @@ export function init() {
 	prefixToShaderSource[`${billboard.prefix}`] = billboard.billboardVsSrc;
 	prefixToShaderSource[`${billboardFS.prefix}`] = billboardFS.billboardFsSrc;
 	prefixToShaderSource[`${billboardFS.prefix}/A`] = billboardFS.billboardFsSrc;
+
 
 }
 

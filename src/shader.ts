@@ -33,6 +33,7 @@ export enum ShaderType {
 	BILLBOARD,
 	BILLBOARD_PLAIN,
 	LINES,
+	OVERLAY_MASK,
 	NUM_SHADERS
 }
 
