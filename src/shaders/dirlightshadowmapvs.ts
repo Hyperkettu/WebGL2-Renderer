@@ -5,6 +5,8 @@ export const shadowMapVsSrc =
 `#version 300 es
 
 layout(location = 0) in vec3 position;
+layout(location = 2) in vec2 texCoords;
+
 
 layout(std140) uniform MatricesPerFrame {
 mat4 projection;
@@ -18,7 +20,10 @@ float displacementFactor;
 float pointLightIndex;
 };
 
+out vec2 uvs;
+
 void main() {
+    uvs = texCoords;
     vec4 positionW = world * vec4(position, 1.0f);
     gl_Position = projection * view * positionW;
 }

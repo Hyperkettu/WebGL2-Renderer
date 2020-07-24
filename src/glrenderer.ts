@@ -389,6 +389,9 @@ export class Renderer {
 			this.shader = submesh.shadowMapShader;
 			this.shaderTech = shader.GetShader(this.shader);
 			this.shaderTech.use(this.gl);
+
+			this.shaderTech.setSamplerTexture(this.gl, Shader.uniformSamplers[0], mat.textures[0], 0);
+
 			return; // skip material textures for depth passes
 		}
 

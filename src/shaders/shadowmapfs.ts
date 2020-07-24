@@ -13,7 +13,10 @@ layout(std140) uniform Data {
 	bool value;
 };
 
+uniform sampler2D albedoMap;
+
 in vec4 positionW;
+in vec2 uvs;
 
 void main() {
 
@@ -22,7 +25,14 @@ void main() {
 	float far = dataVec2.g;
 
 	float distance = length(positionW.xyz - lightPosition);
-	gl_FragDepth = (distance - near) / (far - near);
+
+	vec4 color = texture(albedoMap, uvs.st);
+
+	if(color.a != 0.0f) {
+		gl_FragDepth = (distance - near) / (far - near);
+	} else {
+		discard;
+	}
 }
 `;
 

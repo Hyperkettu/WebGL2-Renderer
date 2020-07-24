@@ -16,6 +16,7 @@ precision highp float;
 
 layout(location = 0) in vec3 position1;
 layout(location = 1) in vec3 position2;
+layout(location = 4) in vec2 texCoords;
 
 layout(std140) uniform MatricesPerFrame {
 	mat4 projection;
@@ -37,7 +38,10 @@ layout (std140) uniform Data {
 
 ${hasDisplacementMap ? 'uniform sampler2D displacementMap;' : ''}
 
+out vec2 uvs;
+
 void main() {
+	uvs = texCoords;
     float weight = clamp(dataVec1.x, 0.0f, 1.0f);
 	vec3 position = weight * position1 + (1.0f - weight) * position2;
 	vec4 positionW = world * vec4(position, 1.0f);
