@@ -41,6 +41,10 @@ export class BillboardText {
         
         for(let index = 0; index < text.length; index++) {
             
+            if(text.charAt(index) === ' ') {
+                continue;
+            }
+
             const subtexture = this.overlay.textureAtlas.subtextures[`images/${text.charAt(index).toUpperCase()}.png`];
             const sprite = new Sprite('temporary', subtexture);
             sprite.setAnchor(1, 0.5);
