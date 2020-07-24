@@ -34,10 +34,10 @@ export class Subtexture {
         const bottomrightX = (x + width) / this.texture.width;
         const bottomrightY = (y + height) / this.texture.height;
 
-        this.textureCoordinates[TextureCoordinate.TOP_LEFT] = vec2.fromValues(topleftX, topleftY);
-        this.textureCoordinates[TextureCoordinate.TOP_RIGHT] = vec2.fromValues(toprightX, toprightY);
-        this.textureCoordinates[TextureCoordinate.BOTTOM_LEFT] = vec2.fromValues(bottomleftX, bottomleftY);
-        this.textureCoordinates[TextureCoordinate.BOTTOM_RIGHT] = vec2.fromValues(bottomrightX, bottomrightY);
+        this.textureCoordinates[TextureCoordinate.BOTTOM_LEFT] = vec2.fromValues(topleftX, topleftY);
+        this.textureCoordinates[TextureCoordinate.BOTTOM_RIGHT] = vec2.fromValues(toprightX, toprightY);
+        this.textureCoordinates[TextureCoordinate.TOP_LEFT] = vec2.fromValues(bottomleftX, bottomleftY);
+        this.textureCoordinates[TextureCoordinate.TOP_RIGHT] = vec2.fromValues(bottomrightX, bottomrightY);
         this.width = width;
         this.height = height;
     }
