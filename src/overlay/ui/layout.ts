@@ -14,6 +14,9 @@ import { AnimationData, Animation } from "../animationsystem";
 import { Grid } from "./grid";
 import * as ui from './container';
 import { Slider } from "./slider";
+import { Texture, TextureType } from "../../texture";
+import * as texture from '../../texturemanager';
+import { Subtexture } from "../../subtexture";
 
 const layouts: { [name: string]: UILayout } = {};
 
@@ -29,6 +32,8 @@ export type DragHandler = (x: number, y: number) => number;
 export interface LayoutFile {
     logicalSize: vec2;
     atlasFile: string;
+    masks?: string[];
+    separateImages?: string[];
     elements?: ElementData[];
     actions: AnimationData[];
     events: { [ name: string ]: EventData };
@@ -71,6 +76,8 @@ export interface FontDef {
 
 export interface SpriteData extends ElementData {
     path: string;
+    separateImage?: boolean;
+    maskPath?: string;
 }
 
 export interface GridData extends ElementData {
@@ -189,6 +196,22 @@ export class UILayout {
         const layout = new UILayout(renderer, renderer.overlay, file.logicalSize);
         await renderer.overlay.textureAtlas.loadFromJson(renderer.gl, file.atlasFile, renderer);
 
+        const imagePromises: Promise<void>[] = [];
+
+        if(file.masks) {
+            for(let maskPath of file.masks) {
+                imagePromises.push(texture.LoadTexture(renderer.gl, maskPath));
+            }
+        }
+
+        if(file.separateImages) {
+            for(let filePath of file.separateImages) {
+                imagePromises.push(texture.LoadTexture(renderer.gl, filePath));
+            }
+        }
+
+        await Promise.all(imagePromises);
+
         layout.events = file.events;
         layout.animations = file.actions;
 
@@ -292,7 +315,17 @@ export class UILayout {
     }
 
     createSprite(data: SpriteData) {
-        const sprite = new Sprite(data.name, this.overlay.textureAtlas.subtextures[data.path]);
+        let sprite: Sprite = null;
+        if(false) {//if(data.separateImage) {
+            const tex = texture.GetTexture(data.path);
+            const subtexture = new Subtexture(data.path, tex, 0, 0, tex.width, tex.height); 
+            sprite = new Sprite(data.name, subtexture);
+        } else {
+            sprite = new Sprite(data.name, this.overlay.textureAtlas.subtextures[data.path]);
+        }
+        if(data.maskPath) {
+            sprite.mask = texture.GetTexture(data.maskPath);
+        }
         sprite.setPosition(data.position);
         sprite.setScale(data.scale);
         sprite.setAngle(data.rotation);
@@ -303,14 +336,20 @@ export class UILayout {
     }
 
     createUISprite(data: SpriteData) {
-        const sprite = new UISprite(data.name, this.overlay, this, { 
-            path: data.path
+        let sprite: UISprite = null;
+        sprite = new UISprite(data.name, this.overlay, this, { 
+            path: data.path,
+            separate: data.separateImage
         });
+
         sprite.setPosition(data.position);
         sprite.setScale(data.scale);
         sprite.setRotation(data.rotation);
         if(data.anchor) {
             sprite.setAnchor(data.anchor);
+        }
+        if(data.maskPath) {
+            sprite.addMask(texture.GetTexture(data.maskPath));
         }
         return sprite;
     }

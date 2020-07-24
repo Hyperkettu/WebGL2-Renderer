@@ -1,6 +1,7 @@
 import { vec2, vec3, mat3 } from 'gl-matrix';
 import { Subtexture } from '../subtexture';
 import { Container } from './container';
+import { Texture } from '../texture';
 
 export class Sprite extends Container {
     constructor(name: string, texture: Subtexture) {
@@ -63,6 +64,7 @@ export class Sprite extends Container {
     tintColor: vec3;
     
     texture: Subtexture;
+    mask?: Texture;
 
     renderSeparately: boolean;
 }

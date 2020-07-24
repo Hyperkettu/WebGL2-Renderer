@@ -7,15 +7,25 @@ import * as math from '../../util/math';
 import { Animation } from "../animationsystem";
 import { Element } from "./element";
 import { TextData, SpriteData, UILayout } from "./layout";
+import { Texture } from "../../texture";
+import { Subtexture } from "../../subtexture";
+import * as texture from '../../texturemanager';
 
 export interface SpriteSettings {
     path: string;
+    separate?: boolean;
 }
 
 export class UISprite extends Element {
     constructor(name: string, overlay: Overlay, layout: UILayout, settings?: SpriteSettings) {
         super(name, overlay, layout);
-        this.sprite = new Sprite(name, overlay.textureAtlas.subtextures[settings?.path]);
+        if(settings.separate !== undefined && settings.separate === true) {
+            const tex = texture.GetTexture(settings?.path);
+            const subtexture = new Subtexture(name, tex, 0, 0, tex.width, tex.height);
+            this.sprite = new Sprite(name, subtexture);  
+        } else {
+            this.sprite = new Sprite(name, overlay.textureAtlas.subtextures[settings?.path]);
+        }
         this.container.addChild(this.sprite);
     }
 
@@ -44,6 +54,10 @@ export class UISprite extends Element {
 
     setRotation(rotation: number) {
         super.setRotation(rotation);
+    }
+
+    addMask(mask: Texture) {
+        this.sprite.mask = mask;
     }
 
     toJson() {

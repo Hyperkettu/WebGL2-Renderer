@@ -53,7 +53,7 @@ export class VertexBuffer<VertexType> {
 		let numVectorComponents = 2;
 		const type = gl.FLOAT;
 		const normalize = false;
-		const stride = 4 * (2 + 2 + 4 + 4 + 4 + 4);
+		const stride = 4 * (2 + 3 + 4 + 4 + 4 + 4);
 		let offset = 0;
 
 		// vertex position
@@ -62,13 +62,13 @@ export class VertexBuffer<VertexType> {
 
 		layoutLocationIndex++;
 		offset += 2 * 4;
-		numVectorComponents = 2;
+		numVectorComponents = 3;
 		// texture coordinates
 		gl.vertexAttribPointer(layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
 		gl.enableVertexAttribArray(layoutLocationIndex);
 
 		layoutLocationIndex++;
-		offset += 2 * 4;
+		offset += 3 * 4;
 		numVectorComponents = 4;
 		// tint + alpha
 		gl.vertexAttribPointer(layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);

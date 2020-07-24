@@ -10,6 +10,7 @@ import { OverlayCamera } from './overlaycamera';
 import { AnimationSystem, Animation } from './animationsystem';
 import { TextureAtlas } from '../textureatlas';
 import { UILayout } from './ui/layout';
+import * as texture from '../texturemanager';
 
 export class Overlay {
     
@@ -81,25 +82,26 @@ export class Overlay {
     }
 
     renderSingleSprite(gl: WebGL2RenderingContext, sprite: Sprite, updateTransform: boolean = true) {
-        const currentTexture = this.textureAtlas.texture;
-        this.setAtlas(sprite.texture.texture);
         sprite.updateWorldTransform(mat3.create(), updateTransform);
 
         this.mesh.updateMesh(gl, [ sprite ]);
 
         const overlayShader = shader.GetShader(ShaderType.OVERLAY, 'default');
         overlayShader.use(gl);
-        overlayShader.setSamplerTexture(gl, 'atlasTexture', this.textureAtlas.texture, 0);
+        overlayShader.setSamplerTexture(gl, 'atlasTexture', sprite.texture.texture, 0);
+
+        if(sprite.mask) {
+            overlayShader.setSamplerTexture(gl, 'mask', sprite.mask, 1);
+        }
 
         ConstantBuffers.overlayMatrices.update(gl, 'view', this.camera.view);
         ConstantBuffers.overlayMatrices.update(gl, 'ortho', this.camera.orthoProjection);
         ConstantBuffers.overlayMatrices.sendToGPU(gl);
 
         gl.bindVertexArray(this.mesh.vao.vao);
-        gl.drawElements(gl.TRIANGLES, 6 * this.sprites.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
         gl.bindVertexArray(null);
 
-        this.setAtlas(currentTexture);
     }
 
     render(gl: WebGL2RenderingContext, dt: number) {
@@ -108,6 +110,7 @@ export class Overlay {
 
         this.sprites = [];
         this.separateSprites = [];
+        let mask: Texture = null;
         this.stage.forEach((node, worldTransform, transformUpdated) => {
             const updated = node.updateWorldTransform(worldTransform, transformUpdated);
             node.updateAlpha(node.parent ? node.parent?.totalAlpha : 1)
@@ -115,7 +118,12 @@ export class Overlay {
                 if(node.renderSeparately) {
                     this.separateSprites.push(node);
                 } else {
-                    this.sprites.push(node);
+                    if(node.mask) {
+                        mask = node.mask;
+                        this.separateSprites.push(node);
+                    } else {
+                        this.sprites.push(node);
+                    }
                 }
             }
             return updated;
@@ -125,6 +133,9 @@ export class Overlay {
         const overlayShader = shader.GetShader(ShaderType.OVERLAY, 'default');
         overlayShader.use(gl);
         overlayShader.setSamplerTexture(gl, 'atlasTexture', this.textureAtlas.texture, 0);
+        if(mask) {
+            overlayShader.setSamplerTexture(gl, 'mask', mask, 1);
+        }
 
         ConstantBuffers.overlayMatrices.update(gl, 'view', this.camera.view);
         ConstantBuffers.overlayMatrices.update(gl, 'ortho', this.camera.orthoProjection);
@@ -164,6 +175,7 @@ export class Overlay {
        }
 
     textureAtlas: TextureAtlas;
+    currentTexture: Texture;
     sprites: Sprite[];
     separateSprites: Sprite[];
     stage: OverlaySceneGraph;
