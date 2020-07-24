@@ -1,0 +1,14 @@
+{
+	"mesh": {
+		"name": "oak-leaf1",
+		"type": "plane",
+		"data": {
+			"width": 1,
+			"height": 1,
+			"material": "oak-leaf"
+		},
+		"materials": [
+			"materials/oak-leaf.mat.json"
+		]
+	}
+}

@@ -1,0 +1,24 @@
+{
+	"material" : {
+		"name" : "oak-leaf",
+		"shader": "pbr",
+		"tech": "ANAD",
+		"textures": [
+			{
+				"path" : "images/oak_leaf/albedo.png",
+				"type" : "albedo"
+			},
+			{
+				"path" : "images/oak_leaf/normal.png",
+				"type" : "normal"
+			},	
+			{
+				"path" : "images/oak_leaf/ao.png",
+				"type" : "ambient-occlusion"
+			},
+			{
+				"path" : "images/oak_leaf/displacement.png",
+				"type" : "displacement"
+			}]
+	}
+}

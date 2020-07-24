@@ -350,6 +350,8 @@ export class GeometryGenerator {
 		const plane = new StaticMesh(name);
 		plane.createSubmesh(gl, 'plane', vertices, indices, 'default');
 		mesh.SetMesh(name, plane);
+
+		return plane;
 	}
 
 	static async GenerateTerrain(gl: WebGL2RenderingContext, name: string, heightRange: number, dimension: number, tileScale: number, tileOffset: number, heightMapFile: string) {

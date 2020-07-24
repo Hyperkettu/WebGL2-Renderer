@@ -6,7 +6,7 @@ import { MeshComponent } from "../../meshcomponent";
 import { StaticMesh } from "../../mesh";
 
 
-export function createBatch(gl: WebGL2RenderingContext, node: SceneNode, meshName: string, submeshName: string, materialId: string) {
+export function createBatch(gl: WebGL2RenderingContext, node: SceneNode, meshName: string, submeshName: string, materialId: string, exclude: string) {
 
     const vertices: Vertex[] = [];
 
@@ -27,7 +27,7 @@ export function createBatch(gl: WebGL2RenderingContext, node: SceneNode, meshNam
             const transform = node.transform;
             const submesh = (node.getComponent('meshComponent') as MeshComponent<Vertex>).mesh;
 
-            if(submesh) {
+            if(submesh && !submesh.submeshName.startsWith(exclude)) {
                 for(let vertex of submesh.vertices) {
                     vec3.transformMat4(newPosition, vertex.position, transform.world);
                     vec4.transformMat4(newNormal, vec4.fromValues(vertex.normal[0], vertex.normal[1], vertex.normal[2], 0), transform.world);

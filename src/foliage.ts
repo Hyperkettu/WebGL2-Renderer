@@ -49,14 +49,15 @@ export class Foliage {
     async create(renderer: Renderer) {
         this.trunk = new StaticMesh('plant');
         await material.loadMaterial('materials/bark1.mat.json', true, renderer.gl);
+        await material.loadMaterial('materials/oak-leaf.mat.json', true, renderer.gl);
 
         const node = new SceneNode('node', renderer.currentScene);
         node.transform.setPosition(0, 0, 0);
        // renderer.currentScene.addObject(node);
 
-        this.generateTrunk(renderer, this.trunk, node, 0, 7);
+        this.generateTrunk(renderer, this.trunk, node, 0, 7); //7);
 
-        const staticMesh = batch.createBatch(renderer.gl, node.children[0], 'tree', 'trunk', 'bark1-with-displacement');
+        const staticMesh = batch.createBatch(renderer.gl, node.children[0], 'tree', 'trunk', 'bark1-with-displacement', 'plane');
 
         const node2 = new SceneNode('node2', renderer.currentScene);
         node2.transform.setPosition(0, 0.5, 0);
@@ -64,16 +65,64 @@ export class Foliage {
         node2.addMesh(staticMesh.getSubmesh('trunk'), Layer.OPAQUE);
         renderer.currentScene.addObject(node2);
 
-        console.log(renderer.currentScene.sceneGraph);
+        const leafMesh = batch.createBatch(renderer.gl, node.children[0], 'leaves', 'leafSubmesh', 'oak-leaf', 'trunk');
+        const leaves = new SceneNode('leaves', renderer.currentScene);
+        leaves.transform.setPosition(0, 0.5, 0);
+        leaves.transform.setRotation(0, 0, 0);
+        leaves.addMesh(leafMesh.getSubmesh('leafSubmesh'), Layer.OPAQUE);
+        renderer.currentScene.addObject(leaves);
+
+      //  const leaves = this.generateLeaves(renderer, node);
+      //  renderer.currentScene.addObject(leaves);
+    }
+
+    generateLeaves(renderer: Renderer, node: SceneNode) {
+
+        const leafMesh = GeometryGenerator.GeneratePlane(renderer.gl, 'oak-leaf', 0.4, 0.4);
+        const leafSubmesh = leafMesh.getSubmesh('plane');
+        leafSubmesh.materialID = 'oak-leaf';
+
+        const scenegraph = new SceneGraph();
+        scenegraph.root.addChild(node);
+        scenegraph.updateGraph(0);
+
+        const root = new SceneNode('root', renderer.currentScene);
+        root.transform.setPosition(0,0,0);
+
+        let current = root;
+        
+        scenegraph.forEach(currentNode => {
+
+            const newNode = new SceneNode('newNode', renderer.currentScene);
+            newNode.transform.setPosition(currentNode.transform.position[0], currentNode.transform.position[1], currentNode.transform.position[2]);
+          //  newNode.transform.setRotation(currentNode.transform.eulerAngles[0], currentNode.transform.eulerAngles[1], currentNode.transform.eulerAngles[2]);
+            newNode.transform.rotation = vec4.fromValues(currentNode.transform.rotation[0],currentNode.transform.rotation[1],currentNode.transform.rotation[2],currentNode.transform.rotation[3]);
+            current.addChild(newNode);
+            current = newNode;
+
+            if(currentNode.children.length === 0) {
+                current.addMesh(Object.create(leafSubmesh), Layer.OPAQUE);
+            }
+        });
+
+        return root;
+
     }
 
     generateTrunk(renderer: Renderer, pMesh: StaticMesh, parent: SceneNode, depth: number, maxDepth: number) {
-        this.recurseTrunk(renderer, pMesh, 0.2, 0.12, 0.6, 1, parent, depth, maxDepth, this.lSystem.init);
+        this.recurseTrunk(renderer, pMesh, 0.2, 0.12, 0.6, 2, parent, depth, maxDepth, this.lSystem.init);
     }
 
     recurseTrunk(renderer: Renderer, pMesh: StaticMesh, radius: number, endRadius: number, scale: number, height: number, parent: SceneNode, depth: number, maxDepth: number, lSystemVariable: LSystemVariable) {
         
         if(depth === maxDepth) {
+            const leafMesh = GeometryGenerator.GeneratePlane(renderer.gl, 'oak-leaf', 0.4, 0.4);
+            const leafSubmesh = leafMesh.getSubmesh('plane');
+            leafSubmesh.materialID = 'oak-leaf';
+            const leafNode = new SceneNode('leafnode', renderer.currentScene);
+            leafNode.transform.setPosition(0, height + 0.2, 0);
+            leafNode.addMesh(Object.create(leafSubmesh), Layer.OPAQUE);
+            parent.addChild(leafNode);
             return;
         }
 
@@ -100,7 +149,7 @@ export class Foliage {
         const keys = this.lSystem.get(lSystemVariable);
 
         for(let index = 0; index < 3; index++) {
-            const trunkLength = math.randomFloat(1 / depth *  height, height);
+            const trunkLength = math.randomFloat(1 / depth *  height * 0.8, height * 0.8);
             GeometryGenerator.GenerateCylinder(renderer.gl, 'trunk', `trunk-${depth}-${index}`, radius, endRadius, 36, 2, trunkLength, 
             pMesh) as StaticMesh;
             this.trunk.getSubmesh(`trunk-${depth}-${index}`).materialID = 'bark1-with-displacement';
@@ -119,7 +168,7 @@ export class Foliage {
         const keys = this.lSystem.get(lSystemVariable);
 
         for(let index = 0; index < 2; index++) {
-            const trunkLength = math.randomFloat(1 / depth * height, height);
+            const trunkLength = math.randomFloat(1 / depth * height * 0.8, height * 0.8);
             GeometryGenerator.GenerateCylinder(renderer.gl, 'trunk', `trunk-${depth}-${index}`, radius, endRadius, 36, 2, trunkLength, 
             pMesh) as StaticMesh;
             this.trunk.getSubmesh(`trunk-${depth}-${index}`).materialID = 'bark1-with-displacement';
