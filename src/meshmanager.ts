@@ -211,21 +211,21 @@ function recurseSubmeshes(gl: WebGL2RenderingContext, mesh: Mesh<VertexBase>, no
 	}
 }
 
-export function toMeshDataFile(mesh: Mesh<VertexBase>) {
+export function toMeshDataFile(mesh: Mesh<VertexBase>, nodeName: string, meshName: string, submeshName: string, materialFile: string, materialId: string) {
 	let vertexData: VertexData = {
-		material: 'bark1-with-displacement',
+		material: materialId,
 		vertices: [],
 		indices: []
 	};
 
-	const submesh = mesh.getSubmesh('plane');
+	const submesh = mesh.getSubmesh(submeshName);
 	vertexData.material = submesh.materialID;
 	vertexData.vertices = submesh.vertices;
 	vertexData.indices = submesh.indices;
 
 	const sceneNodeData: SceneNodeData = {
 		children: [],
-		name: 'plane',
+		name: nodeName,
 		position: {
 			x: 0,
 			y: 0,
@@ -247,16 +247,15 @@ export function toMeshDataFile(mesh: Mesh<VertexBase>) {
 
 	const data: MeshFile = {
 		mesh: {
-			name: 'plane',
+			name: meshName,
 			materials: [
-				'materials/bark1.mat.json'
+				materialFile
 			],
 			type: 'static',
 			data: meshData
 			
 		}
 	};
-//	JSON.stringify(data);
 	console.log(JSON.stringify(data));
 }
 

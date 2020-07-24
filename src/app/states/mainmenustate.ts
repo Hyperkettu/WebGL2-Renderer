@@ -14,11 +14,12 @@ import { MeshComponent } from "../../meshcomponent";
 import { VertexBase } from "../../vertex";
 import * as async from '../../util/math';
 import { SceneNode } from "../../scenenode";
-import { LineMesh } from "../../mesh";
+import { LineMesh, Mesh } from "../../mesh";
 import { AxisMesh } from "../axismesh";
 import * as math from '../../util/math';
 import { Ray } from "../../ray";
 import { Plane } from "../../plane";
+import { toMeshDataFile } from "../../meshmanager";
 
 export interface MainMenuSettings extends MenuSettings {
     scene: Scene;
@@ -320,6 +321,12 @@ export class MainMenuState extends MenuState {
 		if(key === 'c') {
 			this.selectedNode = null;
 			this.selectedAxises = [];
+		}
+
+		if(key === '1') {
+			toMeshDataFile(this.settings.renderer.foliage.trunk, 'oak-tree-node', 'oak-tree', 'trunk', 'materials/bark1.mat.json', 'bark1-with-displacement');        
+		} else if(key === '2') {
+			toMeshDataFile(this.settings.renderer.foliage.leaves, 'oak-leaves-node', 'oak-leaves', 'leafSubmesh', 'materials/oak-leaf.mat.json', 'oak-leaf');        
 		}
 	}
 
