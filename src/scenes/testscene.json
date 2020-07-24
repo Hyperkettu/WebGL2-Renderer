@@ -1,6 +1,6 @@
 {
 	"data": {
-		"skybox": "images/skybox/",
+		"skybox": "images/space-blue/",
 		"objects": [
 			{
 				"name": "terrain",
@@ -20,7 +20,7 @@
 			{
 				"name": "burning-tree",
 				"position": {
-					"x": 4,
+					"x": 14,
 					"y": 0,
 					"z": 0
 				},
@@ -35,9 +35,9 @@
 			{
 				"name": "plane",
 				"position": {
-					"x": 0,
-					"y": 2.5,
-					"z": -5
+					"x": 10,
+					"y": 1,
+					"z": -20
 				},
 				"rotation":  {
 					"x": 90,
@@ -51,8 +51,8 @@
 				"name": "plane",
 				"position": {
 					"x": -5.1,
-					"y": 0,
-					"z": -5
+					"y": 10,
+					"z": -10
 				},
 				"rotation":  {
 					"x": 45,
@@ -63,19 +63,34 @@
 					"meshPath": "meshes/billboard.staticmesh"
 			},
 			{
-				"name": "oak-leaf",
+				"name": "oak-tree1",
 				"position": {
-					"x": -5,
-					"y": 5,
-					"z": 0
+					"x": 0,
+					"y": 1,
+					"z": 1
 				},
 				"rotation":  {
-					"x": -15,
-					"y": 0,
+					"x": 0,
+					"y": 25,
 					"z": 0
 				},
 				"children": [],
-					"meshPath": "meshes/oak-leaf.mesh.json"
+					"meshPath": "meshes/oak-tree1.staticmesh"
+			},
+			{
+				"name": "oak-leaves",
+				"position": {
+					"x": 0,
+					"y": 1,
+					"z": 1
+				},
+				"rotation":  {
+					"x": 0,
+					"y": 25,
+					"z": 0
+				},
+				"children": [],
+					"meshPath": "meshes/oak-leaves1.staticmesh"
 			},
 			{
 				"name": "light",
