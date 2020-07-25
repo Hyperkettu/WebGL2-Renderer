@@ -192,7 +192,7 @@ vec3 CalcDirLight(DirLight dirLight, vec3 N, vec3 V, vec3 F0, vec3 albedo, float
 
 vec4 ogl_pbr(vec3 N, vec3 albedo, float roughness, float metallic, float ao) {
 
-	albedo = mon2lin(albedo);
+	//albedo = mon2lin(albedo);
 
 	vec3 V = normalize(eyePositionW - positionW);
 	vec3 R = reflect(-V, N);
