@@ -10,6 +10,7 @@ precision highp float;
 layout(std140) uniform Data {
 	vec4 dataVec1;
 	vec4 dataVec2;
+	vec4 dataVec3;
 	bool value;
 };
 

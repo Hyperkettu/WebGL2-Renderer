@@ -34,6 +34,7 @@ export function getTerrainSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, h
 		layout(std140) uniform Data {
 			vec4 dataVec1;
 			vec4 dataVec2;
+			vec4 dataVec3;
 			bool value;
 		};
 
@@ -147,6 +148,7 @@ export function getTerrainSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, h
 		layout(std140) uniform Data {
 			vec4 dataVec1;
 			vec4 dataVec2;
+			vec4 dataVec3;
 			bool value;
 		};
 

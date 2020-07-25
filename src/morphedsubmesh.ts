@@ -34,7 +34,7 @@ export class MorphedSubmesh extends Submesh<MorphVertex> {
 
     updateConstantBuffers(renderer: Renderer, batch: Batch) {
         super.updateConstantBuffers(renderer, batch);
-        ConstantBuffers.generalData.update(renderer.gl, 'dataVec1', vec4.fromValues((batch.submesh as MorphedSubmesh).weights[0], 0, 0, 0));
+        ConstantBuffers.generalData.update(renderer.gl, 'dataVec3', vec4.fromValues((batch.submesh as MorphedSubmesh).weights[0], 0, 0, 0));
         ConstantBuffers.generalData.sendToGPU(renderer.gl);
 	}
 

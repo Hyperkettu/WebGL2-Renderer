@@ -131,6 +131,7 @@ export class ConstantBuffers {
 		ConstantBuffers.generalData = new UniformBufferObject();
 		ConstantBuffers.generalData.addUniform('vec4', 'dataVec1');
 		ConstantBuffers.generalData.addUniform('vec4', 'dataVec2');
+		ConstantBuffers.generalData.addUniform('vec4', 'dataVec3');
 		ConstantBuffers.generalData.addUniform('bool', 'value');
 
 		ConstantBuffers.generalData.create(gl);

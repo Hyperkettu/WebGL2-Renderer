@@ -35,7 +35,8 @@ layout(std140) uniform PerObject {
 
 layout (std140) uniform Data {
     vec4 dataVec1;
-    vec4 dataVec2;
+	vec4 dataVec2;
+	vec4 dataVec3;
     bool value;
 };
 
@@ -46,7 +47,7 @@ ${pointLight ? 'out vec4 positionW;' : ''}
 
 void main() {
 	uvs = texCoords;
-    float weight = clamp(dataVec1.x, 0.0f, 1.0f);
+    float weight = clamp(dataVec3.x, 0.0f, 1.0f);
 	vec3 position = weight * position1 + (1.0f - weight) * position2;
 	vec3 normal = weight * normal1 + (1.0f - weight) * normal2;
 	${pointLight ? 'positionW = world * vec4(position, 1.0f);' : 
@@ -96,7 +97,8 @@ layout (std140) uniform PerObject {
 
 layout (std140) uniform Data {
     vec4 dataVec1;
-    vec4 dataVec2;
+	vec4 dataVec2;
+	vec4 dataVec3;
     bool value;
 };
 
@@ -110,7 +112,7 @@ out mat3 TBN;
 
 void main() {
 
-    float weight = clamp(dataVec1.x, 0.0f, 1.0f);
+    float weight = clamp(dataVec3.x, 0.0f, 1.0f);
 
     vec3 position = weight * position1 + (1.0f - weight) * position2;
     vec3 normal = weight * normal1 + (1.0f - weight) * normal2;
