@@ -3,7 +3,7 @@ import { Vertex, PositionVertexType } from './vertex';
 import { Triangle } from './triangle';
 import { VertexDataType } from './vertexbuffer';
 import { VertexData } from './meshmanager';
-import { ShaderMode, Renderer } from './glrenderer';
+import { ShaderMode, Renderer, ShadowPass } from './glrenderer';
 import { ShaderType } from './shader';
 import { Batch } from './batchrenderer';
 import { ConstantBuffers, BufferDirtyFlag } from './constantbuffers';
@@ -22,13 +22,20 @@ export class Submesh<VertexType> {
 		this.shaderModes[ShaderMode.NORMAL] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'Vis' };
 		this.shaderModes[ShaderMode.NORMAL_MAP] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'VisN' };
 	
-		this.shadowMapShader = ShaderType.DIR_LIGHT_SHADOW_MAP;
+		this.shadowMapShaders = [
+			ShaderType.SHADOW_MAP,
+			ShaderType.DIR_LIGHT_SHADOW_MAP
+		];
 
 		this.wireFrame = false;
 		this.renderBoundingVolume = false;
 
 		this.displacementFactor = 0;
 		this.pointLightIndex = -1;
+	}
+	
+	getShadowMapShader(pass: ShadowPass) {
+		return this.shadowMapShaders[pass];
 	}
 
 	addBoundingVolume(gl: WebGL2RenderingContext) {
@@ -84,6 +91,6 @@ export class Submesh<VertexType> {
 	displacementFactor: number;
 	pointLightIndex: number;
 
-	shadowMapShader: ShaderType;
+	shadowMapShaders: ShaderType[];
 
 }

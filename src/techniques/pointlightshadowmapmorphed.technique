@@ -1,5 +1,5 @@
 {
-    "shaderId": 24,
+    "shaderId": 29,
     "shaders":  
     [
         {
@@ -21,13 +21,13 @@
                     "bindIndex": 3
                 }
             ],
-            "source": "pbrMorphedDirLightShadowMapVS"
+            "source": "pbrMorphedPointLightShadowMapVS"
         },
         {
             "type": "fragmentShader",
             "uniforms": [
             ],
-            "source": "dirLightShadowMapFS"
+            "source": "shadowMapFS"
         }
     ],
     "technique": {
@@ -38,8 +38,8 @@
         "passes": [
             {
                 "name": "pass0",
-                "vertexShader": "pbrMorphedDirLightShadowMapVS",
-                "fragmentShader": "dirLightShadowMapFS"
+                "vertexShader": "pbrMorphedPointLightShadowMapVS",
+                "fragmentShader": "shadowMapFS"
             }
         ]
     }

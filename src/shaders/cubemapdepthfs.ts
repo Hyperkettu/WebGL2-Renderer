@@ -30,8 +30,8 @@ float near = dataVec1.r;
 float far = dataVec1.g;
 
 float depth = texture(skybox, uvs).r;
-depth = LinearizeDepth(depth, near, far) / far;
-outColor = vec4(depth, depth, depth, 1.0f);
+//depth = LinearizeDepth(depth, near, far) / far;
+outColor = vec4(1.0f - depth, 1.0f - depth, 1.0f - depth, 1.0f);
 
 bloomColor = outColor;
 }

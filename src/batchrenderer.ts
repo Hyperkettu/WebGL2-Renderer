@@ -1,5 +1,5 @@
 import { Submesh } from './submesh';
-import { Renderer } from './glrenderer';
+import { Renderer, ShadowPass } from './glrenderer';
 import { mat4 } from 'gl-matrix';
 import { VertexBase } from './vertex';
 
@@ -36,7 +36,7 @@ export class BatchRenderer {
 		this.layers[layer].push(batch);
 	}
 
-	flushSortedArray(renderer: Renderer, layer: Layer, shadowPass: boolean = false) {
+	flushSortedArray(renderer: Renderer, layer: Layer, shadowPass?: ShadowPass) {
 
 		const context = renderer.getContext();
 		for (let i = 0; i < this.layers[layer].length; i++) {

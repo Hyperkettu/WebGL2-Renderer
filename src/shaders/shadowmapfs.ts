@@ -3,7 +3,7 @@ export const prefix = 'shadowMapFS';
 
 export const shadowMapFsSrc =
 
-	`#version 300 es
+`#version 300 es
 
 precision highp float;
 

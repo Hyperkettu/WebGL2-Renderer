@@ -1,6 +1,6 @@
 import { DepthTexture } from "./depthtexture";
 import { Camera } from "./camera";
-import { Renderer } from "./glrenderer";
+import { Renderer, ShadowPass } from "./glrenderer";
 import { mat4, vec3, vec4 } from "gl-matrix";
 import * as shader from './shadermanager';
 import { ShaderType } from "./shader";
@@ -51,8 +51,8 @@ export class DirLightShadowMap {
 		ConstantBuffers.matricesPerFrame.update(gl, 'view', this.view);
         ConstantBuffers.matricesPerFrame.sendToGPU(gl);
 
-        renderer.batchRenderer.flushSortedArray(renderer, Layer.OPAQUE, true);
-        renderer.batchRenderer.flushSortedArray(renderer, Layer.TRANSPARENT, true);
+        renderer.batchRenderer.flushSortedArray(renderer, Layer.OPAQUE, ShadowPass.DIRECTIONAL_LIGHT);
+        renderer.batchRenderer.flushSortedArray(renderer, Layer.TRANSPARENT, ShadowPass.DIRECTIONAL_LIGHT);
 
         renderer.context.renderTargetEnd();
 

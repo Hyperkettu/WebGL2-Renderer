@@ -42,6 +42,11 @@ export enum ShaderMode {
 	NUM_MODES
 };
 
+export enum ShadowPass {
+	POINT_LIGHT,
+	DIRECTIONAL_LIGHT
+}
+
 export class Renderer {
 
 	constructor(canvas: HTMLCanvasElement, gl?: WebGL2RenderingContext) {
@@ -283,12 +288,13 @@ export class Renderer {
 		//this.batchRenderer.sortInAscendingOrder(Layer.OPAQUE);
 		//this.batchRenderer.sortInDescendingOrder(Layer.TRANSPARENT);
 
-		this.batchRenderer.flushSortedArray(this, Layer.OPAQUE, false);
-		this.batchRenderer.flushSortedArray(this, Layer.TRANSPARENT, false);
+		this.batchRenderer.flushSortedArray(this, Layer.OPAQUE);
+		this.batchRenderer.flushSortedArray(this, Layer.TRANSPARENT);
 
 		this.hdrBufferRenderCallback(gl);
 
 		if (this.settings.getSetting('Skybox')) {
+			this.skybox.debugDepthTextureCubemap = this.currentScene.pointLights[0].shadowMap.shadowCubeMap;
 			this.skybox.renderSkybox(this, this.gl);
 		}
 
@@ -374,23 +380,28 @@ export class Renderer {
 
 	}
 
-	materialBegin(submesh: Submesh<VertexBase>, shadowPass: boolean = false) {
+	materialBegin(submesh: Submesh<VertexBase>, shadowPass?: ShadowPass) {
 
 		this.materialID = submesh.materialID;
 		const mat = material.GetMaterial(submesh.materialID);
 
-		if (!shadowPass) {
+		if (shadowPass === undefined) {
 			submesh.shaderModes[ShaderMode.DEFAULT].shader = mat.shader;
 			submesh.shaderModes[ShaderMode.DEFAULT].tech = mat.tech;
 			this.shader = submesh.shaderModes[this.shaderMode].shader;
 			this.shaderTech = shader.GetShader(submesh.shaderModes[this.shaderMode].shader, submesh.shaderModes[this.shaderMode].tech);
 			this.shaderTech.use(this.gl);
+
 		} else {
-			this.shader = submesh.shadowMapShader;
-			this.shaderTech = shader.GetShader(this.shader);
+			this.shader = submesh.getShadowMapShader(shadowPass);
+			this.shaderTech = shader.GetShader(this.shader, mat.textures[TextureType.Displacement] ? 'AD' : 'A');
 			this.shaderTech.use(this.gl);
 
 			this.shaderTech.setSamplerTexture(this.gl, Shader.uniformSamplers[0], mat.textures[0], 0);
+
+			if(mat.textures[TextureType.Displacement]) {
+				this.shaderTech.setSamplerTexture(this.gl, Shader.uniformSamplers[TextureType.Displacement], mat.textures[TextureType.Displacement], 5);
+			}
 
 			return; // skip material textures for depth passes
 		}
@@ -409,13 +420,13 @@ export class Renderer {
 		}
 	}
 
-	materialEnd(shadowPass: boolean = false) {
+	materialEnd(shadowPass?: ShadowPass) {
 
 		if (!this.materialID) {
 			return;
 		}
 
-		if (!shadowPass) {
+		if (shadowPass === undefined) {
 
 			const mat = material.GetMaterial(this.materialID);
 

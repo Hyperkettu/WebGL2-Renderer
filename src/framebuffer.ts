@@ -22,7 +22,12 @@ export class FrameBuffer {
 	}
 
 	attachDepthCubeMapFace(gl: WebGL2RenderingContext, depthTexture: DepthTexture, faceIndex: number) {
-		gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex, depthTexture.textureId, 0);
+		if(depthTexture === null) {
+			gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex, null, 0);
+
+		} else {
+			gl.framebufferTexture2D(gl.DRAW_FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_CUBE_MAP_POSITIVE_X + faceIndex, depthTexture.textureId, 0);
+		}
 	}
 
 	attachTexture(gl: WebGL2RenderingContext, texture: Texture, colorRenderTargetIndex: number) {

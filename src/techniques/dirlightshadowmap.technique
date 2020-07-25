@@ -26,9 +26,9 @@
         }
     ],
     "technique": {
-        "name": "default",
+        "name": "A",
         "permutationVariables": [
-
+            "D"
         ],
         "passes": [
             {

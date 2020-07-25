@@ -1,7 +1,7 @@
 import { DepthTexture } from './depthtexture';
 import { vec3, mat4, vec4 } from 'gl-matrix';
 import { DEG_TO_RAD } from './util/math';
-import { Renderer } from './glrenderer';
+import { Renderer, ShadowPass } from './glrenderer';
 import { RenderTargetState } from './rendertarget';
 import { Layer } from './batchrenderer';
 import * as shader from './shadermanager';
@@ -96,10 +96,10 @@ export class PointLightShadowMap {
 
 		renderer.resolveVisibility(renderer.currentScene);
 
-		const shadowMapShader = shader.GetShader(ShaderType.SHADOW_MAP);
-		shadowMapShader.use(gl);
-		renderer.shaderTech = shadowMapShader;
-		renderer.shader = ShaderType.SHADOW_MAP;
+		//const shadowMapShader = shader.GetShader(ShaderType.SHADOW_MAP);
+		//shadowMapShader.use(gl);
+		///renderer.shaderTech = shadowMapShader;
+		//renderer.shader = ShaderType.SHADOW_MAP;
 
 		ConstantBuffers.matricesPerFrame.update(gl, 'projection', this.captureProjection);
 
@@ -112,8 +112,12 @@ export class PointLightShadowMap {
 			ConstantBuffers.matricesPerFrame.sendToGPU(gl);
 			rts.setRenderTargetCubemapFace(gl, face, this.shadowCubeMap);
 			renderer.context.clear(gl.DEPTH_BUFFER_BIT);
-			renderer.batchRenderer.flushSortedArray(renderer, Layer.OPAQUE, true);
-			renderer.batchRenderer.flushSortedArray(renderer, Layer.TRANSPARENT, true);
+			renderer.batchRenderer.flushSortedArray(renderer, Layer.OPAQUE, ShadowPass.POINT_LIGHT);
+			renderer.batchRenderer.flushSortedArray(renderer, Layer.TRANSPARENT, ShadowPass.POINT_LIGHT);
+		}
+		
+		for (let face = 0; face < 6; face++) {
+			rts.setRenderTargetCubemapFace(gl, face, null);
 		}
 
 		renderer.context.renderTargetEnd();

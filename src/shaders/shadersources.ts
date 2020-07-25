@@ -96,12 +96,26 @@ export function init() {
 
 
 	// shadow map
-	prefixToShaderSource[shadowMapVS.prefix] = shadowMapVS.shadowMapVsSrc;
-	prefixToShaderSource[shadowMapFS.prefix] = shadowMapFS.shadowMapFsSrc;
-	prefixToShaderSource[dirLightShadowMapVS.prefix] = dirLightShadowMapVS.shadowMapVsSrc;
-	prefixToShaderSource[dirLightShadowMapFS.prefix] = dirLightShadowMapFS.shadowMapFsSrc;
+	prefixToShaderSource[`${shadowMapVS.prefix}/V`] = shadowMapVS.getVsSrc(false);
+	prefixToShaderSource[`${shadowMapVS.prefix}/VD`] = shadowMapVS.getVsSrc(true);
+
+	prefixToShaderSource[`${shadowMapFS.prefix}/A`] = shadowMapFS.shadowMapFsSrc;
+	prefixToShaderSource[`${shadowMapFS.prefix}/AD`] = shadowMapFS.shadowMapFsSrc;
+
+
+	prefixToShaderSource[`${dirLightShadowMapVS.prefix}/V`] = dirLightShadowMapVS.getVsSrc(false);
+	prefixToShaderSource[`${dirLightShadowMapVS.prefix}/VD`] = dirLightShadowMapVS.getVsSrc(true);
+
+	prefixToShaderSource[`${dirLightShadowMapFS.prefix}/A`] = dirLightShadowMapFS.shadowMapFsSrc;
+	prefixToShaderSource[`${dirLightShadowMapFS.prefix}/AD`] = dirLightShadowMapFS.shadowMapFsSrc;
+
 	
-	prefixToShaderSource[pbrMorphed.shadowMapPrefixVS] = pbrMorphed.getShadowSrc(false);
+	prefixToShaderSource[`${pbrMorphed.shadowMapPrefixVS}/V`] = pbrMorphed.getShadowSrc(false, false);
+	prefixToShaderSource[`${pbrMorphed.shadowMapPrefixVS}/VD`] = pbrMorphed.getShadowSrc(true, false);
+
+	prefixToShaderSource[`${pbrMorphed.pointLightShadowMapVS}/V`] = pbrMorphed.getShadowSrc(false, true);
+	prefixToShaderSource[`${pbrMorphed.pointLightShadowMapVS}/VD`] = pbrMorphed.getShadowSrc(true, true);
+
 
 	// post process
 	prefixToShaderSource[sharpEdgeFS.prefix] = sharpEdgeFS.sharpEdgesFsSrc;

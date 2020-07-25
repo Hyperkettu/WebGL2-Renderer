@@ -5,8 +5,9 @@ export const prefixVS = 'pbrMorphedVS';
 export const prefixFS = 'pbrMorphedFS';
 
 export const shadowMapPrefixVS = 'pbrMorphedDirLightShadowMapVS';
+export const pointLightShadowMapVS = 'pbrMorphedPointLightShadowMapVS';
 
-export function getShadowSrc(hasDisplacementMap: boolean) {
+export function getShadowSrc(hasDisplacementMap: boolean, pointLight: boolean) {
 
 	const vsSrc = 
 	
@@ -16,6 +17,8 @@ precision highp float;
 
 layout(location = 0) in vec3 position1;
 layout(location = 1) in vec3 position2;
+layout(location = 2) in vec3 normal1;
+layout(location = 3) in vec3 normal2;
 layout(location = 4) in vec2 texCoords;
 
 layout(std140) uniform MatricesPerFrame {
@@ -39,19 +42,24 @@ layout (std140) uniform Data {
 ${hasDisplacementMap ? 'uniform sampler2D displacementMap;' : ''}
 
 out vec2 uvs;
+${pointLight ? 'out vec4 positionW;' : ''}
 
 void main() {
 	uvs = texCoords;
     float weight = clamp(dataVec1.x, 0.0f, 1.0f);
 	vec3 position = weight * position1 + (1.0f - weight) * position2;
-	vec4 positionW = world * vec4(position, 1.0f);
+	vec3 normal = weight * normal1 + (1.0f - weight) * normal2;
+	${pointLight ? 'positionW = world * vec4(position, 1.0f);' : 
+	'vec4 positionW = world * vec4(position, 1.0f);' }
+	mat3 normalMatrix = transpose(inverse(mat3(world)));
+	vec3 normalW = normalMatrix * normal;
 
 	${hasDisplacementMap ?
 	'float displacement = displacementFactor * texture(displacementMap, uvs).r;' +
-	'positionW = positionW + displacement * normalW;' : ''}
+	'positionW.xyz = positionW.xyz + displacement * normalW;' : ''}
 	
 
-    gl_Position = projection * view * positionW;
+    gl_Position = projection * view * vec4(positionW.xyz, 1.0f);
 }
 	`;
 
