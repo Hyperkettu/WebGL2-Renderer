@@ -294,7 +294,7 @@ export class Renderer {
 		this.hdrBufferRenderCallback(gl);
 
 		if (this.settings.getSetting('Skybox')) {
-			this.skybox.debugDepthTextureCubemap = this.currentScene.pointLights[0].shadowMap.shadowCubeMap;
+			//this.skybox.debugDepthTextureCubemap = this.currentScene.pointLights[0].shadowMap.shadowCubeMap;
 			this.skybox.renderSkybox(this, this.gl);
 		}
 
