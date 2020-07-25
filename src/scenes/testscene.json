@@ -5,8 +5,8 @@
 			{
 				"name": "terrain",
 				"position": {
-					"x": 0,
-					"y": 0,
+					"x": 10,
+					"y": 0.5,
 					"z": 0
 				},
 				"rotation":  {
@@ -36,11 +36,11 @@
 				"name": "plane",
 				"position": {
 					"x": 10,
-					"y": 1,
-					"z": -20
+					"y": 0.5,
+					"z": 5
 				},
 				"rotation":  {
-					"x": 90,
+					"x": 0,
 					"y": 0,
 					"z": 0
 				},
@@ -111,12 +111,12 @@
 						"z": 0
 					},
 					"color": {
-						"r": 0,
-						"g": 1.0,
-						"b": 1.0
+						"r": 0.1,
+						"g": 0.5,
+						"b": 0.88
 					},
 					"near": 0.01,
-					"intensity": 0.0,
+					"intensity": 25.0,
 					"radius": 35.0
 				},
 				"children": [],

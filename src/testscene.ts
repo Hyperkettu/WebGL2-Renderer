@@ -21,7 +21,7 @@ export class TestScene extends Scene {
 		await super.initScene(renderer, path);
 
 		const dirLightColor = vec3.fromValues(1, 1, 1);
-		const dirLightDirection = vec3.fromValues(0.0, -1.0, -2.0);
+		const dirLightDirection = vec3.fromValues(0.0, -0.1, -1.0);
 		const dirLightIntensity = 0.0;
 		this.dirLight = new DirectionalLight(renderer.gl, dirLightColor, dirLightDirection, dirLightIntensity);
 
@@ -46,19 +46,19 @@ export class TestScene extends Scene {
 			node.addMesh(terrain.getSubmesh('terrain'), Layer.OPAQUE);
 			this.addObject(node); */
 
-		/*	await GeometryGenerator.GeneratePlaneTerrain(renderer.gl, 'planeTerrain', 0.2, 20, 1.2, 0);
-			const terrain = mesh.GetMesh('planeTerrain');
+			await GeometryGenerator.GeneratePlaneTerrain(renderer.gl, 'planeTerrain', 2, 20, 2, 0);
+			const terrain = mesh.GetMesh<StaticMesh>('planeTerrain');
 			const submesh = terrain.getSubmesh('terrain');
 			submesh.wireFrame = false;
-			submesh.materialID = 'bark1-with-displacement';
+			submesh.materialID = 'rock';
 			const node = new SceneNode('terrainNode', this);
-			node.transform.setPosition(0, 0, 0);
+			node.transform.setPosition(0, 0.2, 0);
 			node.transform.setRotation(0, 0, 0);
 			node.addMesh(submesh, Layer.OPAQUE);
 			this.addObject(node);
 			this.plane = node; 
 
-			mesh.toMeshDataFile(terrain); */
+		//	mesh.toMeshDataFile(terrain); 
 
 	}
 
@@ -68,7 +68,7 @@ export class TestScene extends Scene {
 		billboardText.setText('Nightwish', 0.25);
 		const sn = new SceneNode('bb', this);
 		sn.addMesh(billboardText.billboardMesh.getSubmesh('plane'), Layer.OPAQUE);
-		sn.transform.setPosition(0, 7, 0);
+		sn.transform.setPosition(10, 7, 0);
 		this.addObject(sn);
 
 	}
