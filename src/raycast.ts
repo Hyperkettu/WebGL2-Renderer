@@ -52,6 +52,9 @@ export class Picker {
 	select(camera: Camera, x: number, y: number, world: SceneGraph) {
 		const hitInfo = new HitInfo();
 		hitInfo.hit = false;
+
+		const hitObjects: SceneNode[] = [];
+
 		const ray = this.generateScreenRayFromCamera(camera, x, y);
 
 		const setAttributes = (node: SceneNode, info: HitInfo) => {
@@ -76,6 +79,7 @@ export class Picker {
 						setAttributes(node, info);
 						return info;
 					} else if(this.hitPolicy === 'closest') {
+						hitObjects.push(node);
 						const distance = vec3.distance(info.hitPoint, camera.position);
 						if(distance < this.distance) {
 							this.distance = distance;
@@ -85,6 +89,20 @@ export class Picker {
 				}
 			}
 		});
+
+		let dist = Number.MAX_SAFE_INTEGER;
+
+		if(this.hitPolicy === 'closest') {
+			for(let obj of hitObjects) {
+				const distance = vec3.distance(obj.transform.position, camera.position);
+				if(distance < dist) {
+					dist = distance;
+					hitInfo.hitObject = obj;
+				}
+				
+			}
+		}
+
 		return hitInfo;
 	}
 
