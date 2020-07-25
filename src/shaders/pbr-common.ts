@@ -63,11 +63,12 @@ float CalcPointLightShadowFactor(PointLight light, vec3 positionWorld, samplerCu
 	);
 
 	float shadow = 0.0;
-	float bias = 0.1f;
+	float bias = 0.015f;
+	float normalBiasFactor = 0.0f;
 	int samples = 20;
 
 	vec3 dirToLight = light.position - positionWorld;
-	float normalBias = (1.0f - (dot(dirToLight, normalW) / length(dirToLight))) * 0.1f;
+	float normalBias = (1.0f - (dot(dirToLight, normalW) / length(dirToLight))) * normalBiasFactor;
 	vec3 normalBiasPosition = positionWorld + normalW * normalBias;
 	vec3 dirFromLight = normalBiasPosition - light.position;
 	float distanceToLight = length(dirFromLight);
