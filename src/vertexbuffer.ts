@@ -9,6 +9,44 @@ export enum VertexDataType {
 	POSITION_VERTEX
 };
 
+interface VertexBufferStructure {
+	variables: VertexVariable[];
+}
+
+type VertexVariableType = 'vec2' | 'vec3' | 'vec4' | 'mat3' | 'mat4';
+
+interface VertexVariable {
+	type: VertexVariableType;
+}
+
+function getTypeSizeInBytes(type: VertexVariableType) {
+	switch(type) {
+		case 'vec2': return 4 * 2;
+		case 'vec3': return 4 * 3;
+		case 'vec4': return 4 * 4;
+		case 'mat3': return 4 * 9;
+		case 'mat4': return 4 * 16;
+	}
+}
+
+function getNumberOfComponents(type: VertexVariableType) {
+	switch(type) {
+		case 'vec2': return 2;
+		case 'vec3': return 3;
+		case 'vec4': return 4;
+		case 'mat3': return 3;
+		case 'mat4': return 4;
+	}
+}
+
+function getBufferStride(buffer: VertexBufferStructure) {
+	let size = 0;
+	for(let variable of buffer.variables) {
+		size += getTypeSizeInBytes(variable.type);
+	}
+	return size;
+}
+
 export class VertexBuffer<VertexType> {
 
 	constructor(gl: WebGL2RenderingContext, vertices: VertexType[], type: VertexDataType) {
@@ -29,16 +67,24 @@ export class VertexBuffer<VertexType> {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, positionVertexToFloat32Array(vertices as unknown as PositionVertex[]), gl.DYNAMIC_DRAW);
 		
-		let layoutLocationIndex = 0;
-		let numVectorComponents = 3;
+		const structure: VertexBufferStructure = {
+			variables: [
+				{
+					type: 'vec3'
+				}
+			]
+		};
+
+		const stride = getBufferStride(structure);
 		const type = gl.FLOAT;
 		const normalize = false;
-		const stride = 4 * 3;
 		let offset = 0;
 
-		// vertex position
-		gl.vertexAttribPointer(layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(layoutLocationIndex);
+		for(let index = 0; index < structure.variables.length; index++) {
+			gl.vertexAttribPointer(index, getNumberOfComponents(structure.variables[index].type), type, normalize, stride, offset);
+			gl.enableVertexAttribArray(index);
+			offset += getTypeSizeInBytes(structure.variables[index].type);
+		}
 
 	}
 
@@ -49,51 +95,39 @@ export class VertexBuffer<VertexType> {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, this.floatArray, gl.DYNAMIC_DRAW);
 
-		let layoutLocationIndex = 0;
-		let numVectorComponents = 2;
+		const structure: VertexBufferStructure = {
+			variables: [
+				{
+					type: 'vec2'					
+				},
+				{
+					type: 'vec3'
+				},
+				{
+					type: 'vec4'
+				},
+				{
+					type: 'vec4'
+				},
+				{
+					type: 'vec4'
+				},
+				{
+					type: 'vec4'
+				}
+			]
+		};
+
+		const stride = getBufferStride(structure);
 		const type = gl.FLOAT;
 		const normalize = false;
-		const stride = 4 * (2 + 3 + 4 + 4 + 4 + 4);
 		let offset = 0;
 
-		// vertex position
-		gl.vertexAttribPointer(layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(layoutLocationIndex);
-
-		layoutLocationIndex++;
-		offset += 2 * 4;
-		numVectorComponents = 3;
-		// texture coordinates
-		gl.vertexAttribPointer(layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(layoutLocationIndex);
-
-		layoutLocationIndex++;
-		offset += 3 * 4;
-		numVectorComponents = 4;
-		// tint + alpha
-		gl.vertexAttribPointer(layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(layoutLocationIndex);
-
-		layoutLocationIndex++;
-		offset += 4 * 4;
-		numVectorComponents = 4;
-		// transform column 1
-		gl.vertexAttribPointer(layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(layoutLocationIndex);
-
-		layoutLocationIndex++;
-		 offset += 4 * 4;
-		 numVectorComponents = 4;
-		// transform colulm 2
-		gl.vertexAttribPointer(layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(layoutLocationIndex);
-
-		layoutLocationIndex++;
-		offset += 4 * 4;
-		numVectorComponents = 4;
-	   // transform colulm 3
-	   gl.vertexAttribPointer(layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
-	   gl.enableVertexAttribArray(layoutLocationIndex);
+		for(let index = 0; index < structure.variables.length; index++) {
+			gl.vertexAttribPointer(index, getNumberOfComponents(structure.variables[index].type), type, normalize, stride, offset);
+			gl.enableVertexAttribArray(index);
+			offset += getTypeSizeInBytes(structure.variables[index].type);
+		}
 	}
 
 	private createMorphedBuffer(gl: WebGL2RenderingContext, vertices: MorphVertex[]) {
@@ -102,66 +136,45 @@ export class VertexBuffer<VertexType> {
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, floatArray, gl.STATIC_DRAW);
 		
-		let layoutLocationIndex = 0;
-		let numVectorComponents = 3;
+		const structure: VertexBufferStructure = {
+			variables: [
+				{
+					type: 'vec3'					
+				},
+				{
+					type: 'vec3'					
+				},
+				{
+					type: 'vec3'					
+				},
+				{
+					type: 'vec3'					
+				},
+				{
+					type: 'vec2'					
+				},
+				{
+					type: 'vec3'					
+				},
+				{
+					type: 'vec3'					
+				}
+
+			]
+		};
+
+		const stride = getBufferStride(structure);
 		const type = gl.FLOAT;
 		const normalize = false;
-		const stride = 4 * (2 * (3 + 3 + 2 + 3) - 2);
 		let offset = 0;
 
-		// position1
-		gl.vertexAttribPointer(
-			layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(layoutLocationIndex);
+		for(let index = 0; index < structure.variables.length; index++) {
+			gl.vertexAttribPointer(index, getNumberOfComponents(structure.variables[index].type), type, normalize, stride, offset);
+			gl.enableVertexAttribArray(index);
+			offset += getTypeSizeInBytes(structure.variables[index].type);
+		}
 
-		// position2
-		layoutLocationIndex++;
-		offset += 3 * 4;
-		numVectorComponents = 3;
-		gl.vertexAttribPointer(
-			layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(layoutLocationIndex);
-
-		// normal1
-		layoutLocationIndex++;
-		offset += 3 * 4;
-		numVectorComponents = 3;
-		gl.vertexAttribPointer(
-			layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(layoutLocationIndex);
-
-		// normal2
-		layoutLocationIndex++;
-		offset += 3 * 4;
-		numVectorComponents = 3;
-		gl.vertexAttribPointer(
-			layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(layoutLocationIndex);
-
-		// texture coordinates
-		layoutLocationIndex++;
-		offset += 3 * 4;
-		numVectorComponents = 2;
-		gl.vertexAttribPointer(
-			layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(layoutLocationIndex);
-
-		// tangent1
-		layoutLocationIndex++;
-		offset += 2 * 4;
-		numVectorComponents = 3;
-		gl.vertexAttribPointer(
-			layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(layoutLocationIndex);
-
-		// tangent2
-		layoutLocationIndex++;
-		offset += 3 * 4;
-		numVectorComponents = 3;
-		gl.vertexAttribPointer(
-			layoutLocationIndex, numVectorComponents, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(layoutLocationIndex);
-	}
+		}
 
 	private createBuffer(gl: WebGL2RenderingContext, vertices: VertexType[]) {
 
@@ -169,37 +182,35 @@ export class VertexBuffer<VertexType> {
 			const floatArray = toFloat32Array(vertices, this.type);
 			gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
 			gl.bufferData(gl.ARRAY_BUFFER, floatArray, gl.STATIC_DRAW);
-			let size = 3;          // n components per iteration
-			const type = gl.FLOAT;   // the data is 32bit floats
-			const normalize = false; // don't normalize the data
-			let stride = 4 * 11;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-			let offset = 0;        // start at the beginning of the buffer
 
-			// set position data
-			gl.vertexAttribPointer(
-				0, size, type, normalize, stride, offset);
-			gl.enableVertexAttribArray(0);
+			const structure: VertexBufferStructure = {
+				variables: [
+					{
+						type: 'vec3'
+					},
+					{
+						type: 'vec3'
+					},
+					{
+						type: 'vec2'
+					},
+					{
+						type: 'vec3'
+					}
+					
+				]
+			};
 
-			// set normal data
-			offset = 3 * 4;
-			size = 3;
-			gl.vertexAttribPointer(
-				1, size, type, normalize, stride, offset);
-			gl.enableVertexAttribArray(1);
-
-			// set texture coordinate data
-			offset = 6 * 4;
-			size = 2;
-			gl.vertexAttribPointer(
-				2, size, type, normalize, stride, offset);
-			gl.enableVertexAttribArray(2);
-
-			// set tangent data
-			offset = 8 * 4;
-			size = 3;
-			gl.vertexAttribPointer(
-				3, size, type, normalize, stride, offset);
-			gl.enableVertexAttribArray(3);
+			const stride = getBufferStride(structure);
+			const type = gl.FLOAT;
+			const normalize = false;
+			let offset = 0;
+	
+			for(let index = 0; index < structure.variables.length; index++) {
+				gl.vertexAttribPointer(index, getNumberOfComponents(structure.variables[index].type), type, normalize, stride, offset);
+				gl.enableVertexAttribArray(index);
+				offset += getTypeSizeInBytes(structure.variables[index].type);
+			}
 	}
 
 	static createParticleBuffer(gl: WebGL2RenderingContext, vertices: Float32Array, buffer?: WebGLBuffer, divisor: boolean = false) {
@@ -262,37 +273,33 @@ export class VertexBuffer<VertexType> {
 		const vertexBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-		let size = 3;          // n components per iteration
-		const type = gl.FLOAT;   // the data is 32bit floats
-		const normalize = false; // don't normalize the data
-		let stride = 4 * 7;        // 0 = move forward size * sizeof(type) each iteration to get the next position
-		let offset = 0;        // start at the beginning of the buffer
+		
+		const structure: VertexBufferStructure = {
+			variables: [
+				{
+					type: 'vec3'
+				},
+				{
+					type: 'vec2'
+				},
+				{
+					type: 'vec2'
+				}
+			]
+		};
+		
+		const indexOffset = 4;
 
-		// set position data
-		gl.vertexAttribPointer(
-			4, size, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(4);
+		const stride = getBufferStride(structure);
+		const type = gl.FLOAT;
+		const normalize = false;
+		let offset = 0;
 
-		// set texCoords data
-		offset = 3 * 4;
-		size = 2;
-		gl.vertexAttribPointer(
-			5, size, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(5);
-
-		// set size data
-		offset = 5 * 4;
-		size = 2;
-		gl.vertexAttribPointer(
-			6, size, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(6);
-
-		/*// set life data
-		offset = 8 * 4;
-		size = 2;
-		gl.vertexAttribPointer(
-			3, size, type, normalize, stride, offset);
-		gl.enableVertexAttribArray(3);*/
+		for(let index = indexOffset; index < indexOffset + structure.variables.length; index++) {
+			gl.vertexAttribPointer(index, getNumberOfComponents(structure.variables[index - indexOffset].type), type, normalize, stride, offset);
+			gl.enableVertexAttribArray(index);
+			offset += getTypeSizeInBytes(structure.variables[index - indexOffset].type);
+		}
 
 		return vertexBuffer;
 	}
@@ -302,13 +309,29 @@ export class VertexBuffer<VertexType> {
 		const quadVBO = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, quadVBO);
 		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-		gl.enableVertexAttribArray(0);
-		const stride = 5 * 4;
+		const structure: VertexBufferStructure = {
+			variables: [
+				{
+					type: 'vec3'
+				},
+				{
+					type: 'vec2'
+				}
+			]
+		};
+		
+		const indexOffset = 0;
+
+		const stride = getBufferStride(structure);
+		const type = gl.FLOAT;
+		const normalize = false;
 		let offset = 0;
-		gl.vertexAttribPointer(0, 3, gl.FLOAT, false, stride, offset);
-		gl.enableVertexAttribArray(1);
-		offset = 3 * 4;
-		gl.vertexAttribPointer(1, 2, gl.FLOAT, false, stride, offset);
+
+		for(let index = indexOffset; index < indexOffset + structure.variables.length; index++) {
+			gl.vertexAttribPointer(index, getNumberOfComponents(structure.variables[index - indexOffset].type), type, normalize, stride, offset);
+			gl.enableVertexAttribArray(index);
+			offset += getTypeSizeInBytes(structure.variables[index - indexOffset].type);
+		}
 		return quadVBO;
 	}
 
@@ -317,10 +340,27 @@ export class VertexBuffer<VertexType> {
 		const cubeVBO = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, cubeVBO);
 		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-		gl.enableVertexAttribArray(0);
-		const stride = 3 * 4;
+
+		const structure: VertexBufferStructure = {
+			variables: [
+				{
+					type: 'vec3'
+				}
+			]
+		};
+		
+		const indexOffset = 0;
+		const stride = getBufferStride(structure);
+		const type = gl.FLOAT;
+		const normalize = false;
 		let offset = 0;
-		gl.vertexAttribPointer(0, 3, gl.FLOAT, false, stride, offset);
+
+		for(let index = indexOffset; index < indexOffset + structure.variables.length; index++) {
+			gl.vertexAttribPointer(index, getNumberOfComponents(structure.variables[index].type), type, normalize, stride, offset);
+			gl.enableVertexAttribArray(index);
+			offset += getTypeSizeInBytes(structure.variables[index].type);
+		}
+
 
 		return cubeVBO;
 	}
