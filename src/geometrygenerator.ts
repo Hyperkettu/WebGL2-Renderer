@@ -694,11 +694,11 @@ export class GeometryGenerator {
 		}
 
 		// normalize normals
-		for (let i = 0; i < vertices.length; i += 3) {
+		for (let i = 0; i < vertices.length; i++) {
 			vec3.normalize(normals[i], normals[i]);
 		}
 		// set normals to vertices
-		for (let i = 0; i < vertices.length; i += 3) {
+		for (let i = 0; i < vertices.length; i++) {
 			((vertices[i] as unknown) as NormalVertexType).normal = normals[i];
 		}
 	}
