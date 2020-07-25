@@ -24,7 +24,7 @@ import { loadMaterial } from './material';
 import { VertexBase } from './vertex';
 import { Overlay } from './overlay/overlay';
 import { Sprite } from './overlay/sprite'; 
-import { vec2, vec3 } from 'gl-matrix';
+import { vec2, vec3, mat4 } from 'gl-matrix';
 import { TextTexture } from './texttexture';
 import { Color } from './util/color';
 import { UILayout } from './overlay/ui/layout';
@@ -34,6 +34,7 @@ import { Submesh } from './submesh';
 import { Subtexture } from './subtexture';
 import { BillboardText } from './billboardtext';
 import { Foliage } from './foliage';
+import { InstanceBuffer } from './instancebuffer';
 
 export enum ShaderMode {
 	DEFAULT = 0,
@@ -67,6 +68,8 @@ export class Renderer {
 		this.postProcess = new PostProcess(this.gl, this);
 		this.cubeMapRenderer = new CubeMapRenderer(this.gl);
 		this.overlay = new Overlay(this.gl);
+
+		this.instanceBuffer = new InstanceBuffer();
 
 		this.queryExtensions();
 
@@ -291,6 +294,16 @@ export class Renderer {
 		this.batchRenderer.flushSortedArray(this, Layer.OPAQUE);
 		this.batchRenderer.flushSortedArray(this, Layer.TRANSPARENT);
 
+		const matrices: mat4[] = [];
+
+		for(let index = 0; index < 5; index++) {
+			const matrix1 = mat4.create();
+			mat4.fromTranslation(matrix1, vec3.fromValues(5 + 3.5 * index, 0, 10 + 2.5 * index));
+			matrices.push(matrix1);
+		}
+
+		this.instanceBuffer.render(gl, matrices);
+
 		this.hdrBufferRenderCallback(gl);
 
 		if (this.settings.getSetting('Skybox')) {
@@ -471,6 +484,8 @@ export class Renderer {
 	currentScene: Scene;
 
 	particleSystem: ParticleSystem;
+
+	instanceBuffer: InstanceBuffer;
 
 	overlay: Overlay;
 

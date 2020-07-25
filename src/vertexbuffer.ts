@@ -1,6 +1,8 @@
 import { Vertex, toFloat32Array, ParticleVertex, MorphVertex, morphVertexToFloat32Array, SpriteVertex, positionVertexToFloat32Array, PositionVertex } from './vertex';
 import { Overlay } from './overlay/overlay';
 import { OverlayMesh } from './overlay/mesh';
+import { StaticMesh } from './mesh';
+import { InstanceData } from './instancebuffer';
 
 export enum VertexDataType {
 	VERTEX,
@@ -363,6 +365,46 @@ export class VertexBuffer<VertexType> {
 
 
 		return cubeVBO;
+	}
+
+	static createInstanceVertexBuffer(gl: WebGL2RenderingContext, mesh: StaticMesh, instanceCount: number) {
+
+		const data: InstanceData[] = [];
+
+		for(let submesh of mesh.getSubmeshes()) {
+			gl.bindVertexArray(submesh.vertexArrayObject.vao);
+
+			const instanceBuffer = gl.createBuffer();
+			gl.bindBuffer(gl.ARRAY_BUFFER, instanceBuffer);
+			gl.bufferData(gl.ARRAY_BUFFER, instanceCount * getTypeSizeInBytes('mat4'), gl.DYNAMIC_DRAW);
+ 
+			gl.vertexAttribPointer(4, 4, gl.FLOAT, false, 4 * getTypeSizeInBytes('vec4'), 0);
+			gl.enableVertexAttribArray(4);
+			gl.vertexAttribDivisor(4, 1);
+
+			gl.vertexAttribPointer(5, 4, gl.FLOAT, false, 4 * getTypeSizeInBytes('vec4'), getTypeSizeInBytes('vec4'));
+			gl.vertexAttribDivisor(5, 1);
+			gl.enableVertexAttribArray(5);
+
+			gl.vertexAttribPointer(6, 4, gl.FLOAT, false, 4 * getTypeSizeInBytes('vec4'), 2 * getTypeSizeInBytes('vec4'));
+			gl.enableVertexAttribArray(6);
+			gl.vertexAttribDivisor(6, 1);
+
+			gl.vertexAttribPointer(7, 4, gl.FLOAT, false, 4 * getTypeSizeInBytes('vec4'), 3 * getTypeSizeInBytes('vec4'));
+			gl.enableVertexAttribArray(7);
+			gl.vertexAttribDivisor(7, 1);
+
+			gl.bindVertexArray(null);
+
+			data.push({
+				submesh,
+				instanceCount,
+				buffer: instanceBuffer,
+				data: new Float32Array(instanceCount * 16)
+			});
+		}
+
+		return data;
 	}
 
 	vertexBuffer: WebGLBuffer;

@@ -141,7 +141,7 @@ export function init() {
 	prefixToShaderSource[brdfFS.prefix] = brdfFS.brdfFsSrc;
 
 	// pbr
-	const techs = iteratePBR(terrain.getTerrainSrc);
+	const techs = iteratePBR(terrain.getTerrainSrc, false);
 
 	for(let technique in techs.fragmentTechSources) {
 		const sources = techs.fragmentTechSources[technique];
@@ -154,7 +154,7 @@ export function init() {
 	}
 
 
-	const staticPbrTechs = iteratePBR(pbrStatic.getPbrSrc);
+	const staticPbrTechs = iteratePBR(pbrStatic.getPbrSrc, false);
 
 	for(let technique in staticPbrTechs.fragmentTechSources) {
 		const sources = staticPbrTechs.fragmentTechSources[technique];
@@ -166,8 +166,15 @@ export function init() {
 		prefixToShaderSource[`${pbrStatic.prefixVS}/${vertexTechnique}`] = sources.vsSrc;
 	}
 
+	const instancedStaticPbrTechs = iteratePBR(pbrStatic.getPbrSrc, true);
 
-	const morphedPbrTechs = iteratePBR(pbrMorphed.getPbrSrc);
+	for(let vertexTechnique in instancedStaticPbrTechs.vertexTechSources) {
+		const sources = instancedStaticPbrTechs.vertexTechSources[vertexTechnique];
+		prefixToShaderSource[`${pbrStatic.prefixInstancedVS}/${vertexTechnique}`] = sources.vsSrc;
+	}
+
+
+	const morphedPbrTechs = iteratePBR(pbrMorphed.getPbrSrc, false);
 
 	for(let tech in morphedPbrTechs.fragmentTechSources) {
 		const sources = morphedPbrTechs.fragmentTechSources[tech];
@@ -179,7 +186,7 @@ export function init() {
 		prefixToShaderSource[`${pbrMorphed.prefixVS}/${vertexTechnique}`] = sources.vsSrc;
 	}
 
-	const morphedTextureTransformTechs = iteratePBR(pbrMorphedTextureTransform.getPbrSrc);
+	const morphedTextureTransformTechs = iteratePBR(pbrMorphedTextureTransform.getPbrSrc, false);
 	
 	for(let tech in morphedTextureTransformTechs.fragmentTechSources) {
 		const source = morphedTextureTransformTechs.fragmentTechSources[tech];
@@ -200,40 +207,43 @@ export function init() {
 
 }
 
-function iteratePBR(func: (normal: boolean, roughness: boolean, metallic: boolean, ao: boolean, displacement: boolean, emission: boolean) => {vsSrc: string, fsSrc: string } ) {
+function iteratePBR(func: (normal: boolean, roughness: boolean, metallic: boolean, ao: boolean, displacement: boolean, emission: boolean, instanced?: boolean) => {vsSrc: string, fsSrc: string }, instanced: boolean) {
 
 		const fragmentTechSources: { [name: string]: { fsSrc: string } } = {};
 		const vertexTechSources: { [name: string]: { vsSrc: string } } = {};
 
-		for (let emission = 0; emission < 2; emission++) {
-			for (let displacement = 0; displacement < 2; displacement++) {
-				for (let ao = 0; ao < 2; ao++) {
-					for (let metallic = 0; metallic < 2; metallic++) {
-						for (let roughness = 0; roughness < 2; roughness++) {
-							for (let normal = 0; normal < 2; normal++) {
-								let techName = 'A';
+		if(!instanced) {
 
-								if (normal === 1) {
-									techName += 'N';
-								}
-								if (roughness === 1) {
-									techName += 'R';
-								}
-								if (metallic === 1) {
-									techName += 'M';
-								}
-								if (ao === 1) {
-									techName += 'A';
-								}
-								if (displacement === 1) {
-									techName += 'D';
-								}
-								if (emission === 1) {
-									techName += 'E';
-								}
+			for (let emission = 0; emission < 2; emission++) {
+				for (let displacement = 0; displacement < 2; displacement++) {
+					for (let ao = 0; ao < 2; ao++) {
+						for (let metallic = 0; metallic < 2; metallic++) {
+							for (let roughness = 0; roughness < 2; roughness++) {
+								for (let normal = 0; normal < 2; normal++) {
+									let techName = 'A';
 
-								fragmentTechSources[techName] = func(normal === 1,
-									roughness === 1, metallic === 1, ao === 1, displacement === 1, emission === 1);
+									if (normal === 1) {
+										techName += 'N';
+									}
+									if (roughness === 1) {
+										techName += 'R';
+									}
+									if (metallic === 1) {
+										techName += 'M';
+									}
+									if (ao === 1) {
+										techName += 'A';
+									}
+									if (displacement === 1) {
+										techName += 'D';
+									}
+									if (emission === 1) {
+										techName += 'E';
+									}
+
+									fragmentTechSources[techName] = func(normal === 1,
+										roughness === 1, metallic === 1, ao === 1, displacement === 1, emission === 1);
+								}
 							}
 						}
 					}
@@ -241,10 +251,10 @@ function iteratePBR(func: (normal: boolean, roughness: boolean, metallic: boolea
 			}
 		}
 
-		vertexTechSources['VND'] = func(true, false, false, false, true, false);
-		vertexTechSources['VN'] = func(true, false, false, false, false, false);
-		vertexTechSources['VD'] = func(false, false, false, false, true, false);
-		vertexTechSources['V'] = func(false, false, false, false, false, false);
+		vertexTechSources['VND'] = func(true, false, false, false, true, false, instanced);
+		vertexTechSources['VN'] = func(true, false, false, false, false, false, instanced);
+		vertexTechSources['VD'] = func(false, false, false, false, true, false, instanced);
+		vertexTechSources['V'] = func(false, false, false, false, false, false, instanced);
 
 
 	return { vertexTechSources, fragmentTechSources };

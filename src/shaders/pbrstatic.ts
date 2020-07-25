@@ -4,7 +4,9 @@ import { PointLight } from '../pointlight';
 export const prefixVS = 'pbrStaticVS';
 export const prefixFS = 'pbrStaticFS';
 
-export function getPbrSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, hasMetallicMap: boolean, hasAoMap: boolean, hasDisplacementMap: boolean, hasEmissionMap: boolean) {
+export const prefixInstancedVS = 'instancedPbrStaticVS';
+
+export function getPbrSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, hasMetallicMap: boolean, hasAoMap: boolean, hasDisplacementMap: boolean, hasEmissionMap: boolean, instanced: boolean) {
 	
 	let vsSrc =
 
@@ -16,6 +18,8 @@ export function getPbrSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, hasMe
 		layout(location = 1) in vec3 normal;
 		layout(location = 2) in vec2 texCoords;
 		layout(location = 3) in vec3 tangent;
+		${instanced ? 
+		'layout(location = 4) in mat4 instanceWorld;' : ''} 
 
 		layout (std140) uniform MatricesPerFrame {
    			mat4 projection;
@@ -39,11 +43,13 @@ export function getPbrSrc(hasNormalMap: boolean, hasRoughnessMap: boolean, hasMe
 
     	void main() {
 			uvs = texCoords;
-    		positionW = (world * vec4(position, 1.0f)).xyz;
-    		mat3 normalMatrix = transpose(inverse(mat3(world)));
+
+			mat4 model = ${ instanced ? 'instanceWorld;' : 'world;'}
+			positionW = (model * vec4(position, 1.0f)).xyz;
+    		mat3 normalMatrix = transpose(inverse(mat3(model)));
 			normalW = normalize(normalMatrix * normal);
 
-    		vec3 T = normalize(mat3(world) * tangent);
+    		vec3 T = normalize(mat3(model) * tangent);
     		// Gram-Schmidt
     		T = normalize(T - dot(T, normalW) * normalW);
     		vec3 B = cross(normalW, T);

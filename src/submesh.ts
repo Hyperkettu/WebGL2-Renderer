@@ -17,6 +17,8 @@ export class Submesh<VertexType> {
 		this.indices = indices;
 		this.createMesh(gl, vertices, indices, type);
 
+		this.instancedDraw = false;
+
 		this.shaderModes = [];
 		this.shaderModes[ShaderMode.DEFAULT] = { shader: null, tech: 'default' };
 		this.shaderModes[ShaderMode.NORMAL] = { shader: ShaderType.VISUALIZE_NORMALS, tech: 'Vis' };
@@ -90,6 +92,9 @@ export class Submesh<VertexType> {
 
 	displacementFactor: number;
 	pointLightIndex: number;
+
+	instancedDraw: boolean;
+
 
 	shadowMapShaders: ShaderType[];
 

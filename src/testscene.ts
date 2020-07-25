@@ -60,6 +60,7 @@ export class TestScene extends Scene {
 
 		//	mesh.toMeshDataFile(terrain); 
 
+
 	}
 
 	loadAssets(renderer: Renderer) {
@@ -71,6 +72,7 @@ export class TestScene extends Scene {
 		sn.transform.setPosition(10, 7, 0);
 		this.addObject(sn);
 
+		renderer.instanceBuffer.create(renderer.gl, mesh.GetMesh('oak-tree'), 5);
 	}
 
 	update(dt: number) {
