@@ -19,7 +19,7 @@ export class Picker {
 		this.viewport = viewport;
 		this.hitPolicy = hitPolicy;
 		this.pickerRadius = 1;
-		this.distance = Infinity;
+		this.distance = Number.MAX_SAFE_INTEGER;
 
 		this.triangle = new Triangle(
 			vec3.fromValues(-5, 0, -5),
@@ -71,7 +71,7 @@ export class Picker {
 				this.direction = vec4.fromValues(ray.direction[0], ray.direction[1], ray.direction[2], 0);
 				vec4.transformMat4(this.direction, this.direction, this.invTransform);
 				this.localRay.direction = vec3.fromValues(this.direction[0], this.direction[1], this.direction[2]);
-				if(comp.mesh.boundingVolume.intersects(this.localRay)) {
+				if(comp.mesh.boundingVolume.intersects(this.localRay, info)) {
 					if(this.hitPolicy === 'any') {
 						setAttributes(node, info);
 						return info;

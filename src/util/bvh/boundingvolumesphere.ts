@@ -74,9 +74,8 @@ export class BBSphere extends BoundingVolume {
         return false;
     }
 
-    intersects(ray: Ray) {
-        const hitInfo = new HitInfo();
-        return rayIntersectsSphere(ray, this.sphere, hitInfo);
+    intersects(ray: Ray, info: HitInfo) {
+        return rayIntersectsSphere(ray, this.sphere, info);
     }
 
     render(gl: WebGL2RenderingContext) {

@@ -87,8 +87,7 @@ export class BoundingAABB extends BoundingVolume {
         return false;
     }
 
-    intersects(ray: Ray): boolean {
-        const info = new HitInfo();
+    intersects(ray: Ray, info: HitInfo): boolean {
         return rayIntersectsAABB(ray, this.aabb, info);
     }
 
