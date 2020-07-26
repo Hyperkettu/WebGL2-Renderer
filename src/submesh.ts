@@ -75,6 +75,11 @@ export class Submesh<VertexType> {
 			((this.vertices[this.indices[3 * index + 2]]as unknown) as PositionVertexType).position);
 	}
 
+	addToInstanceBuffer(instanceBufferName: string) {
+		this.instanceBufferName = instanceBufferName;
+		this.instancedDraw = true;
+	}
+
 	meshName: string;
 	submeshName: string;
 
@@ -94,7 +99,7 @@ export class Submesh<VertexType> {
 	pointLightIndex: number;
 
 	instancedDraw: boolean;
-
+	instanceBufferName: string;
 
 	shadowMapShaders: ShaderType[];
 

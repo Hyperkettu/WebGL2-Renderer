@@ -2,7 +2,7 @@ import { Submesh } from './submesh';
 import { Renderer, ShadowPass } from './glrenderer';
 import { mat4 } from 'gl-matrix';
 import { VertexBase } from './vertex';
-
+import * as instanceBuffer from './instancebuffer';
 
 export interface Batch {
 	submesh: Submesh<VertexBase>;
@@ -61,6 +61,11 @@ export class BatchRenderer {
 				batch.submesh.boundingVolume.render(renderer.gl);
 			}
 		}
+
+		for(let buffer of instanceBuffer.getInstanceBuffers(layer)) {
+			buffer.render(renderer.gl, shadowPass);
+		}
+		
 	}
 
 	sortInAscendingOrder(renderer: Renderer, layer: Layer) {

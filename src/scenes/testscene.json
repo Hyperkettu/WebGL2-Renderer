@@ -121,6 +121,66 @@
 				},
 				"children": [],
 					"meshPath": "meshes/light-sphere.mesh.json"
+			},
+			{
+				"name": "oak-tree1-1",
+				"position": {
+					"x": -8,
+					"y": 0,
+					"z": -8
+				},
+				"rotation":  {
+					"x": 0,
+					"y": 125,
+					"z": 0
+				},
+				"children": [],
+					"meshPath": "meshes/oak-tree1-instanced.staticmesh"
+			},
+			{
+				"name": "oak-tree1-2",
+				"position": {
+					"x": 8,
+					"y": 0,
+					"z": -8
+				},
+				"rotation":  {
+					"x": 0,
+					"y": 45,
+					"z": 0
+				},
+				"children": [],
+					"meshPath": "meshes/oak-tree1-instanced.staticmesh"
+			},
+			{
+				"name": "oak-tree1-3",
+				"position": {
+					"x": -8,
+					"y": 0,
+					"z": 8
+				},
+				"rotation":  {
+					"x": 0,
+					"y": 25,
+					"z": 0
+				},
+				"children": [],
+					"meshPath": "meshes/oak-tree1-instanced.staticmesh"
+			},
+			{
+				"name": "oak-tree1-4",
+				"position": {
+					"x": 8,
+					"y": 0,
+					"z": 8
+				},
+				"rotation":  {
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"children": [],
+					"meshPath": "meshes/oak-tree1-instanced.staticmesh"
 			}
 			
 		]

@@ -94,8 +94,6 @@ export class PointLightShadowMap {
 			node.enabled = false;
 		}
 
-		renderer.resolveVisibility(renderer.currentScene);
-
 		//const shadowMapShader = shader.GetShader(ShaderType.SHADOW_MAP);
 		//shadowMapShader.use(gl);
 		///renderer.shaderTech = shadowMapShader;
@@ -112,6 +110,7 @@ export class PointLightShadowMap {
 			ConstantBuffers.matricesPerFrame.sendToGPU(gl);
 			rts.setRenderTargetCubemapFace(gl, face, this.shadowCubeMap);
 			renderer.context.clear(gl.DEPTH_BUFFER_BIT);
+			renderer.resolveVisibility(renderer.currentScene);
 			renderer.batchRenderer.flushSortedArray(renderer, Layer.OPAQUE, ShadowPass.POINT_LIGHT);
 			renderer.batchRenderer.flushSortedArray(renderer, Layer.TRANSPARENT, ShadowPass.POINT_LIGHT);
 		}

@@ -34,7 +34,7 @@ import { Submesh } from './submesh';
 import { Subtexture } from './subtexture';
 import { BillboardText } from './billboardtext';
 import { Foliage } from './foliage';
-import { InstanceBuffer } from './instancebuffer';
+import * as instanceBuffer from './instancebuffer';
 
 export enum ShaderMode {
 	DEFAULT = 0,
@@ -68,8 +68,6 @@ export class Renderer {
 		this.postProcess = new PostProcess(this.gl, this);
 		this.cubeMapRenderer = new CubeMapRenderer(this.gl);
 		this.overlay = new Overlay(this.gl);
-
-		this.instanceBuffer = new InstanceBuffer();
 
 		this.queryExtensions();
 
@@ -294,16 +292,6 @@ export class Renderer {
 		this.batchRenderer.flushSortedArray(this, Layer.OPAQUE);
 		this.batchRenderer.flushSortedArray(this, Layer.TRANSPARENT);
 
-		const matrices: mat4[] = [];
-
-		for(let index = 0; index < 5; index++) {
-			const matrix1 = mat4.create();
-			mat4.fromTranslation(matrix1, vec3.fromValues(5 + 3.5 * index, 0, 10 + 2.5 * index));
-			matrices.push(matrix1);
-		}
-
-		this.instanceBuffer.render(gl, matrices);
-
 		this.hdrBufferRenderCallback(gl);
 
 		if (this.settings.getSetting('Skybox')) {
@@ -386,11 +374,15 @@ export class Renderer {
 
 				// cull frustum in the future
 				if(meshComponent.mesh) {
-					this.batchRenderer.addBatch({ submesh: meshComponent.mesh, world: node.transform.world }, meshComponent.layer);
+					if(meshComponent.mesh.instancedDraw) {
+						instanceBuffer.getInstanceBuffer(meshComponent.mesh.instanceBufferName, 
+							meshComponent.layer).addTransform(meshComponent.mesh, node.transform.world);
+					} else {
+						this.batchRenderer.addBatch({ submesh: meshComponent.mesh, world: node.transform.world }, meshComponent.layer);
+					}
 				}
 			}
 		});
-
 	}
 
 	materialBegin(submesh: Submesh<VertexBase>, shadowPass?: ShadowPass) {
@@ -484,8 +476,6 @@ export class Renderer {
 	currentScene: Scene;
 
 	particleSystem: ParticleSystem;
-
-	instanceBuffer: InstanceBuffer;
 
 	overlay: Overlay;
 

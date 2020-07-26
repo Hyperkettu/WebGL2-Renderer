@@ -1,8 +1,9 @@
 import { src } from "gulp";
 
 export const prefix = 'shadowMapVS';
+export const instancedPrefix = 'instancedShadowMapVS';
 
-export function getVsSrc(hasDisplacementMap: boolean) {
+export function getVsSrc(hasDisplacementMap: boolean, instanced: boolean) {
 
 const shadowMapVsSrc =
 `#version 300 es
@@ -10,7 +11,7 @@ const shadowMapVsSrc =
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 texCoords;
-
+${instanced ? 'layout(location = 4) in mat4 instanceWorld;' : ''}
 
 layout(std140) uniform MatricesPerFrame {
 mat4 projection;
@@ -32,10 +33,11 @@ out vec2 uvs;
 
 void main() {
     uvs = texCoords;
-    positionW = world * vec4(position, 1.0f);
+    mat4 model = ${ instanced ? 'instanceWorld;' : 'world;'}
+    positionW = model * vec4(position, 1.0f);
 
     ${hasDisplacementMap ? 
-    'mat3 normalMatrix = transpose(inverse(mat3(world)));' +
+    'mat3 normalMatrix = transpose(inverse(mat3(model)));' +
     'vec3 normalW = normalMatrix * normal;' +    
     'float displacement = displacementFactor * texture(displacementMap, uvs).r;' +
     'positionW.xyz = positionW.xyz + displacement * normalW;' : ''}

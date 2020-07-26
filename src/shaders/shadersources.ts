@@ -96,15 +96,21 @@ export function init() {
 
 
 	// shadow map
-	prefixToShaderSource[`${shadowMapVS.prefix}/V`] = shadowMapVS.getVsSrc(false);
-	prefixToShaderSource[`${shadowMapVS.prefix}/VD`] = shadowMapVS.getVsSrc(true);
+	prefixToShaderSource[`${shadowMapVS.prefix}/V`] = shadowMapVS.getVsSrc(false, false);
+	prefixToShaderSource[`${shadowMapVS.prefix}/VD`] = shadowMapVS.getVsSrc(true, false);
 
 	prefixToShaderSource[`${shadowMapFS.prefix}/A`] = shadowMapFS.shadowMapFsSrc;
 	prefixToShaderSource[`${shadowMapFS.prefix}/AD`] = shadowMapFS.shadowMapFsSrc;
 
+	prefixToShaderSource[`${shadowMapVS.instancedPrefix}/V`] = shadowMapVS.getVsSrc(false, true);
+	prefixToShaderSource[`${shadowMapVS.instancedPrefix}/VD`] = shadowMapVS.getVsSrc(true, true);
 
-	prefixToShaderSource[`${dirLightShadowMapVS.prefix}/V`] = dirLightShadowMapVS.getVsSrc(false);
-	prefixToShaderSource[`${dirLightShadowMapVS.prefix}/VD`] = dirLightShadowMapVS.getVsSrc(true);
+
+	prefixToShaderSource[`${dirLightShadowMapVS.prefix}/V`] = dirLightShadowMapVS.getVsSrc(false, false);
+	prefixToShaderSource[`${dirLightShadowMapVS.prefix}/VD`] = dirLightShadowMapVS.getVsSrc(true, false);
+
+	prefixToShaderSource[`${dirLightShadowMapVS.instancedPrefix}/V`] = dirLightShadowMapVS.getVsSrc(false, true);
+	prefixToShaderSource[`${dirLightShadowMapVS.instancedPrefix}/VD`] = dirLightShadowMapVS.getVsSrc(true, true);
 
 	prefixToShaderSource[`${dirLightShadowMapFS.prefix}/A`] = dirLightShadowMapFS.shadowMapFsSrc;
 	prefixToShaderSource[`${dirLightShadowMapFS.prefix}/AD`] = dirLightShadowMapFS.shadowMapFsSrc;

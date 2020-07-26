@@ -15,6 +15,7 @@ import { MeshComponent } from './meshcomponent';
 import { Terrain } from './terrain';
 import * as resource from './resource';
 import { VertexBase } from './vertex';
+import * as instaceBuffer from './instancebuffer';
 
 export interface SceneFile {
 	data: SceneData;
@@ -153,6 +154,14 @@ export abstract class Scene {
 		// TO SEE TERRAIN UNCOMMENT THIS
 		//await this.terrain.load(renderer);
 		
+		for(let buffer of instaceBuffer.getInstanceBuffers(Layer.OPAQUE)) {
+			buffer.create(renderer.gl);
+		}
+
+		for(let buffer of instaceBuffer.getInstanceBuffers(Layer.TRANSPARENT)) {
+			buffer.create(renderer.gl);
+		}
+
 	}
 
 	loadAssets(renderer: Renderer) {}
