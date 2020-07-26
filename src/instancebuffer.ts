@@ -5,12 +5,10 @@ import { VertexBuffer } from "./vertexbuffer";
 import { mat4 } from "gl-matrix";
 import * as shader from './shadermanager';
 import { ShaderType } from "./shader";
-import { Renderer } from "./glrenderer";
 import * as material from "./material";
 import { Shader } from './shader';
 import { PointLight } from './pointlight';
 import * as texture from './texturemanager';
-import { ConstantBuffers } from "./constantbuffers";
 
 export interface InstanceData {
     submesh: Submesh<VertexBase>;
@@ -42,36 +40,38 @@ export class InstanceBuffer {
 
     render(gl: WebGL2RenderingContext, worldMatrices: mat4[]) {
 
-        this.updateBuffer(gl, worldMatrices);
-
-        const mat = material.GetMaterial('bark1-with-displacement');
-
-        const instancedStaticPbrShader = shader.GetShader(ShaderType.INSTANCE_STATIC_PBR, 'ANRMAD');
-        instancedStaticPbrShader.use(gl);
-
-        for(let index = 0; index < mat.textures.length; index++) {
-            instancedStaticPbrShader.setSamplerTexture(gl, Shader.uniformSamplers[index], mat.textures[index], index);
-        }
-
-        instancedStaticPbrShader.setSamplerTexture(gl, 'prefilterMap', texture.GetTexture('prefilterMap'), 7);
-        instancedStaticPbrShader.setSamplerTexture(gl, 'irradianceMap', texture.GetTexture('irradianceMap'), 8);
-        instancedStaticPbrShader.setSamplerTexture(gl, 'brdfLUT', texture.GetTexture('brdfLUT'), 9);
-
-		for (let index = 1; index <= PointLight.NUM_LIGHTS; index++) {
-			instancedStaticPbrShader.setSamplerTexture(gl, `pointLightShadowMap${index}`, texture.GetDepthTexture(`pointLightShadowMap${index}`), 10 + (index - 1));
-		}
-
-		instancedStaticPbrShader.setSamplerTexture(gl, 'dirLightShadowMap', texture.GetDepthTexture('dirLightShadowMap'), 11);
-
         for(let instanceBuffer of this.data) {
+
+            this.updateBuffer(gl, worldMatrices);
+
+            const mat = material.GetMaterial(instanceBuffer.submesh.materialID);
+
+            const instanceShader = shader.GetShader(ShaderType.INSTANCE_STATIC_PBR, mat.tech);
+            instanceShader.use(gl);
+
+            for(let index = 0; index < mat.textures.length; index++) {
+                instanceShader.setSamplerTexture(gl, Shader.uniformSamplers[index], mat.textures[index], index);
+            }
+
+            instanceShader.setSamplerTexture(gl, 'prefilterMap', texture.GetTexture('prefilterMap'), 7);
+            instanceShader.setSamplerTexture(gl, 'irradianceMap', texture.GetTexture('irradianceMap'), 8);
+            instanceShader.setSamplerTexture(gl, 'brdfLUT', texture.GetTexture('brdfLUT'), 9);
+
+            for (let index = 1; index <= PointLight.NUM_LIGHTS; index++) {
+                instanceShader.setSamplerTexture(gl, `pointLightShadowMap${index}`, texture.GetDepthTexture(`pointLightShadowMap${index}`), 10 + (index - 1));
+            }
+
+            instanceShader.setSamplerTexture(gl, 'dirLightShadowMap', texture.GetDepthTexture('dirLightShadowMap'), 11);
+
+            
             gl.bindVertexArray(instanceBuffer.submesh.vertexArrayObject.vao);
             gl.drawElementsInstanced(gl.TRIANGLES, instanceBuffer.submesh.indices.length, 
-                gl.UNSIGNED_SHORT, 0, instanceBuffer.instanceCount);
+                gl.UNSIGNED_INT, 0, instanceBuffer.instanceCount);
             gl.bindVertexArray(null);
-        }
 
-        for(let index = 0; index < mat.textures.length; index++) {
-            instancedStaticPbrShader.setSamplerTexture(gl, Shader.uniformSamplers[index], null, index);
+            for(let index = 0; index < mat.textures.length; index++) {
+                instanceShader.setSamplerTexture(gl, Shader.uniformSamplers[index], null, index);
+            }
         }
     }
 
