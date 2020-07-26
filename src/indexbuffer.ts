@@ -7,7 +7,7 @@ export class IndexBuffer {
 	createBuffer(gl: WebGL2RenderingContext, indices: number[], usage: number = gl.STATIC_DRAW) {
 		this.indexBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), usage);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), usage);
 	}
 
 	indexBuffer: WebGLBuffer;

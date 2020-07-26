@@ -100,7 +100,7 @@ export class BoundingAABB extends BoundingVolume {
         ConstantBuffers.generalData.sendToGPU(gl);
         
         gl.bindVertexArray(submesh.vertexArrayObject.vao);
-        gl.drawElements(gl.LINE_STRIP, submesh.indices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.LINE_STRIP, submesh.indices.length, gl.UNSIGNED_INT, 0);
         gl.bindVertexArray(null);
     }
 

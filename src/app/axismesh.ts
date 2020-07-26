@@ -76,19 +76,19 @@ export class AxisMesh {
         gl.bindVertexArray(mesh.vertexArrayObject.vao);
         ConstantBuffers.generalData.update(gl, 'dataVec1', vec4.fromValues(1, 0, 0, 1));
         ConstantBuffers.generalData.sendToGPU(gl);
-        gl.drawElements(gl.LINE_STRIP, mesh.indices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.LINE_STRIP, mesh.indices.length, gl.UNSIGNED_INT, 0);
 
         mesh = this.axisMesh.getSubmesh('y-axis');
         gl.bindVertexArray(mesh.vertexArrayObject.vao);
         ConstantBuffers.generalData.update(gl, 'dataVec1', vec4.fromValues(0, 1, 0, 1));
         ConstantBuffers.generalData.sendToGPU(gl);
-        gl.drawElements(gl.LINE_STRIP, mesh.indices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.LINE_STRIP, mesh.indices.length, gl.UNSIGNED_INT, 0);
     
         mesh = this.axisMesh.getSubmesh('z-axis');
         gl.bindVertexArray(mesh.vertexArrayObject.vao);
         ConstantBuffers.generalData.update(gl, 'dataVec1', vec4.fromValues(0, 0, 1, 1));
         ConstantBuffers.generalData.sendToGPU(gl);
-        gl.drawElements(gl.LINE_STRIP, mesh.indices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.LINE_STRIP, mesh.indices.length, gl.UNSIGNED_INT, 0);
     
         if(this.showAABB) {
             for(let aabb of this.aabbs) {

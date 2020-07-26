@@ -88,13 +88,13 @@ export class BBSphere extends BoundingVolume {
         ConstantBuffers.generalData.sendToGPU(gl);
         
         gl.bindVertexArray(submesh.vertexArrayObject.vao);
-        gl.drawElements(gl.LINE_STRIP, submesh.indices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.LINE_STRIP, submesh.indices.length, gl.UNSIGNED_INT, 0);
         gl.bindVertexArray(null);
 
         const submesh2 = this.lineMesh.getSubmesh('circle2');
 
         gl.bindVertexArray(submesh2.vertexArrayObject.vao);
-        gl.drawElements(gl.LINE_STRIP, submesh2.indices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.LINE_STRIP, submesh2.indices.length, gl.UNSIGNED_INT, 0);
         gl.bindVertexArray(null);
     }
 

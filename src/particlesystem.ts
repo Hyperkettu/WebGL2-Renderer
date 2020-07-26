@@ -139,7 +139,7 @@ export class ParticleSystem {
 
 		Renderer.numDrawCallsPerFrame++;
 		gl.bindVertexArray(this.states[this.read].renderBuffers.vertexArrayObject);
-		gl.drawElementsInstanced(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0, this.numParticles);
+		gl.drawElementsInstanced(gl.TRIANGLES, 6, gl.UNSIGNED_INT, 0, this.numParticles);
 		gl.bindVertexArray(null);
 
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);

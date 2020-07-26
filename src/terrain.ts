@@ -98,7 +98,7 @@ export class Terrain {
 			mode = gl.LINE_STRIP;
 		}
 		gl.bindVertexArray(submesh.vertexArrayObject.vao);
-		gl.drawElements(mode, submesh.indices.length, gl.UNSIGNED_SHORT, 0);
+		gl.drawElements(mode, submesh.indices.length, gl.UNSIGNED_INT, 0);
 		gl.bindVertexArray(null);
 	}
 

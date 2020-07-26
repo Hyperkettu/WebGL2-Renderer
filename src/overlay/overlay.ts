@@ -99,7 +99,7 @@ export class Overlay {
         ConstantBuffers.overlayMatrices.sendToGPU(gl);
 
         gl.bindVertexArray(this.mesh.vao.vao);
-        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, 0);
         gl.bindVertexArray(null);
 
     }
@@ -142,7 +142,7 @@ export class Overlay {
         ConstantBuffers.overlayMatrices.sendToGPU(gl);
 
         gl.bindVertexArray(this.mesh.vao.vao);
-        gl.drawElements(gl.TRIANGLES, 6 * this.sprites.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLES, 6 * this.sprites.length, gl.UNSIGNED_INT, 0);
         gl.bindVertexArray(null);
 
         for(let sprite of this.separateSprites) {

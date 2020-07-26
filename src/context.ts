@@ -72,7 +72,7 @@ export class Context {
 		Renderer.numDrawCallsPerFrame++;
 
 		this.gl.bindVertexArray(this.vertexArrayObject.vao);
-		this.gl.drawElements(mode, this.numIndices, this.gl.UNSIGNED_SHORT, 0);
+		this.gl.drawElements(mode, this.numIndices, this.gl.UNSIGNED_INT, 0);
 		this.gl.bindVertexArray(null);
 	}
 
