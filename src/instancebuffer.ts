@@ -64,9 +64,7 @@ export class InstanceBuffer {
     }
 
     addTransform(submesh: Submesh<VertexBase>, matrix: mat4) {
-        for(let instanceBuffer of this.data) {
-            instanceBuffer.matrices.push(matrix);
-        }
+        this.data[0].matrices.push(matrix);
     }
 
     create(gl: WebGL2RenderingContext) {
@@ -74,14 +72,15 @@ export class InstanceBuffer {
         this.clear();
     }
 
-    updateBuffer(submeshIndex: number, gl: WebGL2RenderingContext, worldMatrices: mat4[]) {
-        
-        for(let index = 0; index < this.data[submeshIndex].instanceCount; index++) {
-            const matrix = worldMatrices[index];
-            this.data[submeshIndex].data.set(matrix, 16 * index);
+    updateMatrices() {
+        for(let index = 0; index < this.data[0].instanceCount; index++) {
+            const matrix = this.data[0].matrices[index];
+            this.data[0].data.set(matrix, 16 * index);
         }
+    }
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.data[0].buffer);
+    updateBuffer(submeshIndex: number, gl: WebGL2RenderingContext) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.data[submeshIndex].buffer);
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.data[0].data);
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
     }
@@ -89,9 +88,12 @@ export class InstanceBuffer {
     render(gl: WebGL2RenderingContext, shadowPass?: ShadowPass) {
 
         let submeshIndex = 0;
+
+        this.updateMatrices();
+
         for(let instanceBuffer of this.data) {
 
-            this.updateBuffer(submeshIndex, gl, instanceBuffer.matrices);
+            this.updateBuffer(submeshIndex, gl);
 
             const mat = material.GetMaterial(instanceBuffer.submesh.materialID);
 
@@ -160,6 +162,7 @@ export class InstanceBuffer {
             submeshIndex++;
         }
         this.clear();
+
     }
 
     mesh: StaticMesh;

@@ -116,7 +116,7 @@
 						"b": 0.88
 					},
 					"near": 0.01,
-					"intensity": 35.0,
+					"intensity": 45.0,
 					"radius": 35.0
 				},
 				"children": [],
@@ -131,11 +131,11 @@
 				},
 				"rotation":  {
 					"x": 0,
-					"y": 125,
+					"y": 0,
 					"z": 0
 				},
 				"children": [],
-					"meshPath": "meshes/oak-tree1-instanced.staticmesh"
+					"meshPath": "meshes/oak.staticmesh"
 			},
 			{
 				"name": "oak-tree1-2",
@@ -146,11 +146,11 @@
 				},
 				"rotation":  {
 					"x": 0,
-					"y": 45,
+					"y": 0,
 					"z": 0
 				},
 				"children": [],
-					"meshPath": "meshes/oak-tree1-instanced.staticmesh"
+					"meshPath": "meshes/oak.staticmesh"
 			},
 			{
 				"name": "oak-tree1-3",
@@ -165,7 +165,7 @@
 					"z": 0
 				},
 				"children": [],
-					"meshPath": "meshes/oak-tree1-instanced.staticmesh"
+					"meshPath": "meshes/oak.staticmesh"
 			},
 			{
 				"name": "oak-tree1-4",
@@ -180,7 +180,7 @@
 					"z": 0
 				},
 				"children": [],
-					"meshPath": "meshes/oak-tree1-instanced.staticmesh"
+					"meshPath": "meshes/oak.staticmesh"
 			}
 			
 		]

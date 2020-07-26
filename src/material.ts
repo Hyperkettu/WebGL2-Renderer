@@ -19,6 +19,7 @@ export interface Material {
 	shader?: ShaderType;
 	tech?: string;
 	name?: string;
+	path?: string;
 }
 
 export interface MaterialFile {
@@ -40,6 +41,7 @@ export async function loadMaterial(path: string, load: boolean = false, gl: WebG
 	const file: MaterialFile = resource.get<MaterialFile>(path);
 	const material: Material = {};
 	material.name = file.material.name;
+	material.path = path;
 
 	switch(file.material.shader) {
 		case 'pbr': 

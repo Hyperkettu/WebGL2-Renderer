@@ -6,6 +6,9 @@ import * as resource from './resource';
 import { SceneNode } from './scenenode';
 import { Layer } from './batchrenderer';
 import * as instanceBuffer from './instancebuffer';
+import { Submesh } from './submesh';
+import { MeshComponent } from './meshcomponent';
+import { GetMaterial } from './material';
 
 let meshes: { [id: string]: Mesh<VertexBase> } = {};
 
@@ -129,10 +132,7 @@ export function loadMesh(gl: WebGL2RenderingContext, path: string, parent: Scene
 		}
 
 		buffer.addInstance();
-
-		for(let submesh of mesh.getSubmeshes()) {
-			submesh.addToInstanceBuffer(file.mesh.instanceBufferName);
-		}
+		mesh.getSubmeshes()[0].addToInstanceBuffer(file.mesh.instanceBufferName);
 
 	}
 	return mesh;
@@ -190,7 +190,7 @@ export function loadFromMeshFile(gl: WebGL2RenderingContext, file: MeshData, par
 	}
 
 	for(let child of data.children) {
-		recurseSubmeshes(gl, mesh, child, parent, createNew);
+		recurseSubmeshes(gl, mesh, child, parent, createNew, file.instanceBufferName);
 	}
 
 	SetMesh(file.name, mesh);
@@ -215,7 +215,7 @@ function handleMorphVertices(vertices: VertexBase[], vertices2: VertexBase[]) {
 	return morphVertices;
 }
 
-function recurseSubmeshes(gl: WebGL2RenderingContext, mesh: Mesh<VertexBase>, node: SceneNodeData, parent: SceneNode, createNew: boolean) {
+function recurseSubmeshes(gl: WebGL2RenderingContext, mesh: Mesh<VertexBase>, node: SceneNodeData, parent: SceneNode, createNew: boolean, instanceBufferName?: string) {
 
 	let vertices = node.vertexData.vertices;
 
@@ -225,12 +225,28 @@ function recurseSubmeshes(gl: WebGL2RenderingContext, mesh: Mesh<VertexBase>, no
 	if(createNew) {
 		mesh.createSubmesh(gl, node.name, vertices, node.vertexData.indices, node.vertexData?.material);
 	}
-	const submesh = mesh.getSubmesh(node.name);
 
+	if(instanceBufferName) {
+		const submesh = mesh.getSubmesh(node.name);
+
+		if(submesh === mesh.getSubmeshes()[0]) {
+			const sceneNode = new SceneNode(node.name, parent.scene, parent);
+			sceneNode.transform.setPosition(node.position.x, node.position.y, node.position.y);
+			sceneNode.transform.setRotation(node.rotation.x, node.rotation.y, node.rotation.z);
+		
+			sceneNode.addMesh(Object.create(submesh), Layer.OPAQUE); // take a copy of submesh
+			parent.addChild(sceneNode);
+		}
+		return;
+	}
+	const submesh = mesh.getSubmesh(node.name);
 	const sceneNode = new SceneNode(node.name, parent.scene, parent);
 	sceneNode.transform.setPosition(node.position.x, node.position.y, node.position.y);
 	sceneNode.transform.setRotation(node.rotation.x, node.rotation.y, node.rotation.z);
+	
 	sceneNode.addMesh(Object.create(submesh), Layer.OPAQUE); // take a copy of submesh
+	
+	
 	parent.addChild(sceneNode);
 
 	for(let child of node.children){
@@ -280,6 +296,60 @@ export function toMeshDataFile(mesh: Mesh<VertexBase>, nodeName: string, meshNam
 			],
 			type: 'static',
 			data: meshData
+			
+		}
+	};
+	console.log(JSON.stringify(data));
+}
+
+export function toMeshDataFileMultiSubmesh(mesh: Mesh<VertexBase>, instanceBufferName?: string) {
+
+	const children: SceneNodeData[] = [];
+	const materials: string[] = [];
+
+	for(let submesh of mesh.getSubmeshes()) {
+
+		let vertexData: VertexData = {
+			material: '',
+			vertices: [],
+			indices: []
+		};
+
+		vertexData.material = submesh.materialID;
+		vertexData.vertices = submesh.vertices;
+		vertexData.indices = submesh.indices;
+
+		materials.push(GetMaterial(submesh.materialID).path);
+
+		const sceneNodeData: SceneNodeData = {
+			children: [],
+			name: submesh.submeshName,
+			position: {
+				x: 0,
+				y: 0,
+				z: 0
+			},
+			rotation: {
+				x: 0,
+				y: 0,
+				z: 0
+			},
+			vertexData
+		};
+		children.push(sceneNodeData);
+	}	
+
+	let meshData: MeshFileData = {
+		children
+	}; 
+
+	const data: MeshFile = {
+		mesh: {
+			name: mesh.name,
+			materials,
+			type: mesh instanceof StaticMesh ? 'static' : 'morphed',
+			data: meshData,
+			instanceBufferName
 			
 		}
 	};

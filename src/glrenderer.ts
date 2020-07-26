@@ -33,7 +33,7 @@ import { Cloth } from './cloth';
 import { Submesh } from './submesh';
 import { Subtexture } from './subtexture';
 import { BillboardText } from './billboardtext';
-import { Foliage } from './foliage';
+import { Tree } from './tree';
 import * as instanceBuffer from './instancebuffer';
 
 export enum ShaderMode {
@@ -161,7 +161,7 @@ export class Renderer {
 
 		this.cloth = new Cloth(this.gl, this.currentScene);
 
-		this.foliage = new Foliage(this);
+		this.foliage = new Tree(this);
 
 	}
 
@@ -486,6 +486,6 @@ export class Renderer {
 
 	settings: settings.SettingsManager;
 
-	foliage: Foliage;
+	foliage: Tree;
 
 }
