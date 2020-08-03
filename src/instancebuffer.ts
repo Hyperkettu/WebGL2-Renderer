@@ -51,6 +51,7 @@ export class InstanceBuffer {
         this.mesh = mesh;
         this.instanceCounter = 0;
         setInstanceBuffer(name, this, layer);
+        this.isStatic = false;
     }
 
     clear() {
@@ -72,6 +73,17 @@ export class InstanceBuffer {
         this.clear();
     }
 
+    createStaticFromData(gl: WebGL2RenderingContext, matrices: mat4[]) {
+        this.data = VertexBuffer.createInstanceVertexBuffer(gl, this.mesh, matrices.length);
+        this.clear();
+        this.data[0].matrices = matrices;
+        this.isStatic = true;
+        this.updateMatrices();
+        for(let index = 0; index < this.data.length; index++) {
+            this.updateBuffer(index, gl);
+        }
+    }
+
     updateMatrices() {
         for(let index = 0; index < this.data[0].instanceCount; index++) {
             const matrix = this.data[0].matrices[index];
@@ -88,12 +100,15 @@ export class InstanceBuffer {
     render(gl: WebGL2RenderingContext, shadowPass?: ShadowPass) {
 
         let submeshIndex = 0;
-
-        this.updateMatrices();
+        if(!this.isStatic) {
+            this.updateMatrices();
+        }
 
         for(let instanceBuffer of this.data) {
 
-            this.updateBuffer(submeshIndex, gl);
+            if(!this.isStatic) {
+                this.updateBuffer(submeshIndex, gl);
+            }
 
             const mat = material.GetMaterial(instanceBuffer.submesh.materialID);
 
@@ -170,4 +185,5 @@ export class InstanceBuffer {
     name: string;
     data: InstanceData[];
     bufferId: number;
+    isStatic: boolean;
 }

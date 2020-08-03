@@ -1,67 +1,7 @@
 {
 	"data": {
-		"skybox": "images/space-blue/",
+		"skybox": "images/skybox/",
 		"objects": [
-			{
-				"name": "terrain",
-				"position": {
-					"x": 10,
-					"y": 0.5,
-					"z": 0
-				},
-				"rotation":  {
-					"x": 0,
-					"y": 0,
-					"z": 0
-				},
-				"children": [],
-					"meshPath": "meshes/terrain.morphedmesh"
-			},
-			{
-				"name": "burning-tree",
-				"position": {
-					"x": 14,
-					"y": 0,
-					"z": 0
-				},
-				"rotation":  {
-					"x": 0,
-					"y": 0,
-					"z": 0
-				},
-				"children": [],
-					"meshPath": "meshes/burning-tree.morphedmesh"
-			},
-			{
-				"name": "plane",
-				"position": {
-					"x": 10,
-					"y": 0.5,
-					"z": 5
-				},
-				"rotation":  {
-					"x": 0,
-					"y": 0,
-					"z": 0
-				},
-				"children": [],
-					"meshPath": "meshes/plane.staticmesh"
-			},
-			{
-				"name": "plane",
-				"position": {
-					"x": -5.1,
-					"y": 10,
-					"z": -10
-				},
-				"rotation":  {
-					"x": 45,
-					"y": 0,
-					"z": 0
-				},
-				"children": [],
-					"meshPath": "meshes/billboard.staticmesh"
-			},
 			{
 				"name": "oak-tree1",
 				"position": {

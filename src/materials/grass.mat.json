@@ -1,0 +1,17 @@
+{
+	"material" : {
+		"name" : "grass",
+		"shader": "pbr",
+		"tech": "AM",
+		"textures": [
+			{
+				"path" : "images/grass2/albedo.png",
+				"type" : "albedo"
+			},			
+			{
+				"path" : "images/rock/rock-metallic.png",
+				"type" : "metallic"
+            }
+        ]
+	}
+}

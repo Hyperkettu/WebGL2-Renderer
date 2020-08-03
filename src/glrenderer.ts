@@ -35,6 +35,7 @@ import { Subtexture } from './subtexture';
 import { BillboardText } from './billboardtext';
 import { Tree } from './tree';
 import * as instanceBuffer from './instancebuffer';
+import { FoliageGenerator } from './foliagegeneration';
 
 export enum ShaderMode {
 	DEFAULT = 0,
@@ -161,7 +162,9 @@ export class Renderer {
 
 		this.cloth = new Cloth(this.gl, this.currentScene);
 
-		this.foliage = new Tree(this);
+		this.tree = new Tree(this);
+		
+		const foliage = new FoliageGenerator(this);
 
 	}
 
@@ -486,6 +489,6 @@ export class Renderer {
 
 	settings: settings.SettingsManager;
 
-	foliage: Tree;
+	tree: Tree;
 
 }

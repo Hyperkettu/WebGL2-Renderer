@@ -1,0 +1,28 @@
+{
+	"material" : {
+		"name" : "grass-surface",
+		"shader": "pbr",
+		"tech": "ANRMA",
+		"textures": [
+			{
+				"path" : "images/grass/albedo.png",
+				"type" : "albedo"
+			},
+			{
+				"path" : "images/grass/normal.png",
+				"type" : "normal"
+			},			
+			{
+				"path" : "images/grass/metallic.png",
+				"type" : "metallic"
+			},
+			{
+				"path" : "images/grass/roughness.png",
+				"type" : "roughness"
+			},	
+			{
+				"path" : "images/grass/ao.png",
+				"type" : "ambient-occlusion"
+			}]
+	}
+}

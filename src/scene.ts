@@ -6,16 +6,16 @@ import * as texture from './texturemanager';
 import { Renderer } from './glrenderer';
 import { Skybox } from './skybox';
 import { TextureData } from './texturemanager';
-import { Mesh } from './mesh';
-import { MeshFile, loadMesh } from './meshmanager';
-import { MaterialFile, loadMaterial } from './material';
-import { vec3 } from 'gl-matrix';
+import { Mesh, StaticMesh } from './mesh';
+import { MeshFile, loadMesh, loadFromMeshFile, MeshFileData } from './meshmanager';
+import { MaterialFile, loadMaterial, materials, Material } from './material';
+import { vec3, mat4 } from 'gl-matrix';
 import { Layer } from './batchrenderer';
 import { MeshComponent } from './meshcomponent';
 import { Terrain } from './terrain';
 import * as resource from './resource';
-import { VertexBase } from './vertex';
-import * as instaceBuffer from './instancebuffer';
+import { VertexBase, Vertex } from './vertex';
+import * as instanceBuffer from './instancebuffer';
 
 export interface SceneFile {
 	data: SceneData;
@@ -25,6 +25,13 @@ export interface SceneData {
 	skybox: string;
 	textures: TextureData[];
 	objects: SceneNodeData[];
+	instanceDatas?: InstanceBufferData[];
+}
+
+export interface InstanceBufferData {
+	instanceBufferName: string;
+	meshPath: string;
+	matrices: mat4[];
 }
 
 export interface SceneNodeData {
@@ -154,14 +161,98 @@ export abstract class Scene {
 		// TO SEE TERRAIN UNCOMMENT THIS
 		//await this.terrain.load(renderer);
 		
-		for(let buffer of instaceBuffer.getInstanceBuffers(Layer.OPAQUE)) {
-			buffer.create(renderer.gl);
+		for(let buffer of instanceBuffer.getInstanceBuffers(Layer.OPAQUE)) {
+			if(!buffer.isStatic) {
+				buffer.create(renderer.gl);
+			}
 		}
 
-		for(let buffer of instaceBuffer.getInstanceBuffers(Layer.TRANSPARENT)) {
-			buffer.create(renderer.gl);
+		for(let buffer of instanceBuffer.getInstanceBuffers(Layer.TRANSPARENT)) {
+			if(!buffer.isStatic) {
+				buffer.create(renderer.gl);
+			}
+		}
+		const matrices: mat4[] = [];
+
+		for(let y = 1.25; y < 40; y += 2.5) {
+			for(let x = 1.25; x < 40; x += 2.5) {
+				const matrix = mat4.create();
+				mat4.fromTranslation(matrix, vec3.fromValues(x - 20, 0, y - 20));
+				matrices.push(matrix);
+			}
 		}
 
+		sceneFile.data.instanceDatas = [
+			{
+				instanceBufferName: 'grass-static',
+				meshPath: 'meshes/grass.staticmesh',
+				matrices
+			}
+		];
+
+		await this.handleSeparateInstanceBuffers(renderer.gl, sceneFile);
+	}
+
+	async handleSeparateInstanceBuffers(gl: WebGL2RenderingContext, data: SceneFile) {
+		if(data.data.instanceDatas) {
+			for(let buffer of data.data.instanceDatas) {
+				await resource.loadFile<MeshFile>(buffer.meshPath);
+				const meshData = resource.get<MeshFile>(buffer.meshPath);
+				const staticMesh = new StaticMesh(meshData.mesh.name);
+				const meshFileData = meshData.mesh.data as MeshFileData;
+				
+				const materialFiles: MaterialFile[] = [];
+				const materials: string[] = [];
+				const materialPromises: Promise<MaterialFile>[] = [];
+
+				for(let materialFile of meshData.mesh.materials) {
+					if (materials.indexOf(materialFile)) {
+						materials.push(materialFile);
+						materialPromises.push(resource.loadFile<MaterialFile>(materialFile));
+					}
+				}
+
+				await Promise.all(materialPromises);
+
+				const textureDatas: TextureData[] = [];
+				for (let materialPath of meshData.mesh.materials) {
+					const materialFile: MaterialFile = resource.get<MaterialFile>(materialPath);
+					materialFiles.push(materialFile);
+					for (let texture of materialFile.material.textures) {
+						textureDatas.push(texture);
+					}
+		
+					if(materialFile.material.customTextures) {
+						for(let texture of materialFile.material.customTextures) {
+							textureDatas.push({ path: texture.path, type: 'custom' })
+						}
+					}
+		
+				}
+		
+				await texture.LoadTextures(gl, textureDatas);
+		
+				for(let materialFile of materialFiles) {
+					if(materialFile.material.customTextures) {
+						for(let customTexture of materialFile.material.customTextures) {
+							const tex = texture.GetTexture(customTexture.path);
+							tex.name = customTexture.name;
+						}
+					}
+				}
+		
+				for (let materialPath of meshData.mesh.materials) {
+					loadMaterial(materialPath);
+				}
+				
+
+				for(let child of meshFileData.children) {
+					staticMesh.createSubmesh(gl, child.name, child.vertexData.vertices as unknown as Vertex[], child.vertexData.indices, child.vertexData.material);
+				}
+				const ib = new instanceBuffer.InstanceBuffer(staticMesh, buffer.instanceBufferName, Layer.OPAQUE);
+				ib.createStaticFromData(gl, buffer.matrices);
+			}
+		}
 	}
 
 	loadAssets(renderer: Renderer) {}

@@ -324,9 +324,9 @@ export class MainMenuState extends MenuState {
 		}
 
 		if(key === '1') {
-			toMeshDataFile(this.settings.renderer.foliage.trunk, 'oak-tree-node', 'oak-tree', 'trunk', 'materials/bark1.mat.json', 'bark1-with-displacement');        
+			toMeshDataFile(this.settings.renderer.tree.trunk, 'oak-tree-node', 'oak-tree', 'trunk', 'materials/bark1.mat.json', 'bark1-with-displacement');        
 		} else if(key === '2') {
-			toMeshDataFile(this.settings.renderer.foliage.leaves, 'oak-leaves-node', 'oak-leaves', 'leafSubmesh', 'materials/oak-leaf.mat.json', 'oak-leaf');        
+			toMeshDataFile(this.settings.renderer.tree.leaves, 'oak-leaves-node', 'oak-leaves', 'leafSubmesh', 'materials/oak-leaf.mat.json', 'oak-leaf');        
 		}
 	}
 

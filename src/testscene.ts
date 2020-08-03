@@ -21,7 +21,7 @@ export class TestScene extends Scene {
 		await super.initScene(renderer, path);
 
 		const dirLightColor = vec3.fromValues(1, 1, 1);
-		const dirLightDirection = vec3.fromValues(0.0, -0.1, -1.0);
+		const dirLightDirection = vec3.fromValues(0.0, -1.0, -1.0);
 		const dirLightIntensity = 0.0;
 		this.dirLight = new DirectionalLight(renderer.gl, dirLightColor, dirLightDirection, dirLightIntensity);
 
@@ -31,7 +31,7 @@ export class TestScene extends Scene {
 			]);
 		}
 
-		await material.loadMaterial('materials/rock.mat.json', true, renderer.gl);
+		await material.loadMaterial('materials/grass-static.mat.json', true, renderer.gl);
 
 
 		//this.sceneGraph.find('sphere').addComponent(new CubeScript());
@@ -50,7 +50,7 @@ export class TestScene extends Scene {
 			const terrain = mesh.GetMesh<StaticMesh>('planeTerrain');
 			const submesh = terrain.getSubmesh('terrain');
 			submesh.wireFrame = false;
-			submesh.materialID = 'rock';
+			submesh.materialID = 'grass-surface';
 			const node = new SceneNode('terrainNode', this);
 			node.transform.setPosition(0, 0.2, 0);
 			node.transform.setRotation(0, 0, 0);
@@ -59,7 +59,6 @@ export class TestScene extends Scene {
 			this.plane = node; 
 
 		//	mesh.toMeshDataFile(terrain); 
-
 
 	}
 
