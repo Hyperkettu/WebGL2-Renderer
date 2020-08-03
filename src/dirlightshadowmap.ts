@@ -18,7 +18,7 @@ export class DirLightShadowMap {
         this.near = near;
         this.far = far;
         this.projection = mat4.create();
-        mat4.ortho(this.projection, -10.0, 10.0, -10.0, 10.0, this.near, this.far);
+        mat4.ortho(this.projection, -40.0, 40.0, -40.0, 40.0, this.near, this.far);
         this.view = mat4.create();
         mat4.lookAt(this.view, vec3.fromValues(-this.direction[0] * 10, -this.direction[1] * 10, -this.direction[2] * 10), 
         vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0));
