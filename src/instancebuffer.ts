@@ -85,7 +85,7 @@ export class InstanceBuffer {
     }
 
     updateMatrices() {
-        for(let index = 0; index < this.data[0].instanceCount; index++) {
+        for(let index = 0; index < this.data[0].matrices.length; index++) {
             const matrix = this.data[0].matrices[index];
             this.data[0].data.set(matrix, 16 * index);
         }
@@ -166,7 +166,7 @@ export class InstanceBuffer {
             
             gl.bindVertexArray(instanceBuffer.submesh.vertexArrayObject.vao);
             gl.drawElementsInstanced(gl.TRIANGLES, instanceBuffer.submesh.indices.length, 
-                gl.UNSIGNED_INT, 0, instanceBuffer.instanceCount);
+                gl.UNSIGNED_INT, 0, this.isStatic ? instanceBuffer.instanceCount : this.data[0].matrices.length);
             gl.bindVertexArray(null);
 
             if(shadowPass === undefined) {

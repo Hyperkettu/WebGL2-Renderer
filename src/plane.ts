@@ -10,4 +10,9 @@ export class Plane {
 
 	normal: vec3;
 	p0: vec3;
+
+	A: number;
+	B: number;
+	C: number;
+	D: number;
 }

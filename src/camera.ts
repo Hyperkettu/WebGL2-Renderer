@@ -2,6 +2,7 @@ import { mat4, vec4, vec3, vec2, quat } from 'gl-matrix';
 import { DEG_TO_RAD } from './util/math';
 import { Viewport } from './context';
 import * as math from './util/math';
+import { Frustum } from './frustum';
 
 export class Camera {
 
@@ -9,6 +10,8 @@ export class Camera {
 
 		this.position = vec3.create();
 		this.target = vec3.create();
+
+		this.frustum = new Frustum();
 
 		this.view = mat4.create();
 		this.projection = mat4.create();
@@ -48,6 +51,7 @@ export class Camera {
 	setView() {
 		const cameraMatrix = mat4.fromRotationTranslation(this.view, this.quat, this.position);
 		mat4.invert(this.view, cameraMatrix);
+		this.frustum.update(this.projection, this.view);
 	}
 
 	setRotation(x: number, y: number, z: number) {
@@ -61,6 +65,8 @@ export class Camera {
 
 	lookAt(eye: vec3, center: vec3, up: vec3) {
 		mat4.lookAt(this.view, eye, center, up);
+		this.frustum.update(this.projection, this.view);
+
 	}
 
 
@@ -185,5 +191,7 @@ export class Camera {
 	rightX: number;
 	topY: number;
 	bottomY: number;
+
+	frustum: Frustum;
 
 }

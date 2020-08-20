@@ -7,6 +7,7 @@ import { AABB } from '../aabb';
 import { HitInfo } from '../raycast';
 import { StaticMesh } from '../mesh';
 import { Vertex } from '../vertex';
+import { Frustum } from '../frustum';
 
 export const DEG_TO_RAD = Math.PI / 180.0;
 export const RAD_TO_DEG = 180.0 / Math.PI;
@@ -281,4 +282,45 @@ export function getY(matrix: mat4) {
 
 export function getZ(matrix: mat4) {
 	return vec3.fromValues(matrix[8], matrix[9], matrix[10]);
+}
+
+export function sphereIntersectsPlane(sphere: Sphere, plane: Plane) {
+	const d = vec3.dot(plane.p0, plane.normal);
+	const sphereD = vec3.dot(sphere.center, plane.normal);
+	const distance = Math.abs(sphereD - d);
+
+	if(distance < sphere.radius) {
+		return 0;
+	} else {
+		if(sphereD > 0) {
+			return 1;
+		} else {
+			return -1;
+		}
+	}
+}
+
+export function sphereIsOnPositiveSideOfPlane(sphere: Sphere, plane: Plane, world: mat4) {
+
+	const center = vec4.fromValues(sphere.center[0], sphere.center[1], sphere.center[2], 1);
+	vec4.transformMat4(center, center, world);
+	const planeEq = plane.A * center[0] + plane.B * center[1] + plane.C * center[2] +
+	plane.D;
+
+	//console.log(center, planeEq, plane.A, plane.B, plane.C, plane.D);
+
+	if(planeEq <= -sphere.radius) {
+		return false;
+	}
+
+	return true;
+}
+
+export function sphereIntersectsFrustum(frustum: Frustum, sphere: Sphere, world: mat4) {
+	for(let index = 0; index < 6; index++) {
+		if(!sphereIsOnPositiveSideOfPlane(sphere, frustum.planes[index], world)) {
+			return false;
+		}
+	}
+	return true;
 }

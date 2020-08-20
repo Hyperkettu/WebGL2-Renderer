@@ -36,6 +36,8 @@ import { BillboardText } from './billboardtext';
 import { Tree } from './tree';
 import * as instanceBuffer from './instancebuffer';
 import { FoliageGenerator } from './foliagegeneration';
+import { BBSphere } from './util/bvh/boundingvolumesphere';
+import { BoundingVolume } from './util/bvh/boundingvolume';
 
 export enum ShaderMode {
 	DEFAULT = 0,
@@ -369,23 +371,31 @@ export class Renderer {
 
 	resolveVisibility(scene: Scene) {
 
+		let counter = 0;
+		let total = 0;
 		this.batchRenderer.reset();
 		scene.sceneGraph.forEach(node => {
 
 			if (node !== scene.sceneGraph.root && node.enabled) {
 				const meshComponent = node.getComponent('meshComponent') as MeshComponent<VertexBase>;
 
-				// cull frustum in the future
 				if(meshComponent.mesh) {
-					if(meshComponent.mesh.instancedDraw) {
-						instanceBuffer.getInstanceBuffer(meshComponent.mesh.instanceBufferName, 
-							meshComponent.layer).addTransform(meshComponent.mesh, node.transform.world);
-					} else {
-						this.batchRenderer.addBatch({ submesh: meshComponent.mesh, world: node.transform.world }, meshComponent.layer);
+					total++;
+					const boundingVolume = (meshComponent.mesh.boundingVolume as BBSphere).sphere;
+
+					if(this.getCurrentCamera().frustum.isInside(boundingVolume, node.transform.world)) {
+						counter++;
+						if(meshComponent.mesh.instancedDraw) {
+							instanceBuffer.getInstanceBuffer(meshComponent.mesh.instanceBufferName, 
+								meshComponent.layer).addTransform(meshComponent.mesh, node.transform.world);
+						} else {
+							this.batchRenderer.addBatch({ submesh: meshComponent.mesh, world: node.transform.world }, meshComponent.layer);
+						}
 					}
 				}
 			}
 		});
+		console.log(counter, ' / ', total);
 	}
 
 	materialBegin(submesh: Submesh<VertexBase>, shadowPass?: ShadowPass) {
