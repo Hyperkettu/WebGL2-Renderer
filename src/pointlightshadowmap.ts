@@ -4,12 +4,10 @@ import { DEG_TO_RAD } from './util/math';
 import { Renderer, ShadowPass } from './glrenderer';
 import { RenderTargetState } from './rendertarget';
 import { Layer } from './batchrenderer';
-import * as shader from './shadermanager';
-import { ShaderType } from './shader';
-import { TestScene } from './testscene';
 import * as texture from './texturemanager';
 import { ConstantBuffers } from './constantbuffers';
 import { SceneNode } from './scenenode';
+import { Frustum } from './frustum';
 
 export class PointLightShadowMap {
 
@@ -19,6 +17,12 @@ export class PointLightShadowMap {
 		this.position = position;
 		this.radius = radius;
 		this.near = 0.01;
+
+		this.frusta = [];
+
+		for(let i = 0; i < 6; i++) {
+			this.frusta[i] = new Frustum();
+		}
 
 		this.captureProjection = mat4.create();
 		mat4.perspective(this.captureProjection, DEG_TO_RAD * 90.0, 1.0, this.near, this.radius);
@@ -53,31 +57,42 @@ export class PointLightShadowMap {
 		vec3.add(target, this.position, target);
 		mat4.lookAt(view, this.position, target, vec3.fromValues(0, -1, 0));
 		this.captureViews.push(view);
+		this.frusta[0].update(this.captureProjection, view);
+		
 		view = mat4.create();
 		target = vec3.fromValues(-1, 0, 0);
 		vec3.add(target, this.position, target);
 		mat4.lookAt(view, this.position, target, vec3.fromValues(0, -1, 0));
 		this.captureViews.push(view);
+		this.frusta[1].update(this.captureProjection, view);
+
 		view = mat4.create();
 		target = vec3.fromValues(0, 1, 0);
 		vec3.add(target, this.position, target);
 		mat4.lookAt(view, this.position, target, vec3.fromValues(0, 0, 1));
 		this.captureViews.push(view);
+		this.frusta[2].update(this.captureProjection, view);
+
 		view = mat4.create();
 		target = vec3.fromValues(0, -1, 0);
 		vec3.add(target, this.position, target);
 		mat4.lookAt(view, this.position, target, vec3.fromValues(0, 0, -1));
 		this.captureViews.push(view);
+		this.frusta[3].update(this.captureProjection, view);
+
 		view = mat4.create();
 		target = vec3.fromValues(0, 0, 1);
 		target = vec3.add(target, this.position, target);
 		mat4.lookAt(view, this.position, target, vec3.fromValues(0, -1, 0));
 		this.captureViews.push(view);
+		this.frusta[4].update(this.captureProjection, view);
+
 		view = mat4.create();
 		target = vec3.fromValues(0, 0, -1);
 		target = vec3.add(target, this.position, target);
 		mat4.lookAt(view, this.position, target, vec3.fromValues(0, -1, 0));
 		this.captureViews.push(view);
+		this.frusta[5].update(this.captureProjection, view);
 	}
 
 	render(renderer: Renderer, index: number) {
@@ -94,11 +109,6 @@ export class PointLightShadowMap {
 			node.enabled = false;
 		}
 
-		//const shadowMapShader = shader.GetShader(ShaderType.SHADOW_MAP);
-		//shadowMapShader.use(gl);
-		///renderer.shaderTech = shadowMapShader;
-		//renderer.shader = ShaderType.SHADOW_MAP;
-
 		ConstantBuffers.matricesPerFrame.update(gl, 'projection', this.captureProjection);
 
 		ConstantBuffers.generalData.update(gl, 'dataVec1', vec4.fromValues(this.position[0], this.position[1], this.position[2], 0));
@@ -110,7 +120,7 @@ export class PointLightShadowMap {
 			ConstantBuffers.matricesPerFrame.sendToGPU(gl);
 			rts.setRenderTargetCubemapFace(gl, face, this.shadowCubeMap);
 			renderer.context.clear(gl.DEPTH_BUFFER_BIT);
-			renderer.resolveVisibility(renderer.currentScene);
+			renderer.resolveVisibility(renderer.currentScene, this.frusta[face]);
 			renderer.batchRenderer.flushSortedArray(renderer, Layer.OPAQUE, ShadowPass.POINT_LIGHT);
 			renderer.batchRenderer.flushSortedArray(renderer, Layer.TRANSPARENT, ShadowPass.POINT_LIGHT);
 		}
@@ -141,6 +151,8 @@ export class PointLightShadowMap {
 	radius: number;
 	position: vec3;
 	shadowCubeMap: DepthTexture;
+
+	frusta: Frustum[];
 
 	excludeFromShadowMapNodes: SceneNode[];
 }

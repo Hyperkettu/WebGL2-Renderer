@@ -9,6 +9,7 @@ import { Layer } from "./batchrenderer";
 import { ConstantBuffers } from "./constantbuffers";
 import { Texture } from "./texture";
 import * as texture from './texturemanager';
+import { Frustum } from "./frustum";
 
 export class DirLightShadowMap {
     constructor(gl: WebGL2RenderingContext, direction: vec3, width: number, height: number, near: number, far:number) {
@@ -31,6 +32,8 @@ export class DirLightShadowMap {
 
         this.colorBuffer = Texture.createRenderTarget(gl, gl.RGBA, gl.RGBA, width, height, gl.UNSIGNED_BYTE, gl.LINEAR, false, gl.LINEAR);
 
+        this.frustum = new Frustum();
+        this.frustum.update(this.projection, this.view);
     }
 
 
@@ -44,7 +47,7 @@ export class DirLightShadowMap {
         rts.addColorTarget(gl, 0, this.colorBuffer);
         rts.addDepthStencilTarget(gl, this.shadowMap[0]);
 		renderer.context.renderTargetBegin(rts);
-        renderer.resolveVisibility(renderer.currentScene);
+        renderer.resolveVisibility(renderer.currentScene, this.frustum);
         gl.clear(gl.DEPTH_BUFFER_BIT);
 
         ConstantBuffers.matricesPerFrame.update(gl, 'projection', this.projection);
@@ -77,5 +80,7 @@ export class DirLightShadowMap {
     lightSpaceMatrix: mat4;
     colorBuffer: Texture;
     shadowMap: DepthTexture[];
+
+    frustum: Frustum;
 }
 

@@ -38,6 +38,7 @@ import * as instanceBuffer from './instancebuffer';
 import { FoliageGenerator } from './foliagegeneration';
 import { BBSphere } from './util/bvh/boundingvolumesphere';
 import { BoundingVolume } from './util/bvh/boundingvolume';
+import { Frustum } from './frustum';
 
 export enum ShaderMode {
 	DEFAULT = 0,
@@ -289,7 +290,7 @@ export class Renderer {
 
 		this.cloth.update(this.gl, dt);
 
-		this.resolveVisibility(scene);
+		this.resolveVisibility(scene, this.getCurrentCamera().frustum);
 
 		//this.batchRenderer.sortInAscendingOrder(Layer.OPAQUE);
 		//this.batchRenderer.sortInDescendingOrder(Layer.TRANSPARENT);
@@ -369,10 +370,8 @@ export class Renderer {
 
 	overlayRender(gl: WebGL2RenderingContext) {}
 
-	resolveVisibility(scene: Scene) {
+	resolveVisibility(scene: Scene, frustum: Frustum) {
 
-		let counter = 0;
-		let total = 0;
 		this.batchRenderer.reset();
 		scene.sceneGraph.forEach(node => {
 
@@ -380,11 +379,9 @@ export class Renderer {
 				const meshComponent = node.getComponent('meshComponent') as MeshComponent<VertexBase>;
 
 				if(meshComponent.mesh) {
-					total++;
 					const boundingVolume = (meshComponent.mesh.boundingVolume as BBSphere).sphere;
 
-					if(this.getCurrentCamera().frustum.isInside(boundingVolume, node.transform.world)) {
-						counter++;
+					if(frustum.isInside(boundingVolume, node.transform.world)) {
 						if(meshComponent.mesh.instancedDraw) {
 							instanceBuffer.getInstanceBuffer(meshComponent.mesh.instanceBufferName, 
 								meshComponent.layer).addTransform(meshComponent.mesh, node.transform.world);
@@ -395,7 +392,6 @@ export class Renderer {
 				}
 			}
 		});
-		console.log(counter, ' / ', total);
 	}
 
 	materialBegin(submesh: Submesh<VertexBase>, shadowPass?: ShadowPass) {
