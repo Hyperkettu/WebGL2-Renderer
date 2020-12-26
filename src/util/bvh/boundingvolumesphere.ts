@@ -1,7 +1,7 @@
 import { BoundingVolume } from "./boundingvolume";
 import { Frustum } from "../../frustum";
 import { Ray } from "../../ray";
-import { vec3, vec4 } from "gl-matrix";
+import { vec3, vec4, mat4 } from "gl-matrix";
 import { PositionVertexType, PositionVertex, MorphVertex } from "../../vertex";
 import { Sphere } from "../../sphere";
 import { rayIntersectsSphere } from "../math";
@@ -70,8 +70,8 @@ export class BBSphere extends BoundingVolume {
 
     }
 
-    intersectsFrustum(frustum: Frustum) {
-        return false;
+    intersectsFrustum(frustum: Frustum, world: mat4) {
+    //    return frustum.intersectsSphere(this.sphere, world);
     }
 
     intersects(ray: Ray, info: HitInfo) {

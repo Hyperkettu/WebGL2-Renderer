@@ -1,7 +1,7 @@
 import { BoundingVolume } from "./boundingvolume";
 import { Frustum } from "../../frustum";
 import { Ray } from "../../ray";
-import { vec4, vec3 } from "gl-matrix";
+import { vec4, vec3, mat4 } from "gl-matrix";
 import { VertexBase, PositionVertexType, PositionVertex } from "../../vertex";
 import { AABB } from "../../aabb";
 import { HitInfo } from "../../raycast";
@@ -83,8 +83,8 @@ export class BoundingAABB extends BoundingVolume {
         this.lineMesh.createSubmesh(gl, 'aabb', vertices, indices, '');
     }
 
-    intersectsFrustum(frustum: Frustum): boolean {
-        return false;
+    intersectsFrustum(frustum: Frustum, world: mat4) {
+     //   return frustum.intersectsAABB(this.aabb, world);
     }
 
     intersects(ray: Ray, info: HitInfo): boolean {

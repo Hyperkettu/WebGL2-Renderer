@@ -174,7 +174,7 @@ export abstract class Scene {
 		}
 		const matrices: mat4[] = [];
 
-		for(let y = 1.25; y < 40; y += 2.5) {
+		/*for(let y = 1.25; y < 40; y += 2.5) {
 			for(let x = 1.25; x < 40; x += 2.5) {
 				const matrix = mat4.create();
 				mat4.fromTranslation(matrix, vec3.fromValues(x - 20, 0, y - 20));
@@ -188,7 +188,7 @@ export abstract class Scene {
 				meshPath: 'meshes/grass.staticmesh',
 				matrices
 			}
-		];
+		];*/
 
 		await this.handleSeparateInstanceBuffers(renderer.gl, sceneFile);
 	}

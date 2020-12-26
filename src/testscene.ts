@@ -46,7 +46,19 @@ export class TestScene extends Scene {
 			node.addMesh(terrain.getSubmesh('terrain'), Layer.OPAQUE);
 			this.addObject(node); */
 
-			await GeometryGenerator.GeneratePlaneTerrain(renderer.gl, 'planeTerrain', 2, 20, 2, 0);
+		/*	await GeometryGenerator.GeneratePlaneTerrain(renderer.gl, 'planeTerrain', 2, 20, 2, 0);
+			const terrain = mesh.GetMesh<StaticMesh>('planeTerrain');
+			const submesh = terrain.getSubmesh('terrain');
+			submesh.wireFrame = false;
+			submesh.materialID = 'grass-surface';
+			const node = new SceneNode('terrainNode', this);
+			node.transform.setPosition(0, 0.2, 0);
+			node.transform.setRotation(0, 0, 0);
+			node.addMesh(submesh, Layer.OPAQUE);
+			this.addObject(node);
+			this.plane = node; */
+
+			await GeometryGenerator.GenerateTerrain(renderer.gl, 'planeTerrain', 50, 0.33, 20, 0, 'images/height-map5.png');
 			const terrain = mesh.GetMesh<StaticMesh>('planeTerrain');
 			const submesh = terrain.getSubmesh('terrain');
 			submesh.wireFrame = false;
@@ -57,6 +69,7 @@ export class TestScene extends Scene {
 			node.addMesh(submesh, Layer.OPAQUE);
 			this.addObject(node);
 			this.plane = node; 
+
 
 		//	mesh.toMeshDataFile(terrain); 
 

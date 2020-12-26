@@ -372,26 +372,26 @@ export class Renderer {
 
 	resolveVisibility(scene: Scene, frustum: Frustum) {
 
+		let count  = 0;
 		this.batchRenderer.reset();
-		scene.sceneGraph.forEach(node => {
 
-			if (node !== scene.sceneGraph.root && node.enabled) {
-				const meshComponent = node.getComponent('meshComponent') as MeshComponent<VertexBase>;
-
+		scene.sceneGraph.forEachFrustumCull(frustum, culledNode => {
+			
+			if (culledNode !== scene.sceneGraph.root && culledNode.enabled) {
+				const meshComponent = culledNode.getComponent('meshComponent') as MeshComponent<VertexBase>;
 				if(meshComponent.mesh) {
-					const boundingVolume = (meshComponent.mesh.boundingVolume as BBSphere).sphere;
-
-					if(frustum.isInside(boundingVolume, node.transform.world)) {
-						if(meshComponent.mesh.instancedDraw) {
-							instanceBuffer.getInstanceBuffer(meshComponent.mesh.instanceBufferName, 
-								meshComponent.layer).addTransform(meshComponent.mesh, node.transform.world);
-						} else {
-							this.batchRenderer.addBatch({ submesh: meshComponent.mesh, world: node.transform.world }, meshComponent.layer);
-						}
+					count++;
+					if(meshComponent.mesh.instancedDraw) {
+						instanceBuffer.getInstanceBuffer(meshComponent.mesh.instanceBufferName, 
+							meshComponent.layer).addTransform(meshComponent.mesh, culledNode.transform.world);
+					} else {
+						this.batchRenderer.addBatch({ submesh: meshComponent.mesh, world: culledNode.transform.world }, meshComponent.layer);
 					}
 				}
 			}
 		});
+
+		console.log(count, scene.sceneGraph.totalObjects);
 	}
 
 	materialBegin(submesh: Submesh<VertexBase>, shadowPass?: ShadowPass) {

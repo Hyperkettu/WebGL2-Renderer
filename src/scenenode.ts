@@ -9,6 +9,8 @@ import { Submesh } from './submesh';
 import { vec3 } from 'gl-matrix';
 import { VertexBase } from './vertex';
 import { Mesh } from './mesh';
+import { BoundingVolume } from './util/bvh/boundingvolume';
+import { Sphere } from './sphere';
 
 export class SceneNode {
 
@@ -24,6 +26,8 @@ export class SceneNode {
 
 		this.enabled = true;
 		this.enableUpdate = true;
+
+		this.renderBoundingVolume = true;
 	}
 
 	setMesh(name: string, submeshName: string, layer: Layer) {
@@ -120,6 +124,9 @@ export class SceneNode {
 
 	enabled: boolean;
 	enableUpdate: boolean;
+
+	boundingSphere: Sphere;
+	renderBoundingVolume: boolean;
 
 	components: Component[];
 	transform: Transform;

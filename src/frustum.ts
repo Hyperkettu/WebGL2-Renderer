@@ -2,14 +2,25 @@ import { Plane } from "./plane";
 import { mat4, vec3 } from "gl-matrix";
 import * as math from './util/math';
 import { Sphere } from "./sphere";
+import { AABB } from './aabb';
 
-enum FrustumPlane {
+export enum FrustumPlane {
     LEFT, 
     RIGHT,
     BOTTOM, 
     TOP, 
     NEAR, 
     FAR
+}
+
+export enum FrustumPlaneBit {
+    LEFT = 1 << 0,
+    RIGHT = 1 << 1, 
+    BOTTOM = 1 << 2,
+    TOP = 1 << 3,
+    NEAR = 1 << 4,
+    FAR = 1 << 5,
+    ALL = LEFT | RIGHT | BOTTOM | TOP | NEAR | FAR
 }
 
 export class Frustum {
@@ -78,8 +89,12 @@ export class Frustum {
         this.planes[index].D /= magnitude;
     }
 
-    isInside(sphere: Sphere, world: mat4) {
-        return math.sphereIntersectsFrustum(this, sphere, world);
+    intersectsSphere(sphere: Sphere, planeBits: number) {
+        return math.sphereIntersectsFrustum(this, sphere, planeBits);
+    }
+
+    intersectsAABB(aabb: AABB, world: mat4, planeBits: number) {
+        return math.AABBIntersectsFrustum(this, aabb, planeBits);
     }
 
     viewProjection: mat4;

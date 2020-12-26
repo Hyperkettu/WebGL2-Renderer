@@ -7,16 +7,16 @@ import { AABB } from '../aabb';
 import { HitInfo } from '../raycast';
 import { StaticMesh } from '../mesh';
 import { Vertex } from '../vertex';
-import { Frustum } from '../frustum';
+import { Frustum, FrustumPlaneBit, FrustumPlane } from '../frustum';
 
 export const DEG_TO_RAD = Math.PI / 180.0;
 export const RAD_TO_DEG = 180.0 / Math.PI;
 export const EPSILON = 1e-4;
 
-export async function wait(millis: number) {
+export async function wait(millis: number): Promise<unknown> {
 	const promise = new Promise(resolve => {
 		setTimeout(() => {
-			resolve();
+			resolve(1);
 		}, (millis));
 	});
 	return promise;
@@ -284,7 +284,7 @@ export function getZ(matrix: mat4) {
 	return vec3.fromValues(matrix[8], matrix[9], matrix[10]);
 }
 
-export function sphereIntersectsPlane(sphere: Sphere, plane: Plane) {
+/*export function sphereIntersectsPlane(sphere: Sphere, plane: Plane) {
 	const d = vec3.dot(plane.p0, plane.normal);
 	const sphereD = vec3.dot(sphere.center, plane.normal);
 	const distance = Math.abs(sphereD - d);
@@ -298,29 +298,263 @@ export function sphereIntersectsPlane(sphere: Sphere, plane: Plane) {
 			return -1;
 		}
 	}
+}*/
+
+export enum IntersectionType {
+	OUTSIDE,
+	INTERSECTING,
+	INSIDE
 }
 
-export function sphereIsOnPositiveSideOfPlane(sphere: Sphere, plane: Plane, world: mat4) {
+export function transformedSphereIntersectsPlane(sphere: Sphere, plane: Plane, world: mat4) {
 
 	const center = vec4.fromValues(sphere.center[0], sphere.center[1], sphere.center[2], 1);
 	vec4.transformMat4(center, center, world);
 	const planeEq = plane.A * center[0] + plane.B * center[1] + plane.C * center[2] +
 	plane.D;
 
-	//console.log(center, planeEq, plane.A, plane.B, plane.C, plane.D);
-
 	if(planeEq <= -sphere.radius) {
-		return false;
+		return IntersectionType.OUTSIDE;
 	}
 
-	return true;
+	if(planeEq >= sphere.radius) {
+		return IntersectionType.INSIDE;
+	}
+
+	return IntersectionType.INTERSECTING;
 }
 
-export function sphereIntersectsFrustum(frustum: Frustum, sphere: Sphere, world: mat4) {
+export function sphereIntersectsPlane(sphere: Sphere, plane: Plane) {
+
+	const planeEq = plane.A * sphere.center[0] + plane.B * sphere.center[1] + 
+	plane.C * sphere.center[2] + plane.D;
+
+	if(planeEq <= -sphere.radius) {
+		return IntersectionType.OUTSIDE;
+	}
+
+	if(planeEq >= sphere.radius) {
+		return IntersectionType.INSIDE;
+	}
+
+	return IntersectionType.INTERSECTING;
+}
+
+export function sphereIntersectsFrustum(frustum: Frustum, sphere: Sphere, planeBits: number) {
+
+	let bits = planeBits;
+	let intersecting = false;
+
 	for(let index = 0; index < 6; index++) {
-		if(!sphereIsOnPositiveSideOfPlane(sphere, frustum.planes[index], world)) {
-			return false;
+
+		const planeBit = 1 << index;
+
+		if(!(bits & planeBit)) {
+			const result = sphereIntersectsPlane(sphere, frustum.planes[index]);
+
+			if(result === IntersectionType.OUTSIDE) {
+				return {
+					intersection: IntersectionType.OUTSIDE,
+					planeBits: bits
+				};
+			} else if(result === IntersectionType.INTERSECTING) {
+				intersecting = true;
+			} else { // inside
+				bits |= planeBit;
+
+				if(bits === FrustumPlaneBit.ALL) {
+					return {
+						intersection: IntersectionType.INSIDE,
+						planeBits: bits
+					};
+				}
+			}
 		}
 	}
-	return true;
+
+	if(intersecting) {
+		return {
+			intersection: IntersectionType.INTERSECTING,
+			planeBits: bits
+		};
+	} else {
+		return {
+			intersection: IntersectionType.INSIDE,
+			planeBits: bits
+		};
+	}
+}
+
+export function planeIntersectsAABB(plane: Plane, aabb: AABB) {
+	let maxExtent = 0; 
+	for(let i = 0; i < 3; i++) {
+		maxExtent += aabb.extents[i] * Math.abs(plane.normal[i]); 
+	}
+
+	const s = vec3.dot(plane.normal, aabb.center) + vec3.dot(plane.normal, plane.p0);
+
+	if(s - maxExtent > 0) {
+		return IntersectionType.OUTSIDE;
+	}
+	if(s + maxExtent < 0) {
+		return IntersectionType.INSIDE;
+	}
+	return IntersectionType.INTERSECTING;
+}
+
+export function AABBIntersectsFrustum(frustum: Frustum, aabb: AABB, planeBits: number) {
+
+	let bits = planeBits;
+	let intersecting = false;
+
+	if(!(bits & FrustumPlaneBit.LEFT)) {
+
+		const result = planeIntersectsAABB(frustum.planes[FrustumPlane.LEFT], aabb);
+
+		if(result === IntersectionType.OUTSIDE) {
+			return {
+				intersection: IntersectionType.OUTSIDE,
+				planeBits: bits 
+			};
+		} else if(result === IntersectionType.INTERSECTING) {
+			intersecting = true;
+		} else { // INSIDE
+			bits = bits |= FrustumPlaneBit.LEFT;
+
+			if(bits === FrustumPlaneBit.ALL) {
+				return {
+					intersection: IntersectionType.INSIDE,
+					planeBits: bits
+				};
+			}
+		}
+	}
+
+	if(!(bits & FrustumPlaneBit.RIGHT)) {
+		
+		const result = planeIntersectsAABB(frustum.planes[FrustumPlane.RIGHT], aabb);
+		
+		if(result === IntersectionType.OUTSIDE) {
+			return {
+				intersection: IntersectionType.OUTSIDE,
+				planeBits: bits
+			};
+		} else if(result === IntersectionType.INTERSECTING) {
+			intersecting = true;
+		} else { // INSIDE
+			bits = bits |= FrustumPlaneBit.RIGHT;
+
+			if(bits === FrustumPlaneBit.ALL) {
+				return {
+					intersection: IntersectionType.INSIDE,
+					planeBits: bits
+				};
+			}
+		}
+	}
+
+	if(!(bits & FrustumPlaneBit.BOTTOM)) {
+		
+		const result = planeIntersectsAABB(frustum.planes[FrustumPlane.BOTTOM], aabb);
+
+		if(result === IntersectionType.OUTSIDE) {
+			return {
+				intersection: IntersectionType.OUTSIDE,
+				planeBits: bits
+			};
+		} else if(result === IntersectionType.INTERSECTING) {
+			intersecting = true;
+		} else { // INSIDE
+			bits = bits |= FrustumPlaneBit.BOTTOM;
+
+			if(bits === FrustumPlaneBit.ALL) {
+				return {
+					intersection: IntersectionType.INSIDE,
+					planeBits: bits
+				};
+			}
+		}
+	}
+
+	if(!(bits & FrustumPlaneBit.TOP)) {
+		
+		const result = planeIntersectsAABB(frustum.planes[FrustumPlane.TOP], aabb);
+
+		if(result === IntersectionType.OUTSIDE) {
+			return {
+				intersection: IntersectionType.OUTSIDE,
+				planeBits: bits
+			};
+		} else if(result === IntersectionType.INTERSECTING) {
+			intersecting = true;
+		} else { // INSIDE
+			bits = bits |= FrustumPlaneBit.TOP;
+
+			if(bits === FrustumPlaneBit.ALL) {
+				return {
+					intersection: IntersectionType.INSIDE,
+					planeBits: bits
+				};
+			}
+		}
+	}
+
+	if(!(bits & FrustumPlaneBit.NEAR)) {
+
+		const result = planeIntersectsAABB(frustum.planes[FrustumPlane.NEAR], aabb);
+
+		if(result === IntersectionType.OUTSIDE) {
+			return {
+				intersection: IntersectionType.OUTSIDE,
+				planeBits: bits
+			};
+		} else if(result === IntersectionType.INTERSECTING) {
+			intersecting = true;
+		} else { // INSIDE
+			bits = bits |= FrustumPlaneBit.NEAR;
+
+			if(bits === FrustumPlaneBit.ALL) {
+				return {
+					intersection: IntersectionType.INSIDE,
+					planeBits: bits
+				};
+			}
+		}
+	}
+
+	if(!(bits & FrustumPlaneBit.FAR)) {
+
+		const result = planeIntersectsAABB(frustum.planes[FrustumPlane.FAR], aabb);
+
+		if(result === IntersectionType.OUTSIDE) {
+			return {
+				intersection: IntersectionType.OUTSIDE,
+				planeBits: bits
+			};
+		} else if(result === IntersectionType.INTERSECTING) {
+			intersecting = true;
+		} else { // INSIDE
+			bits = bits |= FrustumPlaneBit.FAR;
+
+			if(bits === FrustumPlaneBit.ALL) {
+				return {
+					intersection: IntersectionType.INSIDE,
+					planeBits: bits
+				};
+			}
+		}
+	}
+
+	if(intersecting) {
+		return {
+			intersection: IntersectionType.INTERSECTING,
+			planeBits: bits
+		};
+	} else {
+		return {
+			intersection: IntersectionType.INSIDE,
+			planeBits: bits
+		};
+	}
+
 }
