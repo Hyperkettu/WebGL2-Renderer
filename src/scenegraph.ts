@@ -6,6 +6,7 @@ import { VertexBase } from './vertex';
 import { Sphere } from './sphere';
 import { vec3 } from 'gl-matrix';
 import { IntersectionType } from './util/math';
+import { Renderer } from './glrenderer';
 
 export class SceneGraph {
 
@@ -21,11 +22,11 @@ export class SceneGraph {
 		return this.root.find(name);
 	}
 
-	forEachFrustumCull(frustum: Frustum, callback?: (node: SceneNode) => void) {
+	forEachFrustumCull(gl: WebGL2RenderingContext, frustum: Frustum, callback?: (node: SceneNode) => void) {
 		this.totalObjects = 0;
 		this.objectCounter = 0;
 		this.solveBoundingVolumeHierarchy();
-		this.hierarchicalFrustumCull(this.root, frustum, 0, callback);
+		this.hierarchicalFrustumCull(gl, this.root, frustum, 0, callback);
 	//	console.log(this.objectCounter, this.totalObjects);
 	}
 
@@ -62,9 +63,13 @@ export class SceneGraph {
 		node.boundingSphere = mergedSphere;
 	}	
 
-	private hierarchicalFrustumCull(node: SceneNode, frustum: Frustum, planeBits: number, callback?: (node: SceneNode) => void) {
+	private hierarchicalFrustumCull(gl: WebGL2RenderingContext, node: SceneNode, frustum: Frustum, planeBits: number, callback?: (node: SceneNode) => void) {
 
 		this.totalObjects++;
+
+		if(Renderer.visualizeBVH) {
+			node.boundingSphere.renderWithTransform(gl);
+		}
 
 		if(planeBits === FrustumPlaneBit.ALL) {
 
@@ -75,7 +80,7 @@ export class SceneGraph {
 
 			for (let child of node.children) {
 				if (child.enabled) {
-					this.hierarchicalFrustumCull(child, frustum, FrustumPlaneBit.ALL, callback);
+					this.hierarchicalFrustumCull(gl, child, frustum, FrustumPlaneBit.ALL, callback);
 				}
 			}
 
@@ -96,9 +101,9 @@ export class SceneGraph {
 			for (let child of node.children) {
 				if (child.enabled) {
 					if(result.intersection === IntersectionType.INTERSECTING) {
-						this.hierarchicalFrustumCull(child, frustum, result.planeBits, callback);
+						this.hierarchicalFrustumCull(gl, child, frustum, result.planeBits, callback);
 					} else if(result.intersection === IntersectionType.INSIDE) {
-						this.hierarchicalFrustumCull(child, frustum, FrustumPlaneBit.ALL, callback);
+						this.hierarchicalFrustumCull(gl, child, frustum, FrustumPlaneBit.ALL, callback);
 					}
 				}
 			}

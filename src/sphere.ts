@@ -1,10 +1,12 @@
-import { mat4, vec3, vec4 } from 'gl-matrix';
+import { mat4, vec3, vec4, quat } from 'gl-matrix';
 import { AABB } from './aabb';
+import { ConstantBuffers } from './constantbuffers';
 import { Frustum } from './frustum';
 import { Ray } from './ray';
 import { HitInfo } from './raycast';
 import { BoundingVolume } from './util/bvh/boundingvolume';
 import { VertexBase } from './vertex';
+import { UnitSphere } from './util/bvh/unitsphere';
 
 export class Sphere extends BoundingVolume {
 
@@ -17,8 +19,22 @@ export class Sphere extends BoundingVolume {
 	create(gl: WebGL2RenderingContext, vertices: VertexBase[]) {
 	}
 
-	render(gl: WebGL2RenderingContext) {
+	render(gl: WebGL2RenderingContext) {}
 
+	renderWithTransform(gl: WebGL2RenderingContext) {
+
+		const scaledWorld = mat4.create();
+		const quaternion = quat.create();
+		mat4.fromRotationTranslationScale(scaledWorld, quaternion, this.center, 
+		vec3.fromValues(this.radius, this.radius, this.radius));
+		ConstantBuffers.bufferPerObject.update(gl, 'world', scaledWorld);
+		ConstantBuffers.bufferPerObject.sendToGPU(gl);
+
+		ConstantBuffers.matricesPerFrame.update(gl, 'projection', ConstantBuffers.projection);
+		ConstantBuffers.matricesPerFrame.update(gl, 'view', ConstantBuffers.view);
+		ConstantBuffers.matricesPerFrame.sendToGPU(gl);
+		
+		UnitSphere.getUnitSphere().render(gl);
 	}
 
 	static merge(spheres: Sphere[]) {

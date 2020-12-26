@@ -39,6 +39,7 @@ import { FoliageGenerator } from './foliagegeneration';
 import { BBSphere } from './util/bvh/boundingvolumesphere';
 import { BoundingVolume } from './util/bvh/boundingvolume';
 import { Frustum } from './frustum';
+import { UnitSphere } from './util/bvh/unitsphere';
 
 export enum ShaderMode {
 	DEFAULT = 0,
@@ -78,6 +79,7 @@ export class Renderer {
 		this.resetCounter();
 
 		ConstantBuffers.createUniformBuffers(this.gl);
+		UnitSphere.initRenderableUnitSphere(this.gl);
 	}
 
 	queryExtensions() {
@@ -290,8 +292,9 @@ export class Renderer {
 
 		this.cloth.update(this.gl, dt);
 
+		Renderer.visualizeBVH = true;
 		this.resolveVisibility(scene, this.getCurrentCamera().frustum);
-
+		Renderer.visualizeBVH = false;
 		//this.batchRenderer.sortInAscendingOrder(Layer.OPAQUE);
 		//this.batchRenderer.sortInDescendingOrder(Layer.TRANSPARENT);
 
@@ -375,7 +378,7 @@ export class Renderer {
 		let count  = 0;
 		this.batchRenderer.reset();
 
-		scene.sceneGraph.forEachFrustumCull(frustum, culledNode => {
+		scene.sceneGraph.forEachFrustumCull(this.gl, frustum, culledNode => {
 			
 			if (culledNode !== scene.sceneGraph.root && culledNode.enabled) {
 				const meshComponent = culledNode.getComponent('meshComponent') as MeshComponent<VertexBase>;
@@ -496,5 +499,7 @@ export class Renderer {
 	settings: settings.SettingsManager;
 
 	tree: Tree;
+
+	static visualizeBVH: boolean = false;
 
 }
