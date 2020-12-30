@@ -393,8 +393,6 @@ export class Renderer {
 				}
 			}
 		});
-
-		console.log(count, scene.sceneGraph.totalObjects);
 	}
 
 	materialBegin(submesh: Submesh<VertexBase>, shadowPass?: ShadowPass) {

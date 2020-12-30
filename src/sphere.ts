@@ -7,7 +7,6 @@ import { HitInfo } from './raycast';
 import { BoundingVolume } from './util/bvh/boundingvolume';
 import { VertexBase } from './vertex';
 import { UnitSphere } from './util/bvh/unitsphere';
-import { inflate } from 'zlib';
 
 export class Sphere extends BoundingVolume {
 

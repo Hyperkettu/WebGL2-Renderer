@@ -284,22 +284,6 @@ export function getZ(matrix: mat4) {
 	return vec3.fromValues(matrix[8], matrix[9], matrix[10]);
 }
 
-/*export function sphereIntersectsPlane(sphere: Sphere, plane: Plane) {
-	const d = vec3.dot(plane.p0, plane.normal);
-	const sphereD = vec3.dot(sphere.center, plane.normal);
-	const distance = Math.abs(sphereD - d);
-
-	if(distance < sphere.radius) {
-		return 0;
-	} else {
-		if(sphereD > 0) {
-			return 1;
-		} else {
-			return -1;
-		}
-	}
-}*/
-
 export enum IntersectionType {
 	OUTSIDE,
 	INTERSECTING,

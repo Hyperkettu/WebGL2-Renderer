@@ -23,11 +23,8 @@ export class SceneGraph {
 	}
 
 	forEachFrustumCull(gl: WebGL2RenderingContext, frustum: Frustum, callback?: (node: SceneNode) => void) {
-		this.totalObjects = 0;
-		this.objectCounter = 0;
 		this.solveBoundingVolumeHierarchy();
 		this.hierarchicalFrustumCull(gl, this.root, frustum, 0, callback);
-	//	console.log(this.objectCounter, this.totalObjects);
 	}
 
 	public solveBoundingVolumeHierarchy() {
@@ -64,9 +61,7 @@ export class SceneGraph {
 	}	
 
 	private hierarchicalFrustumCull(gl: WebGL2RenderingContext, node: SceneNode, frustum: Frustum, planeBits: number, callback?: (node: SceneNode) => void) {
-
-		this.totalObjects++;
-
+		
 		if(Renderer.visualizeBVH) {
 			node.boundingSphere.renderWithTransform(gl);
 		}
@@ -74,7 +69,6 @@ export class SceneGraph {
 		if(planeBits === FrustumPlaneBit.ALL) {
 
 			if (callback && (node.enabled || node.enableUpdate)) {
-				this.objectCounter++;
 				callback(node);
 			}
 
@@ -94,7 +88,6 @@ export class SceneGraph {
 			}
 
 			if (callback && (node.enabled || node.enableUpdate)) {
-				this.objectCounter++;
 				callback(node);
 			}
 
@@ -135,7 +128,4 @@ export class SceneGraph {
 	}
 
 	root: SceneNode;
-
-	objectCounter: number;
-	totalObjects: number;
 }

@@ -1,12 +1,7 @@
-import { BoundingVolume } from "./boundingvolume";
-import { Frustum } from "../../frustum";
-import { Ray } from "../../ray";
-import { vec3, vec4, mat4 } from "gl-matrix";
-import { PositionVertexType, PositionVertex, MorphVertex } from "../../vertex";
+import { vec3, vec4 } from "gl-matrix";
+import { PositionVertex } from "../../vertex";
 import { Sphere } from "../../sphere";
-import { rayIntersectsSphere } from "../math";
-import { HitInfo } from "../../raycast";
-import { StaticMesh, Mesh, LineMesh } from "../../mesh";
+import { LineMesh } from "../../mesh";
 import * as shader from '../../shadermanager';
 import { ShaderType } from "../../shader";
 import { ConstantBuffers } from "../../constantbuffers";
