@@ -7,6 +7,7 @@ import { HitInfo } from './raycast';
 import { BoundingVolume } from './util/bvh/boundingvolume';
 import { VertexBase } from './vertex';
 import { UnitSphere } from './util/bvh/unitsphere';
+import { inflate } from 'zlib';
 
 export class Sphere extends BoundingVolume {
 
@@ -53,8 +54,8 @@ export class Sphere extends BoundingVolume {
 
 	private static findCenterForSpheres(spheres: Sphere[]) {
 
-		let aabb = new AABB(vec3.fromValues(0,0,0),
-			vec3.fromValues(0,0,0));
+		let aabb = new AABB(vec3.fromValues(Infinity,Infinity,Infinity),
+			vec3.fromValues(-Infinity,-Infinity,-Infinity));
 
 		for(let sphere of spheres) {
 			aabb = aabb.merge(sphere.getAABB());
