@@ -28,6 +28,10 @@ export class Context {
 
 		this.gl.enable(this.gl.SAMPLE_ALPHA_TO_COVERAGE);
 
+		this.gl.frontFace(this.gl.CCW);
+		this.gl.enable(renderer.gl.CULL_FACE);
+		this.gl.cullFace(renderer.gl.BACK);
+
 		if (renderer.settings.getSetting('Blending') == Setting.ENABLED) {
 			this.gl.enable(this.gl.BLEND);
 		} else {

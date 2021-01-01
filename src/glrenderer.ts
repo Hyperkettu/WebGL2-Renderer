@@ -292,7 +292,7 @@ export class Renderer {
 
 		this.cloth.update(this.gl, dt);
 
-		Renderer.visualizeBVH = true;
+		Renderer.visualizeBVH = false;
 		this.resolveVisibility(scene, this.getCurrentCamera().frustum);
 		Renderer.visualizeBVH = false;
 		//this.batchRenderer.sortInAscendingOrder(Layer.OPAQUE);
@@ -336,6 +336,8 @@ export class Renderer {
 		this.postProcess.ToneMapping(this, toneMapSource);
 		this.postProcess.End(this);
 
+		this.gl.disable(this.gl.CULL_FACE);
+
 		let rtsOverlay = new RenderTargetState(gl, this.context.screenViewPort);
 		rtsOverlay.addColorTarget(gl, 0, this.postProcess.finalScreenTexture);
 		this.context.renderTargetBegin(rtsOverlay);
@@ -352,6 +354,9 @@ export class Renderer {
 		this.overlay.renderSingleSprite(gl, sp, true);*/
 		this.overlay.overlayEnd(gl);
 		this.context.renderTargetEnd();
+
+		this.gl.enable(this.gl.CULL_FACE);
+
 
 		this.postProcess.renderToScreen(this, this.postProcess.finalScreenTexture);
 
