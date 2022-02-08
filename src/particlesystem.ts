@@ -13,7 +13,7 @@ import { IndexBuffer } from './indexbuffer';
 import * as math from './util/math';
 
 interface ParticleRenderState {
-	udpateVAO: WebGLVertexArrayObject;
+	updateVAO: WebGLVertexArrayObject;
 	renderBuffers: {
 		vertexArrayObject: WebGLVertexArrayObject;
 		vertexBuffer: WebGLBuffer;
@@ -113,12 +113,12 @@ export class ParticleSystem {
 		this.particleBuffer2 = VertexArrayObject.GenerateRenderParticleObject(gl, renderParticles, updateParticles, vertexBuffer2);
 
 		this.states.push({
-			udpateVAO: this.updateVAO1,
+			updateVAO: this.updateVAO1,
 			renderBuffers: this.particleBuffer
 		});
 
 		this.states.push({
-			udpateVAO: this.updateVAO2,
+			updateVAO: this.updateVAO2,
 			renderBuffers: this.particleBuffer2
 		});
 	}
@@ -162,10 +162,10 @@ export class ParticleSystem {
 				this.bornParticles + this.data.birthRate * dt);
 		}
 
-		const particelUpdateShader = shader.GetShader(ShaderType.PARTICLE_UPDATE);
-		particelUpdateShader.use(gl);
+		const particleUpdateShader = shader.GetShader(ShaderType.PARTICLE_UPDATE);
+		particleUpdateShader.use(gl);
 
-		particelUpdateShader.setSamplerTexture(gl, 'noiseTexture', this.noiseTexture, 0);
+		particleUpdateShader.setSamplerTexture(gl, 'noiseTexture', this.noiseTexture, 0);
 
 		ConstantBuffers.particleData.update(gl, 'particleData.gravity', vec3.fromValues(0, -9.81, 0));
 		ConstantBuffers.particleData.updateWithOffset('particleData.gravity', 3, dt);
@@ -175,7 +175,7 @@ export class ParticleSystem {
 		ConstantBuffers.particleData.sendToGPU(gl);
 
 		Renderer.numDrawCallsPerFrame++;
-		gl.bindVertexArray(this.states[this.read].udpateVAO);
+		gl.bindVertexArray(this.states[this.read].updateVAO);
 		gl.enable(gl.RASTERIZER_DISCARD);
 		gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, this.states[this.write].renderBuffers.particleInstanceBuffer);
 		gl.beginTransformFeedback(gl.POINTS);
